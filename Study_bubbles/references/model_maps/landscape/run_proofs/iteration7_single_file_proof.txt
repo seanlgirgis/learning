@@ -1,0 +1,23 @@
+timestamp: 2026-06-16T00:22:06.919457+00:00
+source topic path: iac_why_terraform_exists.studybubble.json
+output HTML path: iac_why_terraform_exists.html
+mode: single-file
+topic id: iac_why_terraform_exists
+topic title: IaC: Why Terraform Exists
+node count: 10
+link count: 10
+path count: 1
+validation result: PASS
+generated HTML byte size: 81351
+manual smoke test steps:
+1. Open outputs/single_file/tiny_capacity_demo.html directly from File Explorer.
+2. Confirm title and subtitle render.
+3. Confirm 3 bubbles render (Telemetry, Baseline, Forecast).
+4. Confirm 2 relationship lines render.
+5. Click Telemetry and confirm side panel updates.
+6. Click Baseline and confirm side panel updates.
+7. Click Forecast and confirm side panel updates.
+8. Confirm no 'Failed to fetch' message appears.
+summary: PASS
+asset copy warnings:
+WARN: image source not found 'assets/iac_landscape_overview.svg'

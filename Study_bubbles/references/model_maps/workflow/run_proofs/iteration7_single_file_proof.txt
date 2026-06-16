@@ -1,0 +1,23 @@
+timestamp: 2026-06-16T00:22:07.036046+00:00
+source topic path: terraform_core_workflow.studybubble.json
+output HTML path: terraform_core_workflow.html
+mode: single-file
+topic id: terraform_core_workflow
+topic title: Terraform Core Workflow
+node count: 11
+link count: 11
+path count: 1
+validation result: PASS
+generated HTML byte size: 84696
+manual smoke test steps:
+1. Open outputs/single_file/tiny_capacity_demo.html directly from File Explorer.
+2. Confirm title and subtitle render.
+3. Confirm 3 bubbles render (Telemetry, Baseline, Forecast).
+4. Confirm 2 relationship lines render.
+5. Click Telemetry and confirm side panel updates.
+6. Click Baseline and confirm side panel updates.
+7. Click Forecast and confirm side panel updates.
+8. Confirm no 'Failed to fetch' message appears.
+summary: PASS
+asset copy warnings:
+WARN: image source not found 'assets/terraform_core_workflow.svg'

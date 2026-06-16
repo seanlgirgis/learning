@@ -1,0 +1,196 @@
+{
+  "id": "crs_001_gen_ai_landscape",
+  "title": "CRS 001 — Generative AI Landscape",
+  "subtitle": "Why the stack exists: models, prompts, LangChain, LCEL, and delivery",
+  "parentTopic": null,
+  "groups": [
+    { "id": "ai_foundations", "label": "AI Foundations", "color": "#4C78A8" },
+    { "id": "prompt_layer", "label": "Prompt Layer", "color": "#F58518" },
+    { "id": "app_stack", "label": "Application Stack", "color": "#54A24B" },
+    { "id": "delivery", "label": "Delivery and Ops", "color": "#E45756" }
+  ],
+  "mapResources": [
+    { "label": "Course Home", "type": "page", "href": "../../index.html" },
+    { "label": "Main Field Guide", "type": "page", "href": "../../study_pages/field_guide.html" },
+    { "label": "LCEL Code Workflow Map", "type": "map", "topic": "crs_001_lcel_workflow.studybubble.json" },
+    { "label": "RemNote Source Cards", "type": "page", "href": "../../source_cards/README.md" },
+    { "label": "Lab Run Book", "type": "lab", "href": "../../lab/lab_run_book.md" }
+  ],
+  "nodes": [
+    {
+      "id": "discriminative_vs_generative",
+      "label": "Discriminative vs Generative",
+      "size": "core",
+      "group": "AI Foundations",
+      "definition": "Discriminative AI classifies or predicts; generative AI creates new content that fits learned patterns and instructions.",
+      "whyItMatters": "The course builds generative applications — you need the mental model before touching LangChain.",
+      "safeSentence": "Discriminative decides a category; generative drafts new text or structured output from a prompt.",
+      "commonTrap": "Treating every LLM task as classification, or assuming generative models never use probability.",
+      "interviewAnswer": "Discriminative models learn boundaries between classes; generative models learn to produce plausible new outputs conditioned on input.",
+      "childTopics": [],
+      "externalLinks": [
+        { "label": "Module 1 Field Guide", "href": "../../study_pages/chapter_01_generative_ai_prompt_engineering_and_prompt_templates_field_guide.html" }
+      ]
+    },
+    {
+      "id": "foundation_model",
+      "label": "Foundation Model",
+      "size": "core",
+      "group": "AI Foundations",
+      "definition": "A broadly trained model adapted or prompted for many downstream tasks instead of one fixed label set.",
+      "whyItMatters": "Enterprise value: one capable model can support summarization, Q&A, drafting, and extraction with prompting.",
+      "safeSentence": "A foundation model is the shared base; prompts and app code steer it for each task.",
+      "commonTrap": "Assuming one prompt works for every task without evaluation or constraints.",
+      "interviewAnswer": "Foundation models are pretrained broadly and then steered with prompts, tools, or light adaptation for specific applications.",
+      "childTopics": []
+    },
+    {
+      "id": "llm",
+      "label": "Large Language Model",
+      "size": "support",
+      "group": "AI Foundations",
+      "definition": "A language-focused foundation model trained to process and generate text.",
+      "whyItMatters": "CRS 001 centers on LLM-backed apps — templates, chains, and parsers all assume text in / text out.",
+      "safeSentence": "An LLM is the language specialist in the foundation-model family.",
+      "interviewAnswer": "LLMs are foundation models specialized for language understanding and generation.",
+      "childTopics": []
+    },
+    {
+      "id": "prompt_engineering",
+      "label": "Prompt Engineering",
+      "size": "core",
+      "group": "Prompt Layer",
+      "definition": "Designing instruction, context, examples, constraints, and output format so the model behaves reliably.",
+      "whyItMatters": "Model capability alone does not make an app dependable — prompt design is the control surface.",
+      "safeSentence": "Strong prompts specify what to do, what context matters, and what shape the answer should take.",
+      "commonTrap": "One giant prompt with no structure, no examples, and no output contract.",
+      "interviewAnswer": "Prompt engineering shapes model behavior through instructions, context, examples, and explicit output requirements.",
+      "childTopics": [],
+      "externalLinks": [
+        { "label": "RemNote deck 02", "href": "../../source_cards/02 coursera_ibm_rag_dev...echniques_learning_mode.md" }
+      ]
+    },
+    {
+      "id": "prompt_templates",
+      "label": "Prompt Templates",
+      "size": "support",
+      "group": "Prompt Layer",
+      "definition": "Reusable prompt structures with runtime variables — PromptTemplate and ChatPromptTemplate in LangChain.",
+      "whyItMatters": "Templates turn ad-hoc strings into maintainable, testable application components.",
+      "safeSentence": "Templates separate stable instructions from changing user data.",
+      "commonTrap": "Calling the model when you only needed prompt.invoke() to fill variables.",
+      "interviewAnswer": "Prompt templates encode reusable structure; invocation fills variables without necessarily calling the LLM.",
+      "childTopics": [],
+      "externalLinks": [
+        { "label": "Code Workflow Map", "href": "crs_001_lcel_workflow.html" }
+      ]
+    },
+    {
+      "id": "langchain",
+      "label": "LangChain",
+      "size": "core",
+      "group": "Application Stack",
+      "definition": "An application framework for composing prompts, models, parsers, retrievers, tools, and conversation state.",
+      "whyItMatters": "It is the glue layer between raw model calls and a maintainable generative AI application.",
+      "safeSentence": "LangChain organizes prompts, models, and parsers as components you can wire together.",
+      "interviewAnswer": "LangChain provides composable components and patterns for building LLM applications beyond a single API call.",
+      "childTopics": [],
+      "externalLinks": [
+        { "label": "Module 2 Field Guide", "href": "../../study_pages/chapter_02_introduction_to_langchain_in_generative_ai_applications_field_guide.html" }
+      ]
+    },
+    {
+      "id": "lcel",
+      "label": "LCEL",
+      "size": "core",
+      "group": "Application Stack",
+      "definition": "LangChain Expression Language — pipe-style composition of runnable steps such as prompt | model | parser.",
+      "whyItMatters": "LCEL is the main code pattern for reusable chains in this course.",
+      "safeSentence": "LCEL connects runnables; chain.invoke() runs the full pipeline.",
+      "commonTrap": "Mixing up prompt.invoke() (prepare) with chain.invoke() (run everything).",
+      "interviewAnswer": "LCEL lets teams declare pipelines as connected runnables with a consistent invoke interface.",
+      "childTopics": [
+        { "label": "LCEL Code Workflow Map", "topic": "crs_001_lcel_workflow.studybubble.json" }
+      ],
+      "externalLinks": [
+        { "label": "LangChain Code Patterns", "href": "../../study_pages/langchain_code_patterns.html" }
+      ]
+    },
+    {
+      "id": "structured_output",
+      "label": "Structured Output",
+      "size": "support",
+      "group": "Application Stack",
+      "definition": "Returning predictable fields and types — JSON parsers, Pydantic models, provider-native schemas.",
+      "whyItMatters": "Applications need validated data, not only free-form text.",
+      "safeSentence": "Structured output turns LLM responses into objects your code can trust and test.",
+      "interviewAnswer": "I use parsers or provider-native structured output when downstream code needs reliable fields and types.",
+      "childTopics": []
+    },
+    {
+      "id": "flask_application",
+      "label": "Flask Application",
+      "size": "support",
+      "group": "Delivery and Ops",
+      "definition": "HTTP routes and handlers that expose chains to users — prototype to production interface.",
+      "whyItMatters": "Module 3 closes the loop from notebook patterns to a deliverable web application.",
+      "safeSentence": "Flask wraps the chain behind routes, request validation, and HTTP responses.",
+      "commonTrap": "Putting business logic only in routes with no reusable chain layer.",
+      "interviewAnswer": "I keep the LangChain pipeline reusable and let Flask handle HTTP concerns and validation.",
+      "childTopics": [],
+      "externalLinks": [
+        { "label": "Module 3 Field Guide", "href": "../../study_pages/chapter_03_build_a_generative_ai_application_with_langchain_field_guide.html" }
+      ]
+    },
+    {
+      "id": "evaluation_governance",
+      "label": "Evaluation and Governance",
+      "size": "support",
+      "group": "Delivery and Ops",
+      "definition": "Model selection, evaluation metrics, monitoring, and refinement after deployment.",
+      "whyItMatters": "Production generative AI needs measurement — not only a working demo.",
+      "safeSentence": "Evaluate outputs, monitor behavior, and refine prompts and models over time.",
+      "interviewAnswer": "I pair functional delivery with evaluation criteria and operational monitoring for generative features.",
+      "childTopics": []
+    }
+  ],
+  "links": [
+    { "source": "discriminative_vs_generative", "target": "foundation_model", "label": "builds on" },
+    { "source": "foundation_model", "target": "llm", "label": "includes" },
+    { "source": "llm", "target": "prompt_engineering", "label": "needs" },
+    { "source": "prompt_engineering", "target": "prompt_templates", "label": "codifies" },
+    { "source": "prompt_templates", "target": "langchain", "label": "implemented in" },
+    { "source": "langchain", "target": "lcel", "label": "composed via" },
+    { "source": "lcel", "target": "structured_output", "label": "validates with" },
+    { "source": "structured_output", "target": "flask_application", "label": "exposed by" },
+    { "source": "flask_application", "target": "evaluation_governance", "label": "monitored by" }
+  ],
+  "paths": [
+    {
+      "id": "stack_lane",
+      "label": "Stack Lane",
+      "description": "Follow the course arc from model concept to delivered application.",
+      "nodeIds": [
+        "discriminative_vs_generative",
+        "foundation_model",
+        "prompt_engineering",
+        "langchain",
+        "lcel",
+        "structured_output",
+        "flask_application"
+      ]
+    },
+    {
+      "id": "interview_lane",
+      "label": "Interview Lane",
+      "description": "Short spoken answers for core distinctions and LCEL role.",
+      "nodeIds": [
+        "discriminative_vs_generative",
+        "prompt_engineering",
+        "lcel",
+        "structured_output",
+        "evaluation_governance"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+paths:
+  - id: coursera_ibm_gen_ai_engineering
+    kind: specialization
+    provider: coursera
+    partner: ibm
+    title: "RAG for Generative AI Applications"
+    url: "https://www.coursera.org/specializations/rag-for-generative-ai-applications"
+    related_certificate_url: "https://www.coursera.org/professional-certificates/ibm-generative-ai-engineering"
+    folder: paths/coursera_ibm_gen_ai_engineering
+    index: paths/coursera_ibm_gen_ai_engineering/index.html
+    members:
+      - kind: course
+        id: crs_001_develop_generative_ai_applications_get_started
+        position: 1
+        coursera_url: "https://www.coursera.org/learn/develop-generative-ai-applications-get-started?specialization=rag-for-generative-ai-applications"
+        status: migrated
+        studybook_mirror: D:/Workarea/StudyBook/study_maps/DataCamp/courses/crs_001_develop_generative_ai_applications_get_started
+      - kind: course
+        id: crs_002_build_rag_applications_get_started
+        position: 2
+        status: scaffolded
+        studybook_mirror: D:/Workarea/StudyBook/study_maps/DataCamp/courses/crs_002_build_rag_applications_get_started
+      - kind: course
+        id: crs_003_vector_databases_for_rag_an_introduction
+        position: 3
+        status: scaffolded
+        studybook_mirror: D:/Workarea/StudyBook/study_maps/DataCamp/courses/crs_003_vector_databases_for_rag_an_introduction
+      - kind: course
+        id: crs_004_advanced_rag_with_vector_databases_and_retrievers
+        position: 4
+        status: scaffolded
+        studybook_mirror: D:/Workarea/StudyBook/study_maps/DataCamp/courses/crs_004_advanced_rag_with_vector_databases_and_retrievers
+
+  - id: interview_data_engineering_core
+    kind: custom
+    title: "Data Engineering Interview Preparation"
+    folder: paths/interview_data_engineering_core
+    index: paths/interview_data_engineering_core/index.html
+    members:
+      - kind: unit
+        id: skill_pyspark_execution_model
+      - kind: unit
+        id: interview_senior_data_engineer_core

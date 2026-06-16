@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Learning Hub</title>
+  <style>
+    :root {
+      --bg: #0d1117; --panel: #161b22; --border: #30363d; --text: #e6edf3;
+      --muted: #9da7b3; --green: #03ef62; --blue: #58a6ff; --amber: #d29922;
+      --purple: #bc8cff; --shadow: 0 12px 30px rgba(0,0,0,.24);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: "Segoe UI", Arial, sans-serif; background: radial-gradient(circle at top left, rgba(3,239,98,.08), transparent 30rem), var(--bg); color: var(--text); line-height: 1.6; }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { color: var(--green); }
+    .page { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 24px 0 52px; }
+    .hero { background: linear-gradient(135deg, #061d2d, #14384e); border: 1px solid #28506a; border-radius: 18px; padding: 34px; box-shadow: var(--shadow); }
+    .hero h1 { margin: 0 0 12px; font-size: 2.2rem; }
+    .hero p { margin: 0; color: #c9d3dc; max-width: 52rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-top: 22px; }
+    .card { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 20px; box-shadow: var(--shadow); }
+    .card h2 { margin: 0 0 8px; font-size: 1.2rem; }
+    .card p { margin: 0 0 12px; color: var(--muted); font-size: .95rem; }
+    .card ul { margin: 0; padding-left: 18px; color: #c9d3dc; }
+    .card li + li { margin-top: 6px; }
+    .section { margin-top: 22px; background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 22px; }
+    .section h2 { margin: 0 0 14px; }
+    footer { margin-top: 28px; padding-top: 18px; border-top: 1px solid var(--border); color: var(--muted); font-size: .88rem; }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <h1>Learning Hub</h1>
+      <p>Staging area for courses, skills, interview prep, and learning paths. Courses and units live once; paths link to them.</p>
+    </header>
+
+    <div class="grid">
+      <article class="card">
+        <h2>Paths</h2>
+        <p>Tracks, certificates, custom sequences.</p>
+        <ul>
+          <li><a href="paths/coursera_ibm_gen_ai_engineering/index.html">RAG for Generative AI Applications (Coursera)</a></li>
+          <li><a href="paths/interview_data_engineering_core/index.html">Data Engineering Interview Prep</a></li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h2>Courses</h2>
+        <p>Coursera (<code>crs_</code>) and DataCamp — canonical course folders.</p>
+        <ul>
+          <li><a href="courses/index.html">Courses library</a></li>
+          <li><a href="courses/crs_001_develop_generative_ai_applications_get_started/index.html">CRS 001 — Develop Generative AI (migrated)</a></li>
+          <li><a href="courses/crs_001_develop_generative_ai_applications_get_started/bubbles/outputs/crs_001_gen_ai_landscape.html">CRS 001 bubble map — Landscape</a></li>
+          <li><a href="courses/crs_001_develop_generative_ai_applications_get_started/bubbles/outputs/crs_001_lcel_workflow.html">CRS 001 bubble map — LCEL Code</a></li>
+          <li><a href="courses/README.md">Courses guide</a></li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h2>Units</h2>
+        <p>Skills, interview packs, anything that is not a provider course.</p>
+        <ul>
+          <li><a href="units/skill_pyspark_execution_model/index.html">PySpark Execution Model</a></li>
+          <li><a href="units/interview_senior_data_engineer_core/index.html">Senior DE Interview Core</a></li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h2>Templates</h2>
+        <p>HTML templates for connected study pages.</p>
+        <ul>
+          <li><a href="shared/templates/README.md">Template index</a></li>
+          <li><a href="shared/templates/course_index_template.html">Course index</a></li>
+          <li><a href="shared/templates/path_index_template.html">Path index</a></li>
+          <li><a href="shared/templates/unit_index_template.html">Unit index</a></li>
+        </ul>
+      </article>
+    </div>
+
+    <section class="section">
+      <h2>StudyBook mirrors (tour)</h2>
+      <ul>
+        <li><a href="../StudyBook/study_maps/DataCamp/index.html">DataCamp master hub</a></li>
+        <li><a href="../StudyBook/study_maps/DataCamp/career_tracks/index.html">Career tracks index</a></li>
+        <li><a href="../StudyBook/study_maps/DataCamp/courses/index.html">StudyBook courses library</a></li>
+      </ul>
+      <p style="color:var(--muted);font-size:.9rem;">Map: <code>planning/studybook_hierarchy_map.md</code></p>
+    </section>
+
+    <section class="section">
+      <h2>Catalog</h2>
+      <p>Registry files: <a href="catalog/courses.yaml">courses.yaml</a> · <a href="catalog/units.yaml">units.yaml</a> · <a href="catalog/paths.yaml">paths.yaml</a></p>
+      <p>Planning: <a href="planning/repository_plan.md">repository_plan.md</a></p>
+    </section>
+
+    <footer>Learning Hub · <a href="index.html">home</a></footer>
+  </main>
+</body>
+</html>

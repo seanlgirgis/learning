@@ -1,0 +1,21 @@
+timestamp: 2026-06-16T00:22:03.379734+00:00
+source topic path: topics/skill_pyspark_execution_model.studybubble.json
+output HTML path: outputs/skill_pyspark_execution_model.html
+mode: single-file
+topic id: skill_pyspark_execution_model
+topic title: PySpark Execution Model
+node count: 12
+link count: 12
+path count: 2
+validation result: PASS
+generated HTML byte size: 79537
+manual smoke test steps:
+1. Open outputs/single_file/tiny_capacity_demo.html directly from File Explorer.
+2. Confirm title and subtitle render.
+3. Confirm 3 bubbles render (Telemetry, Baseline, Forecast).
+4. Confirm 2 relationship lines render.
+5. Click Telemetry and confirm side panel updates.
+6. Click Baseline and confirm side panel updates.
+7. Click Forecast and confirm side panel updates.
+8. Confirm no 'Failed to fetch' message appears.
+summary: PASS

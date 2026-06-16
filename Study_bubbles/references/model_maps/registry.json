@@ -1,0 +1,27 @@
+{
+  "style_id": "terraform_learnterraform_v1",
+  "style_name": "LearnTerraform TerraForm StudyBubble Style",
+  "recall_doc": "MODEL_MAPS.md",
+  "model_maps": [
+    {
+      "id": "iac_why_terraform_exists",
+      "type": "landscape",
+      "title": "IaC: Why Terraform Exists",
+      "bubble_count": 10,
+      "html": "landscape/iac_why_terraform_exists.html",
+      "topic_json": "landscape/iac_why_terraform_exists.studybubble.json",
+      "layout_json": "landscape/iac_why_terraform_exists.layout.json",
+      "studybook_source_html": "../../../../StudyBook/study_maps/IaC/TerraForm/outputs/iac_why_terraform_exists.html"
+    },
+    {
+      "id": "terraform_core_workflow",
+      "type": "workflow",
+      "title": "Terraform Core Workflow",
+      "bubble_count": 11,
+      "html": "workflow/terraform_core_workflow.html",
+      "topic_json": "workflow/terraform_core_workflow.studybubble.json",
+      "layout_json": "workflow/terraform_core_workflow.layout.json",
+      "studybook_source_html": "../../../../StudyBook/study_maps/IaC/TerraForm/outputs/terraform_core_workflow.html"
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "topicId": "skill_pyspark_execution_model",
+  "topicTitle": "PySpark Execution Model",
+  "version": 1,
+  "nodes": {
+    "lazy_evaluation": {
+      "x": 100,
+      "y": 240.68
+    },
+    "lineage_dag": {
+      "x": 208.48,
+      "y": 147.46
+    },
+    "catalyst_optimizer": {
+      "x": 100.93,
+      "y": 402.5
+    },
+    "transformations": {
+      "x": 331.24,
+      "y": 609.6
+    },
+    "actions": {
+      "x": 643.98,
+      "y": 59.46
+    },
+    "narrow_transforms": {
+      "x": 337.75,
+      "y": 310.25
+    },
+    "wide_transforms": {
+      "x": 619.2,
+      "y": 573.06
+    },
+    "stages_tasks": {
+      "x": 708.82,
+      "y": 292.46
+    },
+    "shuffle": {
+      "x": 839,
+      "y": 330
+    },
+    "partition_skew": {
+      "x": 978.42,
+      "y": 255.04
+    },
+    "spark_ui": {
+      "x": 1100,
+      "y": 279.42
+    },
+    "slow_job_playbook": {
+      "x": 1018.46,
+      "y": 400.53
+    }
+  }
+}

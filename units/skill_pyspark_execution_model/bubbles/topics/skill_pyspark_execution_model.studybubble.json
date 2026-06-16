@@ -1,0 +1,196 @@
+{
+  "id": "skill_pyspark_execution_model",
+  "title": "PySpark Execution Model",
+  "subtitle": "Test map — lazy evaluation, stages, shuffles, and slow-job diagnosis",
+  "parentTopic": null,
+  "groups": [
+    { "id": "core_model", "label": "Core Model", "color": "#4C78A8" },
+    { "id": "transform_actions", "label": "Transformations and Actions", "color": "#F58518" },
+    { "id": "execution", "label": "Execution", "color": "#54A24B" },
+    { "id": "diagnosis", "label": "Diagnosis", "color": "#E45756" }
+  ],
+  "mapResources": [
+    {
+      "label": "Open Unit Home",
+      "type": "page",
+      "href": "../../index.html"
+    },
+    {
+      "label": "Open Field Guide",
+      "type": "page",
+      "href": "../../study_pages/field_guide.html"
+    },
+    {
+      "label": "Model map: Terraform Workflow (style reference)",
+      "type": "map",
+      "topic": "terraform_core_workflow.studybubble.json"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "lazy_evaluation",
+      "label": "Lazy Evaluation",
+      "size": "core",
+      "group": "Core Model",
+      "definition": "Spark does not run transformations immediately. It records a logical plan until an action forces execution.",
+      "whyItMatters": "Lazy evaluation enables optimization and avoids wasted work, but delays when problems appear.",
+      "safeSentence": "Transformations are lazy; nothing runs until an action triggers a job.",
+      "commonTrap": "Assuming a transformation already ran because you called a DataFrame method.",
+      "interviewAnswer": "Spark builds a plan first and executes only when an action is called, which lets Catalyst optimize before running.",
+      "childTopics": []
+    },
+    {
+      "id": "lineage_dag",
+      "label": "Lineage DAG",
+      "size": "support",
+      "group": "Core Model",
+      "definition": "The recorded transformation graph from sources to the current DataFrame.",
+      "whyItMatters": "Lineage explains what Spark will recompute and what can be recomputed after failure.",
+      "safeSentence": "Lineage is the recipe Spark can replay if partitions are lost.",
+      "interviewAnswer": "Lineage is the DAG of transformations; it supports fault tolerance and logical planning.",
+      "childTopics": []
+    },
+    {
+      "id": "transformations",
+      "label": "Transformations",
+      "size": "core",
+      "group": "Transformations and Actions",
+      "definition": "Operations that return a new DataFrame without triggering a cluster job.",
+      "whyItMatters": "Most DataFrame code is transformations; they define the plan.",
+      "safeSentence": "select, filter, withColumn, join, and groupBy are transformations — they extend the plan.",
+      "commonTrap": "Treating join or groupBy as cheap because they return quickly in the driver.",
+      "interviewAnswer": "Transformations are lazy and only describe the computation graph.",
+      "childTopics": []
+    },
+    {
+      "id": "actions",
+      "label": "Actions",
+      "size": "core",
+      "group": "Transformations and Actions",
+      "definition": "Operations that trigger execution and return a result or side effect to the driver.",
+      "whyItMatters": "Actions are where jobs start, metrics appear, and failures surface.",
+      "safeSentence": "count, collect, show, and write are actions — they start jobs.",
+      "interviewAnswer": "An action materializes the plan into stages and tasks on the cluster.",
+      "childTopics": []
+    },
+    {
+      "id": "narrow_transforms",
+      "label": "Narrow Transformations",
+      "size": "support",
+      "group": "Transformations and Actions",
+      "definition": "Each input partition maps to at most one output partition (map, filter, select).",
+      "whyItMatters": "Narrow ops are cheap and usually avoid shuffle.",
+      "safeSentence": "Narrow transformations keep partition count stable and stay local to each partition.",
+      "childTopics": []
+    },
+    {
+      "id": "wide_transforms",
+      "label": "Wide Transformations",
+      "size": "support",
+      "group": "Transformations and Actions",
+      "definition": "Require data movement across partitions (groupBy, join, repartition).",
+      "whyItMatters": "Wide transformations often cause shuffle — the main performance cliff.",
+      "safeSentence": "Wide transformations usually need a shuffle to regroup data by key.",
+      "interviewAnswer": "Joins and aggregations are wide; they redistribute data and are expensive at scale.",
+      "childTopics": []
+    },
+    {
+      "id": "stages_tasks",
+      "label": "Stages and Tasks",
+      "size": "core",
+      "group": "Execution",
+      "definition": "Spark splits a job into stages separated by shuffle boundaries; each stage has parallel tasks per partition.",
+      "whyItMatters": "Stages explain parallelism and where barriers occur.",
+      "safeSentence": "A shuffle boundary ends one stage and starts another; tasks run one partition at a time per stage.",
+      "interviewAnswer": "Stages are shuffle-separated execution phases; tasks are partition-level units of work.",
+      "childTopics": []
+    },
+    {
+      "id": "shuffle",
+      "label": "Shuffle",
+      "size": "core",
+      "group": "Execution",
+      "definition": "Exchange of data across executors so rows with the same key land on the same partition.",
+      "whyItMatters": "Shuffle is network- and disk-heavy; it dominates many slow jobs.",
+      "safeSentence": "Shuffle redistributes data by key and is often the bottleneck in joins and aggregations.",
+      "commonTrap": "Calling repartition or distinct without understanding the shuffle cost.",
+      "interviewAnswer": "Shuffle happens when data must be regrouped; minimize it with better keys, filters, and partition strategy.",
+      "childTopics": []
+    },
+    {
+      "id": "partition_skew",
+      "label": "Partition Skew",
+      "size": "detail",
+      "group": "Diagnosis",
+      "definition": "Some partitions hold far more data than others, leaving tasks straggling.",
+      "whyItMatters": "Skew makes one task finish much later than the rest.",
+      "safeSentence": "Skew means a few keys own most of the data; watch for one task running much longer in Spark UI.",
+      "interviewAnswer": "I check stage task duration distribution; one long task often signals skew on a hot key.",
+      "childTopics": []
+    },
+    {
+      "id": "catalyst_optimizer",
+      "label": "Catalyst Optimizer",
+      "size": "support",
+      "group": "Core Model",
+      "definition": "Spark SQL engine that optimizes the logical plan (predicate pushdown, column pruning).",
+      "whyItMatters": "Explains why filter-early and narrow projections improve performance without manual micro-tuning.",
+      "safeSentence": "Catalyst can push filters and drop unused columns before expensive shuffles.",
+      "childTopics": []
+    },
+    {
+      "id": "spark_ui",
+      "label": "Spark UI",
+      "size": "support",
+      "group": "Diagnosis",
+      "definition": "Web UI showing jobs, stages, tasks, shuffle read/write, and SQL plans.",
+      "whyItMatters": "First place to look when a job is slow or failing.",
+      "safeSentence": "I start with Jobs → Stages → task skew, then SQL/DataFrame explain for the plan.",
+      "childTopics": []
+    },
+    {
+      "id": "slow_job_playbook",
+      "label": "Slow Job Playbook",
+      "size": "core",
+      "group": "Diagnosis",
+      "definition": "Practical sequence: confirm action, inspect plan, find shuffle, check skew, reduce data early.",
+      "whyItMatters": "Interview and production troubleshooting need a repeatable pattern.",
+      "safeSentence": "I ask what action ran, where the shuffle is, whether skew exists, and what data could be filtered earlier.",
+      "interviewAnswer": "I trace the action, inspect stages for shuffle volume, look for stragglers, then attack data volume and join keys.",
+      "relatedQuestions": [
+        "What action triggered this job?",
+        "Where is the shuffle and how large is it?",
+        "Is one task much slower than the others?"
+      ],
+      "childTopics": []
+    }
+  ],
+  "links": [
+    { "source": "lazy_evaluation", "target": "lineage_dag", "label": "records" },
+    { "source": "lazy_evaluation", "target": "transformations", "label": "defers" },
+    { "source": "transformations", "target": "actions", "label": "until" },
+    { "source": "transformations", "target": "narrow_transforms", "label": "includes" },
+    { "source": "transformations", "target": "wide_transforms", "label": "includes" },
+    { "source": "wide_transforms", "target": "shuffle", "label": "often causes" },
+    { "source": "actions", "target": "stages_tasks", "label": "creates" },
+    { "source": "shuffle", "target": "stages_tasks", "label": "splits" },
+    { "source": "shuffle", "target": "partition_skew", "label": "can worsen" },
+    { "source": "spark_ui", "target": "slow_job_playbook", "label": "feeds" },
+    { "source": "partition_skew", "target": "slow_job_playbook", "label": "explains" },
+    { "source": "catalyst_optimizer", "target": "transformations", "label": "optimizes" }
+  ],
+  "paths": [
+    {
+      "id": "execution_lane",
+      "label": "Execution Lane",
+      "description": "From lazy plan to action, stages, and shuffle.",
+      "nodeIds": ["lazy_evaluation", "transformations", "actions", "stages_tasks", "shuffle"]
+    },
+    {
+      "id": "troubleshoot_lane",
+      "label": "Troubleshoot Lane",
+      "description": "Diagnose slow jobs with UI, skew, and a playbook.",
+      "nodeIds": ["spark_ui", "partition_skew", "slow_job_playbook", "wide_transforms"]
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+Packaging Proof - Iteration 0
+Timestamp: 2026-05-15T21:42:13.7355094-05:00
+Project: ../../StudyBook\study_bubbles
+FileCount: 19
+Files:
+../../StudyBook\study_bubbles\AGENTS.md
+../../StudyBook\study_bubbles\CHANGELOG.md
+../../StudyBook\study_bubbles\docs\CONTRACT.md
+../../StudyBook\study_bubbles\docs\DECISIONS.md
+../../StudyBook\study_bubbles\docs\DESIGN.md
+../../StudyBook\study_bubbles\docs\ROADMAP.md
+../../StudyBook\study_bubbles\docs\TEST_PLAN.md
+../../StudyBook\study_bubbles\HANDOFF.md
+../../StudyBook\study_bubbles\legacy\.gitkeep
+../../StudyBook\study_bubbles\outputs\baseline\.gitkeep
+../../StudyBook\study_bubbles\outputs\multifile\.gitkeep
+../../StudyBook\study_bubbles\outputs\single_file\.gitkeep
+../../StudyBook\study_bubbles\PROJECT_STATE.md
+../../StudyBook\study_bubbles\README.md
+../../StudyBook\study_bubbles\src\study_bubbles\__init__.py
+../../StudyBook\study_bubbles\TASK_BOARD.md
+../../StudyBook\study_bubbles\tests\.gitkeep
+../../StudyBook\study_bubbles\topics\.gitkeep
+../../StudyBook\study_bubbles\viewer\.gitkeep

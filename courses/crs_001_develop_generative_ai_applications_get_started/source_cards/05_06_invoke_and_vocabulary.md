@@ -1,0 +1,37 @@
+- What does `prompt.invoke()` do? >>A)
+    - Prepares templated input without calling the LLM
+    - Calls the LLM and returns the final answer
+    - Parses JSON into a Python dict
+    - Saves conversation history to disk
+- What does `model.invoke()` do? >>A)
+    - Sends input to the model and generates a response
+    - Fills prompt template variables only
+    - Builds a ChatPromptTemplate
+    - Validates a Pydantic schema
+- What does `chain.invoke()` do? >>A)
+    - Runs every runnable step connected in the LCEL chain
+    - Fills only the prompt template
+    - Calls only the output parser
+    - Creates a Flask route
+- Complete the memory rule: `prompt.invoke()`→{{prepare}}
+- Complete the memory rule: `model.invoke()`→{{generate}}
+- Complete the memory rule: `chain.invoke()`→{{run everything}}
+- Coursera may say `format()`. In our labs the same fill step is often `prompt.__________({"topic": "RAG"})`→invoke
+- After `messages = chat_prompt.invoke({...})`, which property holds the message list? >>A)
+    - `messages.messages`
+    - `messages.output`
+    - `messages.history`
+    - `messages.content`
+- In LangChain templates, which role tuple is the user request? >>A)
+    - `("human", "{question}")`
+    - `("user", "{question}")`
+    - `("system", "{question}")`
+    - `("parser", "{question}")`
+- Complete the vocabulary bridge: API `user` = LangChain template `__________`→human
+- Complete the pair rule: one string with `{vars}` → PromptTemplate.__________("...")→from_template
+- Complete the pair rule: list of role tuples `[...]` → ChatPromptTemplate.__________([...])→from_messages
+- LCEL automatically handles type coercion between steps. Manual pre-processing of every input for type compatibility is >>A)
+    - Not required in a typical LCEL pattern
+    - Always required before the pipe operator
+    - Required only for OpenAI models
+    - Required only for JSON parsers

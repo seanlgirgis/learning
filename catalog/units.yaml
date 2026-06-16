@@ -1,0 +1,17 @@
+# Non-course learning units — skills, interview prep, topic packs
+units:
+  - id: skill_pyspark_execution_model
+    kind: skill
+    title: "PySpark Execution Model"
+    folder: units/skill_pyspark_execution_model
+    index: units/skill_pyspark_execution_model/index.html
+    tags: [pyspark, interview, data-engineering]
+    source_notes: "Derived from interview prep patterns; expandable from jobsearch repository."
+
+  - id: interview_senior_data_engineer_core
+    kind: interview
+    title: "Senior Data Engineer Interview Core"
+    folder: units/interview_senior_data_engineer_core
+    index: units/interview_senior_data_engineer_core/index.html
+    tags: [interview, python, sql, pyspark, aws, etl]
+    source_notes: "Cross-cutting interview skills; not tied to one employer or posting."

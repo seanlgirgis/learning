@@ -1,0 +1,46 @@
+courses:
+  - id: crs_001_develop_generative_ai_applications_get_started
+    number: crs_001
+    provider: coursera
+    partner: ibm
+    title: "Develop Generative AI Applications: Get Started"
+    coursera_url: "https://www.coursera.org/learn/develop-generative-ai-applications-get-started?specialization=rag-for-generative-ai-applications"
+    specialization_id: rag-for-generative-ai-applications
+    folder: courses/crs_001_develop_generative_ai_applications_get_started
+    index: courses/crs_001_develop_generative_ai_applications_get_started/index.html
+    status: migrated
+    studybook_mirror: D:/Workarea/StudyBook/study_maps/DataCamp/courses/crs_001_develop_generative_ai_applications_get_started
+    tags: [generative-ai, langchain, prompt-engineering, flask]
+
+  - id: crs_002_build_rag_applications_get_started
+    number: crs_002
+    provider: coursera
+    partner: ibm
+    title: "Build RAG Applications: Get Started"
+    folder: courses/crs_002_build_rag_applications_get_started
+    index: courses/crs_002_build_rag_applications_get_started/index.html
+    status: scaffolded
+    studybook_mirror: D:/Workarea/StudyBook/study_maps/DataCamp/courses/crs_002_build_rag_applications_get_started
+    tags: [rag]
+
+  - id: crs_003_vector_databases_for_rag_an_introduction
+    number: crs_003
+    provider: coursera
+    partner: ibm
+    title: "Vector Databases for RAG: An Introduction"
+    folder: courses/crs_003_vector_databases_for_rag_an_introduction
+    index: courses/crs_003_vector_databases_for_rag_an_introduction/index.html
+    status: scaffolded
+    studybook_mirror: D:/Workarea/StudyBook/study_maps/DataCamp/courses/crs_003_vector_databases_for_rag_an_introduction
+    tags: [rag, vector-db]
+
+  - id: crs_004_advanced_rag_with_vector_databases_and_retrievers
+    number: crs_004
+    provider: coursera
+    partner: ibm
+    title: "Advanced RAG with Vector Databases and Retrievers"
+    folder: courses/crs_004_advanced_rag_with_vector_databases_and_retrievers
+    index: courses/crs_004_advanced_rag_with_vector_databases_and_retrievers/index.html
+    status: scaffolded
+    studybook_mirror: D:/Workarea/StudyBook/study_maps/DataCamp/courses/crs_004_advanced_rag_with_vector_databases_and_retrievers
+    tags: [rag, vector-db, retrievers]

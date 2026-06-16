@@ -1,0 +1,21 @@
+timestamp: 2026-06-16T00:33:04.516672+00:00
+source topic path: topics/crs_001_lcel_workflow.studybubble.json
+output HTML path: outputs/crs_001_lcel_workflow.html
+mode: single-file
+topic id: crs_001_lcel_workflow
+topic title: CRS 001 — LCEL Code Workflow
+node count: 11
+link count: 10
+path count: 3
+validation result: PASS
+generated HTML byte size: 82430
+manual smoke test steps:
+1. Open outputs/single_file/tiny_capacity_demo.html directly from File Explorer.
+2. Confirm title and subtitle render.
+3. Confirm 3 bubbles render (Telemetry, Baseline, Forecast).
+4. Confirm 2 relationship lines render.
+5. Click Telemetry and confirm side panel updates.
+6. Click Baseline and confirm side panel updates.
+7. Click Forecast and confirm side panel updates.
+8. Confirm no 'Failed to fetch' message appears.
+summary: PASS

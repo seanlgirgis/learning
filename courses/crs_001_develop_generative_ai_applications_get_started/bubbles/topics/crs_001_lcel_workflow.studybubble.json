@@ -1,0 +1,255 @@
+{
+  "id": "crs_001_lcel_workflow",
+  "title": "CRS 001 — LCEL Code Workflow",
+  "subtitle": "Templates, invoke rules, pipes, parsers, and provider switching",
+  "parentTopic": {
+    "label": "Gen AI Landscape Map",
+    "topic": "crs_001_gen_ai_landscape.studybubble.json"
+  },
+  "groups": [
+    { "id": "templates", "label": "Templates", "color": "#4C78A8" },
+    { "id": "invoke_rules", "label": "Invoke Rules", "color": "#F58518" },
+    { "id": "pipeline", "label": "LCEL Pipeline", "color": "#54A24B" },
+    { "id": "advanced", "label": "Advanced Patterns", "color": "#E45756" },
+    { "id": "map_navigation", "label": "Map Navigation", "color": "#6B7280" }
+  ],
+  "mapResources": [
+    { "label": "Course Home", "type": "page", "href": "../../index.html" },
+    { "label": "LangChain Code Patterns", "type": "page", "href": "../../study_pages/langchain_code_patterns.html" },
+    { "label": "Lab Run Book", "type": "lab", "href": "../../lab/lab_run_book.md" },
+    { "label": "RemNote coding deck 05_01", "type": "page", "href": "../../source_cards/05_01_prompt_and_chat_coding.md" },
+    { "label": "Back: Gen AI Landscape", "type": "map", "topic": "crs_001_gen_ai_landscape.studybubble.json" }
+  ],
+  "nodes": [
+    {
+      "id": "prompt_template_code",
+      "label": "PromptTemplate",
+      "size": "core",
+      "group": "Templates",
+      "definition": "Reusable string template with variables — filled by prompt.invoke(), not by the LLM.",
+      "whyItMatters": "First lab pattern; every chain starts here.",
+      "safeSentence": "PromptTemplate.from_template creates a reusable prompt; invoke fills variables.",
+      "commonTrap": "Importing PromptTemplate from the wrong module or skipping .from_template().",
+      "interviewAnswer": "I use PromptTemplate.from_template for single-string prompts and invoke with a dict of variables.",
+      "note": {
+        "summary": "from langchain_core.prompts import PromptTemplate\n\nprompt = PromptTemplate.from_template(\"Explain {topic}.\")\nformatted = prompt.invoke({\"topic\": \"RAG\"})\nprint(formatted.to_string())"
+      },
+      "childTopics": [],
+      "externalLinks": [
+        { "label": "Lab 01", "href": "../../lab/python/01_prompt_template_one_variable.py" },
+        { "label": "RemNote 05_01", "href": "../../source_cards/05_01_prompt_and_chat_coding.md" }
+      ]
+    },
+    {
+      "id": "chat_prompt_template",
+      "label": "ChatPromptTemplate",
+      "size": "support",
+      "group": "Templates",
+      "definition": "Role-based messages — system, human, assistant tuples via from_messages().",
+      "whyItMatters": "Chat models expect message lists, not one flat string.",
+      "safeSentence": "ChatPromptTemplate.from_messages builds role-based chat input.",
+      "interviewAnswer": "Chat prompts use message roles; from_messages is the usual constructor.",
+      "note": {
+        "summary": "from langchain_core.prompts import ChatPromptTemplate\n\nchat = ChatPromptTemplate.from_messages([\n    (\"system\", \"You are a helpful tutor.\"),\n    (\"human\", \"Explain {topic}.\")\n])"
+      },
+      "childTopics": [],
+      "externalLinks": [
+        { "label": "Lab 03", "href": "../../lab/python/03_chat_prompt_template.py" }
+      ]
+    },
+    {
+      "id": "few_shot_template",
+      "label": "Few-Shot Template",
+      "size": "support",
+      "group": "Templates",
+      "definition": "Embeds example input/output pairs in the prompt to steer model behavior.",
+      "whyItMatters": "Improves format adherence without fine-tuning.",
+      "safeSentence": "Few-shot adds examples so the model sees the pattern you want.",
+      "interviewAnswer": "Few-shot prompting supplies examples in the template when zero-shot is inconsistent.",
+      "note": {
+        "summary": "FewShotPromptTemplate combines example_selector + suffix/prefix.\nSee lab 04 for the course-local Runnable-style few-shot pattern."
+      },
+      "childTopics": [],
+      "externalLinks": [
+        { "label": "Lab 04", "href": "../../lab/python/04_few_shot_prompt_template.py" },
+        { "label": "RemNote 05_02", "href": "../../source_cards/05_02_few_shot_and_lcel_coding.md" }
+      ]
+    },
+    {
+      "id": "prompt_invoke",
+      "label": "prompt.invoke()",
+      "size": "core",
+      "group": "Invoke Rules",
+      "definition": "Runs the prompt component only — fills variables and builds a prompt value.",
+      "whyItMatters": "Top recall trap in source_cards 05_05.",
+      "safeSentence": "prompt.invoke() prepares input; it does not call the LLM.",
+      "commonTrap": "Expecting a model answer from prompt.invoke().",
+      "interviewAnswer": "prompt.invoke prepares templated input; model.invoke generates; chain.invoke runs the full pipeline.",
+      "relatedQuestions": [
+        "What does prompt.invoke do vs model.invoke?",
+        "When do I still not need an API key?"
+      ],
+      "childTopics": []
+    },
+    {
+      "id": "chain_invoke",
+      "label": "chain.invoke()",
+      "size": "core",
+      "group": "Invoke Rules",
+      "definition": "Runs every runnable connected in the LCEL chain end to end.",
+      "whyItMatters": "The main execution entry point for composed pipelines.",
+      "safeSentence": "chain.invoke() runs prompt, model, parser, and any other linked steps.",
+      "commonTrap": "Manually calling each step when one chain.invoke() would do.",
+      "interviewAnswer": "chain.invoke executes the full LCEL pipeline with one call and consistent input shape.",
+      "childTopics": []
+    },
+    {
+      "id": "lcel_pipe",
+      "label": "LCEL Pipe",
+      "size": "core",
+      "group": "LCEL Pipeline",
+      "definition": "Compose runnables with the pipe operator: prompt | model | parser.",
+      "whyItMatters": "Core Module 2 code pattern validated in local labs.",
+      "safeSentence": "The pipe builds a chain; invoke once at the end.",
+      "interviewAnswer": "LCEL uses | to connect runnables into a reusable chain with a single invoke interface.",
+      "note": {
+        "summary": "chain = prompt | model | parser\nresult = chain.invoke({\"topic\": \"RAG\"})\n\nLocal lab 05 uses a stand-in model function before provider-backed 05b/05c."
+      },
+      "childTopics": [],
+      "externalLinks": [
+        { "label": "Lab 05", "href": "../../lab/python/05_lcel_local_pipeline.py" },
+        { "label": "Lab 05b OpenAI", "href": "../../lab/python/05b_lcel_openai_pipeline.py" }
+      ]
+    },
+    {
+      "id": "runnable_parallel",
+      "label": "RunnableParallel",
+      "size": "support",
+      "group": "Advanced Patterns",
+      "definition": "Run multiple branches from one input dict and merge named outputs.",
+      "whyItMatters": "Useful when one user question needs multiple sub-answers.",
+      "safeSentence": "RunnableParallel fans out work; each branch is a named key in the result.",
+      "interviewAnswer": "RunnableParallel executes branches concurrently and returns a dict of branch outputs.",
+      "note": {
+        "summary": "from langchain_core.runnables import RunnableParallel\n\nparallel = RunnableParallel(summary=chain_a, keywords=chain_b)\nparallel.invoke({\"text\": doc})"
+      },
+      "childTopics": [],
+      "externalLinks": [
+        { "label": "Lab 06", "href": "../../lab/python/06_runnable_parallel.py" },
+        { "label": "RemNote 05_03", "href": "../../source_cards/05_03_parallel_json_structured_coding.md" }
+      ]
+    },
+    {
+      "id": "json_parser",
+      "label": "JsonOutputParser",
+      "size": "support",
+      "group": "Advanced Patterns",
+      "definition": "Parses model text into JSON-shaped Python data at the end of a chain.",
+      "whyItMatters": "Bridge from free-form LLM text to application data structures.",
+      "safeSentence": "Parser is the last pipe segment when you need JSON fields.",
+      "interviewAnswer": "I append JsonOutputParser when the app needs structured fields from model text.",
+      "note": {
+        "summary": "from langchain_core.output_parsers import JsonOutputParser\n\nchain = prompt | model | JsonOutputParser()\n# Model should return JSON text the parser can load."
+      },
+      "childTopics": [],
+      "externalLinks": [
+        { "label": "Lab 08", "href": "../../lab/python/08_json_parser_shape.py" }
+      ]
+    },
+    {
+      "id": "structured_pydantic",
+      "label": "Structured Output",
+      "size": "support",
+      "group": "Advanced Patterns",
+      "definition": "Provider-native or Pydantic-validated objects instead of manual JSON parsing.",
+      "whyItMatters": "Safer contracts for downstream Python code.",
+      "safeSentence": "Prefer structured output when the provider supports schema-bound responses.",
+      "interviewAnswer": "I use provider-native structured output or Pydantic parsers when field types must be reliable.",
+      "note": {
+        "summary": "See lab 09 for provider-native structured output with a Pydantic model.\nPattern: model.with_structured_output(MySchema) or parser bound to schema."
+      },
+      "childTopics": [],
+      "externalLinks": [
+        { "label": "Lab 09", "href": "../../lab/python/09_provider_native_structured_output.py" }
+      ]
+    },
+    {
+      "id": "provider_switch",
+      "label": "Provider Switch",
+      "size": "support",
+      "group": "Advanced Patterns",
+      "definition": "Same chain shape, different model adapter — OpenAI vs watsonx.",
+      "whyItMatters": "Shows LCEL reusability beyond one vendor.",
+      "safeSentence": "Swap the model runnable; keep prompt and parser stable.",
+      "interviewAnswer": "LCEL lets me swap provider adapters while preserving prompt and parser structure.",
+      "note": {
+        "summary": "Labs 05b (OpenAI), 05c/05d (watsonx), 05f (switching) share the same chain skeleton.\nOnly the model runnable and env vars change."
+      },
+      "childTopics": [],
+      "externalLinks": [
+        { "label": "Lab 05f", "href": "../../lab/python/05f_provider_switching_lcel_pipeline.py" },
+        { "label": "RemNote 05_04", "href": "../../source_cards/05_04_history_and_provider_coding.md" }
+      ]
+    },
+    {
+      "id": "landscape_nav",
+      "label": "Gen AI Landscape",
+      "size": "detail",
+      "group": "Map Navigation",
+      "definition": "Return to the big-picture map — models, prompts, LangChain, delivery.",
+      "whyItMatters": "Keeps code workflow connected to course concepts.",
+      "safeSentence": "Open the landscape map when you need why before how.",
+      "commonTrap": "Memorizing syntax without the stack context.",
+      "interviewAnswer": "I connect LCEL patterns back to the broader generative application stack.",
+      "childTopics": [
+        { "label": "Gen AI Landscape Map", "topic": "crs_001_gen_ai_landscape.studybubble.json" }
+      ]
+    }
+  ],
+  "links": [
+    { "source": "prompt_template_code", "target": "chat_prompt_template", "label": "then" },
+    { "source": "chat_prompt_template", "target": "few_shot_template", "label": "extends" },
+    { "source": "prompt_template_code", "target": "prompt_invoke", "label": "uses" },
+    { "source": "prompt_invoke", "target": "lcel_pipe", "label": "feeds" },
+    { "source": "lcel_pipe", "target": "chain_invoke", "label": "run via" },
+    { "source": "lcel_pipe", "target": "json_parser", "label": "often ends with" },
+    { "source": "json_parser", "target": "structured_pydantic", "label": "evolves to" },
+    { "source": "lcel_pipe", "target": "runnable_parallel", "label": "branches with" },
+    { "source": "lcel_pipe", "target": "provider_switch", "label": "swaps model in" },
+    { "source": "landscape_nav", "target": "prompt_template_code", "label": "context for" }
+  ],
+  "paths": [
+    {
+      "id": "lab_lane",
+      "label": "Lab Lane",
+      "description": "Match local lab order: templates → LCEL pipe → invoke.",
+      "nodeIds": [
+        "prompt_template_code",
+        "chat_prompt_template",
+        "few_shot_template",
+        "lcel_pipe",
+        "chain_invoke"
+      ]
+    },
+    {
+      "id": "parser_lane",
+      "label": "Parser Lane",
+      "description": "From pipe to JSON and structured output.",
+      "nodeIds": [
+        "lcel_pipe",
+        "json_parser",
+        "structured_pydantic"
+      ]
+    },
+    {
+      "id": "memory_lane",
+      "label": "Memory Lane",
+      "description": "Invoke rules and traps from RemNote reinforcement.",
+      "nodeIds": [
+        "prompt_invoke",
+        "chain_invoke",
+        "provider_switch"
+      ]
+    }
+  ]
+}
