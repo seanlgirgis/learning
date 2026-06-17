@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Story Spine (Experiment) | CRS 001</title>
+  <style>
+    :root { --bg:#0d1117; --panel:#161b22; --border:#30363d; --text:#e6edf3; --muted:#9da7b3; --green:#03ef62; --blue:#58a6ff; --amber:#d29922; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:"Segoe UI",Arial,sans-serif; background:var(--bg); color:var(--text); line-height:1.62; }
+    a { color:var(--blue); text-decoration:none; }
+    a:hover { color:var(--green); }
+    .page { width:min(900px,calc(100% - 32px)); margin:0 auto; padding:24px 0 52px; }
+    .breadcrumbs { color:var(--muted); font-size:.9rem; margin-bottom:16px; }
+    .hero { background:linear-gradient(135deg,#061d2d,#14384e); border:1px solid #28506a; border-radius:18px; padding:28px; margin-bottom:22px; }
+    .hero h1 { margin:0 0 10px; font-size:1.85rem; }
+    .hero p { margin:0; color:#c9d3dc; }
+    .badge { display:inline-block; margin-bottom:10px; padding:4px 10px; border-radius:999px; background:rgba(210,153,34,.15); color:var(--amber); font-size:.78rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; }
+    .scene { background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:22px; margin:18px 0; }
+    .scene h2 { margin:0 0 6px; font-size:1.25rem; }
+    .scene .act { color:var(--green); font-size:.8rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+    .scene p { margin:10px 0 0; color:#c9d3dc; }
+    figure { margin:16px 0 0; }
+    figure img { max-width:100%; border-radius:10px; border:1px solid var(--border); display:block; }
+    .img-placeholder { min-height:140px; display:flex; align-items:center; justify-content:center; padding:20px; border:2px dashed var(--border); border-radius:10px; color:var(--muted); font-size:.9rem; text-align:center; background:#121820; }
+    figcaption { margin-top:8px; color:var(--muted); font-size:.85rem; }
+    .links { margin-top:14px; font-size:.92rem; }
+    .links span { color:var(--muted); }
+    .story-arc { margin:20px 0; padding:16px 18px; border-left:4px solid var(--green); background:rgba(3,239,98,.08); border-radius:0 10px 10px 0; color:#c9d3dc; }
+    footer { margin-top:28px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:.88rem; }
+  </style>
+</head>
+<body>
+<main class="page">
+  <nav class="breadcrumbs">
+    <a href="../../index.html">Course Home</a> ›
+    <a href="../field_guide.html">Field Guide</a> ›
+    <span>Story experiment</span>
+  </nav>
+
+  <header class="hero">
+    <span class="badge">Experiment — additive only</span>
+    <h1>The Help Desk Story</h1>
+    <p>
+      One team, one problem, one app — the same arc Coursera walks, told as a story instead of a concept chain.
+      Existing field guides and cards stay as reference; this page is the <em>through-line</em>.
+    </p>
+  </header>
+
+  <div class="story-arc">
+    <strong>Cast:</strong> Sarah runs customer support. Thousands of product questions arrive daily.
+    She does not need another classifier — she needs an assistant that <em>drafts helpful replies</em>.
+    Your job in Course 1: build that assistant, one layer at a time.
+  </div>
+
+  <article class="scene" id="scene-1">
+    <p class="act">Scene 1 · The wrong tool</p>
+    <h2>Why generative AI — not just classification?</h2>
+    <p>
+      A spam filter (discriminative) labels mail. Sarah needs <strong>new draft text</strong> for each customer (generative).
+      Foundation models and LLMs are the shared engine; prompting steers them for her desk.
+    </p>
+    <figure>
+      <img src="../../source_material/screenshots/scene_01_discriminative_vs_generative.png" alt="Discriminative vs generative"
+           onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="img-placeholder" style="display:none;">
+        Paste Coursera slide → <code>source_material/screenshots/scene_01_discriminative_vs_generative.png</code>
+      </div>
+      <figcaption>Drop the course image here — placeholder until you capture it.</figcaption>
+    </figure>
+    <p class="links">
+      <span>Reference:</span>
+      <a href="../chapter_01_generative_ai_prompt_engineering_and_prompt_templates_field_guide.html">Module 1 guide</a> ·
+      <a href="../../bubbles/outputs/crs_001_gen_ai_landscape.html">Landscape map</a> ·
+      <a href="../../source_cards/01 coursera_ibm_rag_dev...undations_learning_mode.md">RemNote 01</a>
+    </p>
+  </article>
+
+  <article class="scene" id="scene-2">
+    <p class="act">Scene 2 · Instructions that travel</p>
+    <h2>Sarah writes prompts that scale</h2>
+    <p>
+      One-off strings break in production. <strong>PromptTemplate</strong> holds the mold; variables hold tonight’s product name.
+      Strong prompts bundle instruction, context, input data, and output shape — so the desk stays consistent.
+    </p>
+    <figure>
+      <img src="../../source_material/screenshots/scene_02_prompt_elements.png" alt="Prompt elements"
+           onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="img-placeholder" style="display:none;">
+        <code>source_material/screenshots/scene_02_prompt_elements.png</code>
+      </div>
+      <figcaption>Coursera prompt-engineering diagram.</figcaption>
+    </figure>
+    <p class="links">
+      <a href="../../lab/python/01_prompt_template_one_variable.py">Lab 01</a> ·
+      <a href="../../source_cards/02 coursera_ibm_rag_dev...echniques_learning_mode.md">RemNote 02</a> ·
+      <a href="../../source_cards/05_01_prompt_and_chat_coding.md">RemNote 05_01</a>
+    </p>
+  </article>
+
+  <article class="scene" id="scene-3">
+    <p class="act">Scene 3 · Roles in the chat window</p>
+    <h2>System, human, and the message list</h2>
+    <p>
+      The tutor behavior lives in <code>system</code>. The live customer question is <code>human</code> (API says “user” — same role).
+      <code>ChatPromptTemplate.from_messages</code> builds the list; <code>invoke</code> fills it — then the model runs.
+    </p>
+    <figure>
+      <img src="../../source_material/screenshots/scene_03_chat_roles.png" alt="Chat roles"
+           onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="img-placeholder" style="display:none;">
+        <code>source_material/screenshots/scene_03_chat_roles.png</code>
+      </div>
+    </figure>
+    <p class="links">
+      <a href="../../lab/python/03_chat_prompt_template.py">Lab 03</a> ·
+      <a href="../../source_cards/03 coursera_ibm_rag_dev...ates_chat_learning_mode.md">RemNote 03</a> ·
+      <a href="../../source_cards/05_06_invoke_and_vocabulary.md">RemNote 05_06</a>
+    </p>
+  </article>
+
+  <article class="scene" id="scene-4">
+    <p class="act">Scene 4 · The reusable pipeline</p>
+    <h2>LCEL — prompt | model | parser</h2>
+    <p>
+      Sarah’s desk needs a repeatable pipeline, not a script spaghetti. The pipe connects components;
+      <code>chain.invoke()</code> runs the whole path. Type coercion is automatic — she focuses on behavior, not glue code.
+    </p>
+    <figure>
+      <img src="../../source_material/screenshots/scene_04_lcel_pipe.png" alt="LCEL pipe"
+           onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="img-placeholder" style="display:none;">
+        <code>source_material/screenshots/scene_04_lcel_pipe.png</code>
+      </div>
+    </figure>
+    <p class="links">
+      <a href="../../lab/python/05_lcel_local_pipeline.py">Lab 05</a> ·
+      <a href="../langchain_code_patterns.html">Code patterns</a> ·
+      <a href="../../bubbles/outputs/crs_001_lcel_workflow.html">LCEL bubble map</a> ·
+      <a href="../../source_cards/04 coursera_ibm_rag_dev...s_parsers_learning_mode.md">RemNote 04</a>
+    </p>
+  </article>
+
+  <article class="scene" id="scene-5">
+    <p class="act">Scene 5 · From prototype to product</p>
+    <h2>Structured answers and delivery</h2>
+    <p>
+      Free text is not enough for ticketing systems — parsers and structured output produce reliable fields.
+      Delivery might be an API or web route; evaluation asks “is Sarah’s team actually faster and accurate?”
+    </p>
+    <figure>
+      <img src="../../source_material/screenshots/scene_05_app_delivery.png" alt="App delivery"
+           onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="img-placeholder" style="display:none;">
+        <code>source_material/screenshots/scene_05_app_delivery.png</code>
+      </div>
+    </figure>
+    <p class="links">
+      <a href="../../lab/python/09_provider_native_structured_output.py">Lab 09</a> ·
+      <a href="../chapter_03_build_a_generative_ai_application_with_langchain_field_guide.html">Module 3 guide</a>
+    </p>
+  </article>
+
+  <div class="story-arc">
+    <strong>How to use this experiment:</strong> read one scene → open its image (when captured) → run its lab → do its RemNote deck.
+    Field guide remains your encyclopedia; this page is the movie.
+  </div>
+
+  <footer>
+    Experiment layer · <a href="README.md">experiments/README</a> ·
+    <a href="../../source_material/screenshots/README.md">Add screenshots</a> ·
+    <a href="../field_guide.html">Back to field guide</a>
+  </footer>
+</main>
+</body>
+</html>

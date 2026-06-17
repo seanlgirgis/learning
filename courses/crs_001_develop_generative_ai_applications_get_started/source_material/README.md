@@ -1,13 +1,9 @@
 # Source Material
 
-Store course-specific evidence here:
+Evidence from Coursera, slides, screenshots, notebooks — **not** primary study HTML.
 
-- curriculum screenshots
-- copied lesson titles
-- transcripts or notes
-- downloaded notebooks
-- quiz/exercise notes
-- datasets
-- source ZIPs under `archive`
+```text
+screenshots/     ← paste course images (see screenshots/README.md)
+```
 
-Do not treat raw source files as finished study material.
+Experiments pull images from here into `study_pages/experiments/`.

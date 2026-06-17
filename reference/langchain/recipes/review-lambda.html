@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Recipe: Review + lambda | LangChain Reference</title>
+  <link rel="stylesheet" href="../reference.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <h2>Recipes</h2>
+    <ul>
+      <li><a href="../index.html">← LangChain hub</a></li>
+      <li><a href="index.html">All recipes</a></li>
+      <li><a href="summarize.html">Summarize</a></li>
+      <li><a href="qa-context.html">Q&amp;A</a></li>
+      <li><a href="classify.html">Classify</a></li>
+      <li><a href="sql-text.html">SQL text</a></li>
+      <li><a href="chat-loop.html">Chat loop</a></li>
+      <li><a href="review-lambda.html" class="active">Review + lambda</a></li>
+      <li><a href="ibm-model-generate.html">IBM generate</a></li>
+      <li><a href="langchain-llm-plug.html">LLM plug-in</a></li>
+      <li><a href="chat-messages.html">Chat messages</a></li>
+      <li><a href="temperature-compare.html">Temperature</a></li>
+      <li><a href="string-template-demo.html">String template</a></li>
+      <li><a href="chat-prompt-template.html">Chat template</a></li>
+      <li><a href="json-joke-parser.html">JSON Joke</a></li>
+      <li><a href="comma-list-parser.html">Comma list</a></li>
+      <li><a href="movie-json.html">Movie JSON</a></li>
+    </ul>
+  </aside>
+  <main class="main">
+    <nav class="breadcrumbs"><a href="../../index.html">Reference</a> › <a href="../index.html">LangChain</a> › <a href="index.html">Recipes</a> › <span>Review</span></nav>
+    <header class="hero">
+      <span class="badge">Recipe · module 05</span>
+      <h1>Product review analysis</h1>
+      <p>Structured sentiment + features + summary — Coursera style with <code>RunnableLambda</code>.</p>
+    </header>
+
+    <section class="section">
+      <h2>Problem</h2>
+      <p>Run the same analysis template over a batch of review strings. Output format is fixed in the prompt.</p>
+    </section>
+
+    <section class="section">
+      <h2>Ingredients</h2>
+      <p>
+        <a class="pill" href="../modules/01-prompt-template.html">01</a>
+        <a class="pill" href="../modules/02-watsonx-llm.html">02</a>
+        <a class="pill" href="../modules/03-lcel-pipe.html">03</a>
+        <a class="pill" href="../modules/04-output-parser.html">04</a>
+        <a class="pill" href="../modules/05-runnable-lambda.html">05 RunnableLambda</a>
+      </p>
+    </section>
+
+    <section class="section">
+      <h2>Setup</h2>
+      <pre>from langchain_core.prompts import PromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.runnables import RunnableLambda
+from watson_llm import make_watsonx_llm, GenParams
+
+llm = make_watsonx_llm({
+    GenParams.MAX_NEW_TOKENS: 512,
+    GenParams.TEMPERATURE: 0.2,
+})</pre>
+    </section>
+
+    <section class="section">
+      <h2>Recipe code (Coursera pattern)</h2>
+      <pre>template = """
+Analyze the following product review:
+"{review}"
+
+Provide your analysis in the following format:
+- Sentiment: (positive, negative, or neutral)
+- Key Features Mentioned: (list the product features mentioned)
+- Summary: (one-sentence summary)
+"""
+product_review_prompt = PromptTemplate.from_template(template)
+
+def format_review_prompt(variables):
+    return product_review_prompt.format(**variables)
+
+review_analysis_chain = (
+    RunnableLambda(format_review_prompt)
+    | llm
+    | StrOutputParser()
+)
+
+reviews = [
+    "I love this smartphone! The camera quality is exceptional...",
+    "This laptop is terrible. It's slow, crashes frequently...",
+]
+
+for i, review in enumerate(reviews):
+    print(f"==== Review #{i + 1} ====")
+    print(review_analysis_chain.invoke({"review": review}))
+    print()</pre>
+    </section>
+
+    <section class="section">
+      <h2>Direct equivalent (your pattern)</h2>
+      <pre>review_analysis_chain = product_review_prompt | llm | StrOutputParser()
+# same invoke: {"review": review}</pre>
+    </section>
+
+    <section class="section">
+      <h2>invoke keys</h2>
+      <table>
+        <tr><th>Key</th><th>Value</th></tr>
+        <tr><td><code>review</code></td><td>One product review string</td></tr>
+      </table>
+    </section>
+
+    <div class="callout"><strong>Trap:</strong> Model may add extra sections (e.g. Recommendation). Tighten the template or lower temperature if format drifts.</div>
+
+    <section class="section">
+      <h2>Modules</h2>
+      <p><a href="../modules/05-runnable-lambda.html">05 RunnableLambda</a> · <a href="../modules/03-lcel-pipe.html">03 pipe</a></p>
+    </section>
+  </main>
+</div>
+</body>
+</html>

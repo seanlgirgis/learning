@@ -1,8 +1,21 @@
 # GROK Current State
 
-Last updated: 2026-06-15
+Last updated: 2026-06-17
 
 ## Session Summary
+
+LangChain reference treasure updated: modules 08–11, 14 recipes, lab track 15–21, synced sidebars across all reference pages.
+
+## Latest (2026-06-17)
+
+- **Reference hub** — `reference/langchain/index.html`: 11 modules, playground lab table (15–21), all recipe cards
+- **Recipes index** — three sections (LCEL core, watson infra, notebook track) with playground script links
+- **Sidebars** — modules 01–11 and all recipe pages now share full nav
+- **Cross-links** — module 04 → 11; module 07 → notebook recipes + module 08
+- **Playground README** — lab track table with recipe links
+- **Learning hub** — `index.html` LangChain link text updated
+
+## Prior session summary
 
 crs_001 migrated into `learning/` as canonical home; hub and cert-path navigation updated to relative links.
 
@@ -28,9 +41,10 @@ crs_001 migrated into `learning/` as canonical home; hub and cert-path navigatio
 
 ## Next Steps
 
-1. Migrate crs_002 when ready (copy package + relative-path pass).
-2. Initial git commit when Sean is ready.
-3. Optional: StudyBubble map for crs_001 chapters.
+1. **Lab 21** — finish `21.output_parsers.py` (chain invoke + comma list Part B) with Sean.
+2. **Lab 22** — optional movie JSON exercise.
+3. Migrate crs_002 when ready.
+4. Initial git commit when Sean is ready.
 
 ## Blockers
 

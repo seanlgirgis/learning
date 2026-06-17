@@ -14,6 +14,11 @@ Sean study questions and recall tracking. Agent appends rows during training ses
 | 2026-06-15 | LangChain · ChatPromptTemplate | drill — `ChatPromptTemplate.__________([("human", "{q}")])` | `from_template` then **`from_messages`** ✓ | `from_messages` | Brackets = list = from_messages | solid |
 | 2026-06-15 | Coursera crs_001 quiz | Module quiz (5 Q) — in-context learning, zero-shot, LCEL pipe, PromptTemplate | **100%** (screenshot) | all correct | RemNote drills translating to platform | solid |
 | 2026-06-15 | Coursera crs_001 quiz | Module quiz (7 Q) — prompt elements, format(), LCEL coercion, in-context, pipe | **100%** (screenshot) | all correct | Platform uses `format()` vocabulary; labs use `invoke()` | solid |
+| 2026-06-16 | Coursera crs_001 quiz | LangChain components (5 Q) — sequential chain, memory, agents, parsers, chat models | **40%** (2/5) | Q1,Q4 only | Mapped sequential chain → memory/context; agent → memory; dynamic chat → prompt templates | needs_repetition |
+| 2026-06-16 | LangChain · sequential chain | Q1 — primary function of sequential chain? | (passed quiz) | Pass output of one step as input to next | Concept was fuzzy pre-quiz; answered correctly under pressure | improving |
+| 2026-06-16 | LangChain · memory | Q2 — continuity across interactions? | Sequential chains link outputs/inputs | **Memory** reads/writes historical data | Confused pipeline wiring with conversation history | needs_repetition |
+| 2026-06-16 | LangChain · agents | Q3 — Italy population via agent? | Store query in memory | **LLM picks options + queries database** | Agent = reason + use tools, not just remember | needs_repetition |
+| 2026-06-16 | LangChain · chat models | Q5 — workout bot, direct responses, no predefined instructions? | Prompt templates | **Chat models** | Prompt templates *are* predefined structure | needs_repetition |
 
 ## Concepts to revisit
 

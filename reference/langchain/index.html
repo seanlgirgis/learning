@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LangChain Reference</title>
+  <link rel="stylesheet" href="reference.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <h2>LangChain</h2>
+    <ul>
+      <li><a href="index.html" class="active">Module web</a></li>
+      <li><a href="modules/01-prompt-template.html">01 PromptTemplate</a></li>
+      <li><a href="modules/02-watsonx-llm.html">02 Watsonx LLM</a></li>
+      <li><a href="modules/03-lcel-pipe.html">03 LCEL pipe</a></li>
+      <li><a href="modules/04-output-parser.html">04 Output parser</a></li>
+      <li><a href="modules/05-runnable-lambda.html">05 RunnableLambda</a></li>
+      <li><a href="modules/06-model-inference.html">06 ModelInference</a></li>
+      <li><a href="modules/07-watson-helpers.html">07 Watson helpers</a></li>
+      <li><a href="modules/08-chat-messages.html">08 Chat messages</a></li>
+      <li><a href="modules/09-gen-params.html">09 GenParams</a></li>
+      <li><a href="modules/10-chat-prompt-template.html">10 ChatPromptTemplate</a></li>
+      <li><a href="modules/11-json-output-parser.html">11 JsonOutputParser</a></li>
+    </ul>
+    <h2>Also</h2>
+    <ul>
+      <li><a href="recipes/index.html">Recipes</a></li>
+      <li><a href="../../courses/crs_001_develop_generative_ai_applications_get_started/bubbles/outputs/crs_001_lcel_workflow.html">LCEL bubble map</a></li>
+      <li><a href="../index.html">Reference hub</a></li>
+    </ul>
+  </aside>
+
+  <main class="main">
+    <nav class="breadcrumbs">
+      <a href="../../index.html">Learning Hub</a> ›
+      <a href="../index.html">Reference</a> ›
+      <span>LangChain</span>
+    </nav>
+
+    <header class="hero">
+      <span class="badge">Your subset only</span>
+      <h1>LangChain Reference</h1>
+      <p>11 modules + 15 recipes — LCEL drills (01–05), watson infra (06–07), notebook track (08–11, Lab 22). Playground scripts in <code>playground/langchain/</code>.</p>
+    </header>
+
+    <section class="section">
+      <h2>Module web</h2>
+      <div class="web-diagram">
+        <span class="web-node hub">LangChain</span>
+        <span class="web-arrow">→</span>
+        <a class="web-node" href="modules/01-prompt-template.html">01 Prompt</a>
+        <a class="web-node" href="modules/02-watsonx-llm.html">02 LLM</a>
+        <a class="web-node" href="modules/03-lcel-pipe.html">03 Pipe</a>
+        <a class="web-node" href="modules/04-output-parser.html">04 Str</a>
+        <a class="web-node" href="modules/05-runnable-lambda.html">05 Lambda</a>
+        <a class="web-node" href="modules/06-model-inference.html">06 IBM</a>
+        <a class="web-node" href="modules/07-watson-helpers.html">07 Helpers</a>
+        <a class="web-node" href="modules/08-chat-messages.html">08 Chat</a>
+        <a class="web-node" href="modules/09-gen-params.html">09 Params</a>
+        <a class="web-node" href="modules/10-chat-prompt-template.html">10 ChatTpl</a>
+        <a class="web-node" href="modules/11-json-output-parser.html">11 JSON</a>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Two watson paths</h2>
+      <table>
+        <tr><th>Path</th><th>Object type</th><th>Helper</th><th>Use</th></tr>
+        <tr>
+          <td><a href="modules/06-model-inference.html">IBM SDK</a></td>
+          <td><code>ModelInference</code></td>
+          <td><code>watson_helper</code></td>
+          <td><code>model.generate()</code> · dict → <code>generated_text</code></td>
+        </tr>
+        <tr>
+          <td><a href="modules/02-watsonx-llm.html">LangChain</a></td>
+          <td><code>WatsonxLLM</code></td>
+          <td><code>watson_llm.make_watsonx_llm()</code></td>
+          <td><code>prompt | llm | parser</code> · <code>invoke</code> → <code>str</code></td>
+        </tr>
+      </table>
+    </section>
+
+    <section class="section">
+      <h2>Modules</h2>
+      <div class="module-grid">
+        <a class="module-card" href="modules/01-prompt-template.html">
+          <div class="num">MODULE 01</div>
+          <h3>PromptTemplate</h3>
+          <p>1 object · 3 methods · template variables</p>
+        </a>
+        <a class="module-card" href="modules/02-watsonx-llm.html">
+          <div class="num">MODULE 02</div>
+          <h3>Watsonx LLM</h3>
+          <p>1 object · 4 env vars · 5 GenParams</p>
+        </a>
+        <a class="module-card" href="modules/03-lcel-pipe.html">
+          <div class="num">MODULE 03</div>
+          <h3>LCEL pipe</h3>
+          <p>RunnableSequence · <code>|</code> · <code>invoke</code></p>
+        </a>
+        <a class="module-card" href="modules/04-output-parser.html">
+          <div class="num">MODULE 04</div>
+          <h3>StrOutputParser</h3>
+          <p>Step 3 · plain string out</p>
+        </a>
+        <a class="module-card" href="modules/05-runnable-lambda.html">
+          <div class="num">MODULE 05</div>
+          <h3>RunnableLambda</h3>
+          <p>Wrap a function · optional</p>
+        </a>
+        <a class="module-card" href="modules/06-model-inference.html">
+          <div class="num">MODULE 06</div>
+          <h3>ModelInference</h3>
+          <p>IBM SDK · <code>generate</code> · dict out</p>
+        </a>
+        <a class="module-card" href="modules/07-watson-helpers.html">
+          <div class="num">MODULE 07</div>
+          <h3>Watson helpers</h3>
+          <p>watson_helper · watson_llm · notebook twins</p>
+        </a>
+        <a class="module-card" href="modules/08-chat-messages.html">
+          <div class="num">MODULE 08</div>
+          <h3>Chat messages</h3>
+          <p>System · Human · AI → <code>invoke([...])</code></p>
+        </a>
+        <a class="module-card" href="modules/09-gen-params.html">
+          <div class="num">MODULE 09</div>
+          <h3>GenParams</h3>
+          <p>temperature · max tokens · new <code>make_llm()</code></p>
+        </a>
+        <a class="module-card" href="modules/10-chat-prompt-template.html">
+          <div class="num">MODULE 10</div>
+          <h3>ChatPromptTemplate</h3>
+          <p>Roles in a pipe · <code>MessagesPlaceholder</code></p>
+        </a>
+        <a class="module-card" href="modules/11-json-output-parser.html">
+          <div class="num">MODULE 11</div>
+          <h3>JsonOutputParser</h3>
+          <p>Pydantic → format instructions → <code>dict</code></p>
+        </a>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Playground lab track</h2>
+      <p style="color:var(--muted);font-size:.9rem;margin:0 0 10px;">Coursera LangChain notebook → local scripts. Run <code>set_env.ps1</code> first.</p>
+      <table>
+        <tr><th>Lab</th><th>Script</th><th>Module</th><th>Recipe</th></tr>
+        <tr><td>15</td><td><code>15.watson_helper.generate_test.py</code></td><td><a href="modules/06-model-inference.html">06</a></td><td><a href="recipes/ibm-model-generate.html">IBM generate</a></td></tr>
+        <tr><td>16</td><td><code>16.langchain_helper.invoke_test.py</code></td><td><a href="modules/07-watson-helpers.html">07</a></td><td><a href="recipes/langchain-llm-plug.html">LLM plug-in</a></td></tr>
+        <tr><td>17</td><td><code>17.chat_messages.invoke_test.py</code></td><td><a href="modules/08-chat-messages.html">08</a></td><td><a href="recipes/chat-messages.html">Chat messages</a></td></tr>
+        <tr><td>18</td><td><code>18.temperature.compare.py</code></td><td><a href="modules/09-gen-params.html">09</a></td><td><a href="recipes/temperature-compare.html">Temperature</a></td></tr>
+        <tr><td>19</td><td><code>19.params.py</code></td><td><a href="modules/01-prompt-template.html">01</a>, <a href="modules/03-lcel-pipe.html">03</a></td><td><a href="recipes/string-template-demo.html">String template</a></td></tr>
+        <tr><td>20</td><td><code>20.chat_prompt_templates.py</code></td><td><a href="modules/10-chat-prompt-template.html">10</a></td><td><a href="recipes/chat-prompt-template.html">Chat template</a></td></tr>
+        <tr><td>21</td><td><code>21.output_parsers.py</code></td><td><a href="modules/11-json-output-parser.html">11</a></td><td><a href="recipes/json-joke-parser.html">JSON Joke</a> · <a href="recipes/comma-list-parser.html">Comma list</a></td></tr>
+        <tr><td>22</td><td><code>22.exercise2.movie_json.py</code></td><td><a href="modules/11-json-output-parser.html">11</a></td><td><a href="recipes/movie-json.html">Movie JSON</a></td></tr>
+      </table>
+    </section>
+
+    <section class="section">
+      <h2>Spatial map</h2>
+      <p style="color:var(--muted);font-size:.9rem;margin:0 0 10px;">Click-through memory — same ideas, bubble layout.</p>
+      <p><a href="../../courses/crs_001_develop_generative_ai_applications_get_started/bubbles/outputs/crs_001_lcel_workflow.html">Open LCEL workflow bubble map</a></p>
+    </section>
+
+    <section class="section">
+      <h2>Recipes</h2>
+      <p style="color:var(--muted);font-size:.9rem;margin:0 0 12px;">Combine modules → copy-paste scripts. <a href="recipes/index.html">All recipes</a></p>
+      <div class="module-grid">
+        <a class="module-card" href="recipes/summarize.html">
+          <div class="num">RECIPE</div>
+          <h3>Summarize</h3>
+          <p>01–04 · one variable</p>
+        </a>
+        <a class="module-card" href="recipes/qa-context.html">
+          <div class="num">RECIPE</div>
+          <h3>Q&amp;A</h3>
+          <p>01–04 · question + content</p>
+        </a>
+        <a class="module-card" href="recipes/classify.html">
+          <div class="num">RECIPE</div>
+          <h3>Classify</h3>
+          <p>01–04 · closed labels</p>
+        </a>
+        <a class="module-card" href="recipes/sql-text.html">
+          <div class="num">RECIPE</div>
+          <h3>SQL text</h3>
+          <p>01–04 · no database</p>
+        </a>
+        <a class="module-card" href="recipes/chat-loop.html">
+          <div class="num">RECIPE</div>
+          <h3>Chat loop</h3>
+          <p>01–04 · input() REPL</p>
+        </a>
+        <a class="module-card" href="recipes/review-lambda.html">
+          <div class="num">RECIPE</div>
+          <h3>Review + lambda</h3>
+          <p>01–05 · batch reviews</p>
+        </a>
+        <a class="module-card" href="recipes/ibm-model-generate.html">
+          <div class="num">RECIPE</div>
+          <h3>IBM generate</h3>
+          <p>06–07 · Lab 15 · model.generate</p>
+        </a>
+        <a class="module-card" href="recipes/langchain-llm-plug.html">
+          <div class="num">RECIPE</div>
+          <h3>LLM plug-in</h3>
+          <p>02, 07 · make_watsonx_llm</p>
+        </a>
+        <a class="module-card" href="recipes/chat-messages.html">
+          <div class="num">RECIPE</div>
+          <h3>Chat messages</h3>
+          <p>08 · Lab 17</p>
+        </a>
+        <a class="module-card" href="recipes/temperature-compare.html">
+          <div class="num">RECIPE</div>
+          <h3>Temperature</h3>
+          <p>09 · 0.8 vs 0.1</p>
+        </a>
+        <a class="module-card" href="recipes/string-template-demo.html">
+          <div class="num">RECIPE</div>
+          <h3>String template</h3>
+          <p>01, 03 · Lab 19</p>
+        </a>
+        <a class="module-card" href="recipes/chat-prompt-template.html">
+          <div class="num">RECIPE</div>
+          <h3>Chat template</h3>
+          <p>10 · Lab 20</p>
+        </a>
+        <a class="module-card" href="recipes/json-joke-parser.html">
+          <div class="num">RECIPE</div>
+          <h3>JSON Joke</h3>
+          <p>11 · Lab 21 Part A</p>
+        </a>
+        <a class="module-card" href="recipes/comma-list-parser.html">
+          <div class="num">RECIPE</div>
+          <h3>Comma list</h3>
+          <p>11 · Lab 21 Part B</p>
+        </a>
+        <a class="module-card" href="recipes/movie-json.html">
+          <div class="num">RECIPE</div>
+          <h3>Movie JSON</h3>
+          <p>11 · Lab 22 · Exercise 2</p>
+        </a>
+      </div>
+    </section>
+  </main>
+</div>
+</body>
+</html>

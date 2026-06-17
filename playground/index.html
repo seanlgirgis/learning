@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Playground | Learning Hub</title>
+  <style>
+    :root {
+      --bg:#0d1117; --panel:#161b22; --border:#30363d; --text:#e6edf3;
+      --muted:#9da7b3; --green:#03ef62; --blue:#58a6ff; --amber:#d29922;
+      --shadow:0 12px 30px rgba(0,0,0,.24);
+    }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:"Segoe UI",Arial,sans-serif; background:var(--bg); color:var(--text); line-height:1.62; }
+    a { color:var(--blue); text-decoration:none; }
+    a:hover { color:var(--green); }
+    .page { width:min(900px,calc(100% - 32px)); margin:0 auto; padding:24px 0 52px; }
+    .breadcrumbs { color:var(--muted); font-size:.9rem; margin-bottom:16px; }
+    .hero { background:linear-gradient(135deg,#1a1520,#2a1f3d); border:1px solid #4a3868; border-radius:18px; padding:28px; margin-bottom:22px; }
+    .hero h1 { margin:0 0 10px; font-size:1.85rem; }
+    .hero p { margin:0; color:#c9d3dc; }
+    .badge { display:inline-block; margin-bottom:10px; padding:4px 10px; border-radius:999px; background:rgba(210,153,34,.15); color:var(--amber); font-size:.78rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:14px; }
+    .card { background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:18px; box-shadow:var(--shadow); }
+    .card h2 { margin:0 0 8px; font-size:1.1rem; }
+    .card p { margin:0 0 10px; color:var(--muted); font-size:.92rem; }
+    .card ul { margin:0; padding-left:18px; color:#c9d3dc; font-size:.92rem; }
+    .card li + li { margin-top:6px; }
+    .callout { margin:20px 0; padding:14px 16px; border-left:4px solid var(--green); background:rgba(3,239,98,.08); border-radius:0 10px 10px 0; color:#c9d3dc; font-size:.92rem; }
+    footer { margin-top:28px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:.88rem; }
+    code { font-family:Consolas,"Courier New",monospace; font-size:.88em; }
+  </style>
+</head>
+<body>
+<main class="page">
+  <nav class="breadcrumbs">
+    <a href="../index.html">Learning Hub</a> › <span>Playground</span>
+  </nav>
+
+  <header class="hero">
+    <span class="badge">Sean-owned · not curriculum</span>
+    <h1>Playground</h1>
+    <p>Free drilling and experimenting — LangChain now, RAG next. Course labs stay clean; this is your gym.</p>
+  </header>
+
+  <div class="callout">
+    <strong>Before Python:</strong> <code>D:\py_venv\rag_application_builder_foundation\set_env.ps1</code>
+  </div>
+
+  <div class="grid">
+    <article class="card">
+      <h2>LangChain</h2>
+      <p>Prompts, LCEL, invoke — CRS 001 territory.</p>
+      <ul>
+        <li><a href="../reference/langchain/index.html">LangChain reference</a></li>
+        <li><a href="langchain/README.md">Folder guide</a></li>
+        <li><a href="langchain/00_env_check.py">00_env_check.py</a></li>
+        <li><a href="../courses/crs_001_develop_generative_ai_applications_get_started/lab/lab_guide.html">CRS 001 lab guide</a></li>
+      </ul>
+    </article>
+
+    <article class="card">
+      <h2>RAG</h2>
+      <p>Loaders, chunking, retrieval — CRS 002+.</p>
+      <ul>
+        <li><a href="rag/README.md">Folder guide</a></li>
+        <li><a href="../courses/crs_002_build_rag_applications_get_started/">CRS 002 scaffold</a></li>
+      </ul>
+    </article>
+
+    <article class="card">
+      <h2>Notebooks</h2>
+      <p>Your forked Coursera labs and personal .ipynb files.</p>
+      <ul>
+        <li><a href="notebooks/README.md">Folder guide</a></li>
+        <li><a href="../courses/crs_001_develop_generative_ai_applications_get_started/source_material/">CRS 001 source notebooks</a></li>
+      </ul>
+    </article>
+
+    <article class="card">
+      <h2>Notes &amp; scratch</h2>
+      <p>Quick logs and throwaway tries.</p>
+      <ul>
+        <li><a href="notes/README.md">notes/</a></li>
+        <li><a href="scratch/README.md">scratch/</a></li>
+        <li><a href="README.md">Playground README</a></li>
+      </ul>
+    </article>
+  </div>
+
+  <footer>
+    Playground · <a href="../index.html">Learning Hub</a>
+  </footer>
+</main>
+</body>
+</html>

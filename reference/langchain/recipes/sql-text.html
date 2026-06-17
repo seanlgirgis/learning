@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Recipe: SQL text | LangChain Reference</title>
+  <link rel="stylesheet" href="../reference.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <h2>Recipes</h2>
+    <ul>
+      <li><a href="../index.html">← LangChain hub</a></li>
+      <li><a href="index.html">All recipes</a></li>
+      <li><a href="summarize.html">Summarize</a></li>
+      <li><a href="qa-context.html">Q&amp;A</a></li>
+      <li><a href="classify.html">Classify</a></li>
+      <li><a href="sql-text.html" class="active">SQL text</a></li>
+      <li><a href="chat-loop.html">Chat loop</a></li>
+      <li><a href="review-lambda.html">Review + lambda</a></li>
+      <li><a href="ibm-model-generate.html">IBM generate</a></li>
+      <li><a href="langchain-llm-plug.html">LLM plug-in</a></li>
+      <li><a href="chat-messages.html">Chat messages</a></li>
+      <li><a href="temperature-compare.html">Temperature</a></li>
+      <li><a href="string-template-demo.html">String template</a></li>
+      <li><a href="chat-prompt-template.html">Chat template</a></li>
+      <li><a href="json-joke-parser.html">JSON Joke</a></li>
+      <li><a href="comma-list-parser.html">Comma list</a></li>
+      <li><a href="movie-json.html">Movie JSON</a></li>
+    </ul>
+  </aside>
+  <main class="main">
+    <nav class="breadcrumbs"><a href="../../index.html">Reference</a> › <a href="../index.html">LangChain</a> › <a href="index.html">Recipes</a> › <span>SQL text</span></nav>
+    <header class="hero">
+      <span class="badge">Recipe</span>
+      <h1>Generate SQL text</h1>
+      <p>English description → SQL string. <strong>No database connection.</strong></p>
+    </header>
+
+    <section class="section">
+      <h2>Problem</h2>
+      <p>Write a query from a natural-language spec. Output is text only — you run it elsewhere (or not at all).</p>
+    </section>
+
+    <section class="section">
+      <h2>Ingredients</h2>
+      <p>
+        <a class="pill" href="../modules/01-prompt-template.html">01</a>
+        <a class="pill" href="../modules/02-watsonx-llm.html">02</a>
+        <a class="pill" href="../modules/03-lcel-pipe.html">03</a>
+        <a class="pill" href="../modules/04-output-parser.html">04</a>
+      </p>
+    </section>
+
+    <section class="section">
+      <h2>Setup</h2>
+      <pre>from langchain_core.prompts import PromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+from watson_llm import make_watsonx_llm
+
+llm = make_watsonx_llm()</pre>
+    </section>
+
+    <section class="section">
+      <h2>Recipe code</h2>
+      <pre>description = """
+Retrieve the names and email addresses of all customers from the
+'customers' table who have made a purchase in the last 30 days.
+The table 'purchases' contains a column 'purchase_date'.
+"""
+
+template = """
+Generate an SQL query only with no explanation or commentary based on the {description}
+
+SQL Query:
+"""
+prompt = PromptTemplate.from_template(template)
+sql_generation_chain = prompt | llm | StrOutputParser()
+
+print(sql_generation_chain.invoke({"description": description}))</pre>
+    </section>
+
+    <section class="section">
+      <h2>invoke keys</h2>
+      <table>
+        <tr><th>Key</th><th>Value</th></tr>
+        <tr><td><code>description</code></td><td>Tables, columns, filters in plain English</td></tr>
+      </table>
+    </section>
+
+    <div class="callout"><strong>Not agentic:</strong> No DB tool. Fixed chain ≠ agent that queries Italy’s population from a live database.</div>
+
+    <section class="section">
+      <h2>Modules</h2>
+      <p><a href="../modules/01-prompt-template.html">01</a> · <a href="../modules/03-lcel-pipe.html">03</a></p>
+    </section>
+  </main>
+</div>
+</body>
+</html>

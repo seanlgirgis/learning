@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LangChain LCEL Code Guide</title>
+  <link rel="stylesheet" href="guide.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <h2>On this page</h2>
+    <ul>
+      <li><a href="#pattern">Core pattern</a></li>
+      <li><a href="#scripts">Scripts 08–14</a></li>
+      <li><a href="#components">Components</a></li>
+      <li><a href="#traps">Traps</a></li>
+      <li><a href="#styles">Two styles</a></li>
+    </ul>
+    <h2>Also</h2>
+    <ul>
+      <li><a href="index.html">LCEL hub</a></li>
+      <li><a href="../../index.html">Reference</a></li>
+      <li><a href="../../../playground/langchain/">Scripts</a></li>
+    </ul>
+  </aside>
+
+  <main class="main">
+    <nav class="breadcrumbs">
+      <a href="../../../index.html">Learning Hub</a> ›
+      <a href="../../index.html">Reference</a> ›
+      <a href="index.html">LCEL</a> ›
+      <span>Guide</span>
+    </nav>
+
+    <header class="hero">
+      <span class="badge">General · job reference</span>
+      <h1>LangChain LCEL Code Guide</h1>
+      <p>Small examples. Links to playground <code>.py</code> files. Search below.</p>
+    </header>
+
+    <div class="search-bar">
+      <input id="guide-search" type="search" placeholder="Search: invoke, sql, RunnableLambda, trap…" autocomplete="off">
+      <span id="search-count" class="search-count"></span>
+    </div>
+
+    <section class="section" id="pattern">
+      <h2>Core pattern</h2>
+      <article class="card" data-guide-item data-title="Core pattern prompt llm parser" data-tags="lcel pipe invoke pattern">
+        <span class="tag">concept</span>
+        <h3>prompt | llm | StrOutputParser()</h3>
+        <p>Build objects once. Pass a <strong>dict</strong> to <code>chain.invoke()</code> — keys match <code>{holes}</code> in the template.</p>
+        <pre>prompt = PromptTemplate.from_template("Tell me a {adjective} joke about {content}.")
+chain = prompt | llm | StrOutputParser()
+chain.invoke({"adjective": "funny", "content": "chickens"})</pre>
+        <p><a href="../../../playground/langchain/08.lcel.1.py">08.lcel.1.py</a></p>
+      </article>
+    </section>
+
+    <section class="section" id="scripts">
+      <h2>Scripts 08–14</h2>
+
+      <article class="card" id="script-08" data-guide-item data-title="08 joke chain" data-tags="lcel joke invoke script">
+        <span class="tag script">08</span>
+        <h3>Joke chain</h3>
+        <p>First full LCEL pipe.</p>
+        <p><a href="../../../playground/langchain/08.lcel.1.py">08.lcel.1.py</a></p>
+      </article>
+
+      <article class="card" id="script-09" data-guide-item data-title="09 summarization" data-tags="summarize content script">
+        <span class="tag script">09</span>
+        <h3>Summarization</h3>
+        <p><code>{content}</code> → one-sentence summary.</p>
+        <p><a href="../../../playground/langchain/09.LCEL.Summurization.py">09.LCEL.Summurization.py</a></p>
+      </article>
+
+      <article class="card" id="script-10" data-guide-item data-title="10 question answering" data-tags="qa question content script">
+        <span class="tag script">10</span>
+        <h3>Question answering</h3>
+        <p><code>{question}</code> + <code>{content}</code>.</p>
+        <p><a href="../../../playground/langchain/10.lcelanswer.py">10.lcelanswer.py</a></p>
+      </article>
+
+      <article class="card" id="script-11" data-guide-item data-title="11 classification" data-tags="classify categories script">
+        <span class="tag script">11</span>
+        <h3>Classification</h3>
+        <p><code>{text}</code> into <code>{categories}</code>.</p>
+        <p><a href="../../../playground/langchain/11.lcel.classification.py">11.lcel.classification.py</a></p>
+      </article>
+
+      <article class="card" id="script-12" data-guide-item data-title="12 sql generation" data-tags="sql code script">
+        <span class="tag script">12</span>
+        <h3>SQL generation</h3>
+        <p>SQL text only — no database.</p>
+        <p><a href="../../../playground/langchain/12.lcel.generatesql.py">12.lcel.generatesql.py</a></p>
+      </article>
+
+      <article class="card" id="script-13" data-guide-item data-title="13 role bot" data-tags="chat loop role script">
+        <span class="tag script">13</span>
+        <h3>Role-play bot</h3>
+        <p><code>while True</code> + one <code>invoke</code> per question.</p>
+        <p><a href="../../../playground/langchain/13.lcel.bot.py">13.lcel.bot.py</a></p>
+      </article>
+
+      <article class="card" id="script-14" data-guide-item data-title="14 review RunnableLambda" data-tags="runnablelambda format coursera script">
+        <span class="tag script">14</span>
+        <h3>Review analysis</h3>
+        <p><code>RunnableLambda(format_review_prompt)</code> — notebook style.</p>
+        <p><a href="../../../playground/langchain/14.lcel.chain.custom_formatting.py">14.lcel.chain.custom_formatting.py</a></p>
+      </article>
+    </section>
+
+    <section class="section" id="components">
+      <h2>Components</h2>
+      <article class="card" id="concept-prompt" data-guide-item data-title="PromptTemplate" data-tags="prompt template format invoke">
+        <span class="tag">component</span>
+        <h3>PromptTemplate</h3>
+        <p><code>invoke(dict)</code> in chains; <code>format(**dict)</code> for quick tests.</p>
+      </article>
+      <article class="card" id="concept-parser" data-guide-item data-title="StrOutputParser" data-tags="parser output">
+        <span class="tag">component</span>
+        <h3>StrOutputParser</h3>
+        <p>Normalize output to plain <code>str</code>.</p>
+      </article>
+      <article class="card" id="concept-lambda" data-guide-item data-title="RunnableLambda" data-tags="runnablelambda format coursera">
+        <span class="tag">component</span>
+        <h3>RunnableLambda</h3>
+        <p>Optional wrapper for <code>.format()</code>; <code>prompt | llm</code> is enough.</p>
+      </article>
+    </section>
+
+    <section class="section" id="traps">
+      <h2>Traps</h2>
+      <article class="card" id="trap-format" data-guide-item data-title="format vs invoke" data-tags="trap format invoke">
+        <span class="tag trap">trap</span>
+        <h3>format vs invoke</h3>
+        <p>Chains use <code>invoke(dict)</code>.</p>
+      </article>
+      <article class="card" id="trap-agent" data-guide-item data-title="chain not agent" data-tags="trap agent sql">
+        <span class="tag trap">trap</span>
+        <h3>Chain ≠ agent</h3>
+        <p>Fixed steps vs tool-picking. SQL lab does not run queries.</p>
+      </article>
+      <article class="card" id="trap-drift" data-guide-item data-title="template drift" data-tags="trap role template">
+        <span class="tag trap">trap</span>
+        <h3>Template wins</h3>
+        <p>Role/tone in template beats constraints in the user question.</p>
+      </article>
+    </section>
+
+    <section class="section" id="styles">
+      <h2>Two styles</h2>
+      <article class="card" data-guide-item data-title="direct vs RunnableLambda" data-tags="sean coursera runnablelambda">
+        <h3>Direct (default)</h3>
+        <pre>chain = prompt | llm | StrOutputParser()</pre>
+        <h3 style="margin-top:14px;">Notebook / Coursera</h3>
+        <pre>chain = RunnableLambda(format_prompt) | llm | StrOutputParser()</pre>
+      </article>
+    </section>
+  </main>
+</div>
+<script src="guide.js"></script>
+<script>initGuideSearch();</script>
+</body>
+</html>

@@ -24,8 +24,13 @@ if missing:
     )
 
 
+model_id = os.getenv(
+    "WATSONX_MODEL_ID",
+    "mistralai/mistral-small-3-1-24b-instruct-2503",
+)
+
 model = ChatWatsonx(
-    model_id="mistralai/mistral-small-3-1-24b-instruct-2503",
+    model_id=model_id,
     apikey=os.environ["WATSONX_APIKEY"],
     project_id=os.environ["WATSONX_PROJECT_ID"],
     url=os.environ["WATSONX_URL"],

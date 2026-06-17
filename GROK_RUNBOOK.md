@@ -80,6 +80,7 @@ learning/
 ├── index.html
 ├── catalog/         # courses.yaml, units.yaml, paths.yaml
 ├── courses/         # Coursera (crs_) + DataCamp courses
+├── playground/      # Sean-owned drills & experiments (not curriculum)
 ├── units/           # skills, interview prep, non-course learning
 ├── paths/           # tracks, certs, custom sequences
 ├── shared/templates/# HTML study page templates

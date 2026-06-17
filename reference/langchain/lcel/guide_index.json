@@ -1,0 +1,131 @@
+{
+  "title": "LCEL Playground Code Guide",
+  "items": [
+    {
+      "id": "pattern",
+      "title": "Core pattern: prompt | llm | parser",
+      "type": "concept",
+      "tags": ["lcel", "pipe", "invoke", "pattern"],
+      "anchor": "pattern",
+      "script": null,
+      "summary": "Build once, invoke with a dict. Sean's default style."
+    },
+    {
+      "id": "08",
+      "title": "08 — Joke chain",
+      "type": "script",
+      "tags": ["lcel", "prompt", "joke", "invoke"],
+      "anchor": "script-08",
+      "script": "../08.lcel.1.py",
+      "summary": "First full pipe: template, llm, StrOutputParser, chain.invoke."
+    },
+    {
+      "id": "09",
+      "title": "09 — Summarization",
+      "type": "script",
+      "tags": ["lcel", "summarize", "content"],
+      "anchor": "script-09",
+      "script": "../09.LCEL.Summurization.py",
+      "summary": "Long passage in, one-sentence summary out."
+    },
+    {
+      "id": "10",
+      "title": "10 — Question answering",
+      "type": "script",
+      "tags": ["lcel", "qa", "question", "content"],
+      "anchor": "script-10",
+      "script": "../10.lcelanswer.py",
+      "summary": "Answer from context block + question variables."
+    },
+    {
+      "id": "11",
+      "title": "11 — Classification",
+      "type": "script",
+      "tags": ["lcel", "classify", "categories"],
+      "anchor": "script-11",
+      "script": "../11.lcel.classification.py",
+      "summary": "Pick one category from a fixed list."
+    },
+    {
+      "id": "12",
+      "title": "12 — SQL generation",
+      "type": "script",
+      "tags": ["lcel", "sql", "code"],
+      "anchor": "script-12",
+      "script": "../12.lcel.generatesql.py",
+      "summary": "Natural language to SQL text only — no database."
+    },
+    {
+      "id": "13",
+      "title": "13 — Role-play bot loop",
+      "type": "script",
+      "tags": ["lcel", "chat", "loop", "role"],
+      "anchor": "script-13",
+      "script": "../13.lcel.bot.py",
+      "summary": "while True + input; one invoke per question."
+    },
+    {
+      "id": "14",
+      "title": "14 — Review analysis (RunnableLambda)",
+      "type": "script",
+      "tags": ["lcel", "runnablelambda", "format", "coursera"],
+      "anchor": "script-14",
+      "script": "../14.lcel.chain.custom_formatting.py",
+      "summary": "Coursera Exercise 5: format_review_prompt wrapper."
+    },
+    {
+      "id": "prompt-template",
+      "title": "PromptTemplate",
+      "type": "concept",
+      "tags": ["prompt", "template", "format", "invoke"],
+      "anchor": "concept-prompt",
+      "script": null,
+      "summary": "Formatter Runnable; invoke uses a dict, not a raw string."
+    },
+    {
+      "id": "str-parser",
+      "title": "StrOutputParser",
+      "type": "concept",
+      "tags": ["parser", "output"],
+      "anchor": "concept-parser",
+      "script": null,
+      "summary": "Step 3: normalize model output to plain str."
+    },
+    {
+      "id": "runnable-lambda",
+      "title": "RunnableLambda",
+      "type": "concept",
+      "tags": ["runnablelambda", "format", "coursera"],
+      "anchor": "concept-lambda",
+      "script": null,
+      "summary": "Optional wrapper for .format(); prompt in pipe is enough."
+    },
+    {
+      "id": "trap-format-invoke",
+      "title": "Trap: format vs invoke",
+      "type": "trap",
+      "tags": ["trap", "format", "invoke"],
+      "anchor": "trap-format",
+      "script": null,
+      "summary": "Chains use invoke(dict); format is for quick tests."
+    },
+    {
+      "id": "trap-not-agent",
+      "title": "Trap: chain is not an agent",
+      "type": "trap",
+      "tags": ["trap", "agent", "sql"],
+      "anchor": "trap-agent",
+      "script": null,
+      "summary": "LCEL generates text; agents pick tools and query data."
+    },
+    {
+      "id": "trap-template-drift",
+      "title": "Trap: template wins over question",
+      "type": "trap",
+      "tags": ["trap", "role", "template"],
+      "anchor": "trap-drift",
+      "script": null,
+      "summary": "Strong role/tone in template overrides user constraints."
+    }
+  ]
+}

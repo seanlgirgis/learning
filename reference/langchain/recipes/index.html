@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Recipes | LangChain Reference</title>
+  <link rel="stylesheet" href="../reference.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <h2>Recipes</h2>
+    <ul>
+      <li><a href="../index.html">← LangChain hub</a></li>
+      <li><a href="index.html" class="active">All recipes</a></li>
+      <li><a href="summarize.html">Summarize</a></li>
+      <li><a href="qa-context.html">Q&amp;A</a></li>
+      <li><a href="classify.html">Classify</a></li>
+      <li><a href="sql-text.html">SQL text</a></li>
+      <li><a href="chat-loop.html">Chat loop</a></li>
+      <li><a href="review-lambda.html">Review + lambda</a></li>
+      <li><a href="ibm-model-generate.html">IBM generate</a></li>
+      <li><a href="langchain-llm-plug.html">LLM plug-in</a></li>
+      <li><a href="chat-messages.html">Chat messages</a></li>
+      <li><a href="temperature-compare.html">Temperature</a></li>
+      <li><a href="string-template-demo.html">String template</a></li>
+      <li><a href="chat-prompt-template.html">Chat template</a></li>
+      <li><a href="json-joke-parser.html">JSON Joke</a></li>
+      <li><a href="comma-list-parser.html">Comma list</a></li>
+      <li><a href="movie-json.html">Movie JSON</a></li>
+    </ul>
+  </aside>
+  <main class="main">
+    <nav class="breadcrumbs"><a href="../../index.html">Reference</a> › <a href="../index.html">LangChain</a> › <span>Recipes</span></nav>
+    <header class="hero">
+      <span class="badge">15 recipes</span>
+      <h1>Recipes</h1>
+      <p>Problem → ingredients → short inline code. LCEL core (01–05), watson infra (06–07), notebook track (08–11).</p>
+    </header>
+
+    <section class="section">
+      <h2>LCEL core (playground 08–14)</h2>
+      <table>
+        <tr><th>Recipe</th><th>Modules</th><th>Playground</th><th>Link</th></tr>
+        <tr><td>Summarize in one sentence</td><td>01, 02, 03, 04</td><td><code>09.LCEL.Summurization.py</code></td><td><a href="summarize.html">Open</a></td></tr>
+        <tr><td>Q&amp;A from context</td><td>01, 02, 03, 04</td><td><code>10.lcelanswer.py</code></td><td><a href="qa-context.html">Open</a></td></tr>
+        <tr><td>Classify into fixed list</td><td>01, 02, 03, 04</td><td><code>11.lcel.classification.py</code></td><td><a href="classify.html">Open</a></td></tr>
+        <tr><td>Generate SQL text (no DB)</td><td>01, 02, 03, 04</td><td><code>12.lcel.generatesql.py</code></td><td><a href="sql-text.html">Open</a></td></tr>
+        <tr><td>Interactive chat loop</td><td>01, 02, 03, 04</td><td><code>13.lcel.bot.py</code></td><td><a href="chat-loop.html">Open</a></td></tr>
+        <tr><td>Review analysis (RunnableLambda)</td><td>01, 02, 03, 04, 05</td><td><code>14.lcel.chain.custom_formatting.py</code></td><td><a href="review-lambda.html">Open</a></td></tr>
+      </table>
+    </section>
+
+    <section class="section">
+      <h2>Watson infra (Labs 15–16)</h2>
+      <table>
+        <tr><th>Recipe</th><th>Modules</th><th>Playground</th><th>Link</th></tr>
+        <tr><td>Test watsonx — <code>model.generate</code></td><td>06, 07</td><td><code>15.watson_helper.generate_test.py</code></td><td><a href="ibm-model-generate.html">Open</a></td></tr>
+        <tr><td>Plug in <code>WatsonxLLM</code> for LangChain</td><td>02, 07</td><td><code>16.langchain_helper.invoke_test.py</code></td><td><a href="langchain-llm-plug.html">Open</a></td></tr>
+      </table>
+    </section>
+
+    <section class="section">
+      <h2>Notebook track (Labs 17–21)</h2>
+      <table>
+        <tr><th>Recipe</th><th>Modules</th><th>Playground</th><th>Link</th></tr>
+        <tr><td>Chat messages invoke</td><td>07, 08</td><td><code>17.chat_messages.invoke_test.py</code></td><td><a href="chat-messages.html">Open</a></td></tr>
+        <tr><td>Compare temperature 0.8 vs 0.1</td><td>07, 09</td><td><code>18.temperature.compare.py</code></td><td><a href="temperature-compare.html">Open</a></td></tr>
+        <tr><td>String PromptTemplate + pipe</td><td>01, 03, 07</td><td><code>19.params.py</code></td><td><a href="string-template-demo.html">Open</a></td></tr>
+        <tr><td>ChatPromptTemplate + placeholder</td><td>07, 10</td><td><code>20.chat_prompt_templates.py</code></td><td><a href="chat-prompt-template.html">Open</a></td></tr>
+        <tr><td>JsonOutputParser — Joke</td><td>01, 07, 11</td><td><code>21.output_parsers.py</code> (Part A)</td><td><a href="json-joke-parser.html">Open</a></td></tr>
+        <tr><td>CommaSeparatedListOutputParser</td><td>01, 07, 11</td><td><code>21.output_parsers.py</code> (Part B)</td><td><a href="comma-list-parser.html">Open</a></td></tr>
+        <tr><td>Movie JSON (Exercise 2)</td><td>01, 07, 11</td><td><code>22.exercise2.movie_json.py</code></td><td><a href="movie-json.html">Open</a></td></tr>
+      </table>
+    </section>
+  </main>
+</div>
+</body>
+</html>

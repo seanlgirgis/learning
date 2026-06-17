@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>08 Chat messages | LangChain Reference</title>
+  <link rel="stylesheet" href="../reference.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <h2>Modules</h2>
+    <ul>
+      <li><a href="../index.html">← LangChain hub</a></li>
+      <li><a href="01-prompt-template.html">01 PromptTemplate</a></li>
+      <li><a href="02-watsonx-llm.html">02 Watsonx LLM</a></li>
+      <li><a href="03-lcel-pipe.html">03 LCEL pipe</a></li>
+      <li><a href="04-output-parser.html">04 Output parser</a></li>
+      <li><a href="05-runnable-lambda.html">05 RunnableLambda</a></li>
+      <li><a href="06-model-inference.html">06 ModelInference</a></li>
+      <li><a href="07-watson-helpers.html">07 Watson helpers</a></li>
+      <li><a href="08-chat-messages.html" class="active">08 Chat messages</a></li>
+      <li><a href="09-gen-params.html">09 GenParams</a></li>
+      <li><a href="10-chat-prompt-template.html">10 ChatPromptTemplate</a></li>
+      <li><a href="11-json-output-parser.html">11 JsonOutputParser</a></li>
+    </ul>
+  </aside>
+  <main class="main">
+    <nav class="breadcrumbs"><a href="../../index.html">Reference</a> › <a href="../index.html">LangChain</a> › <span>08 Chat messages</span></nav>
+    <header class="hero">
+      <span class="badge">Module 08 · Lab 17</span>
+      <h1>Chat message types</h1>
+      <p>Labeled messages in a list — not one plain string. Use with <code>WatsonxLLM.invoke([...])</code>.</p>
+    </header>
+
+    <section class="section">
+      <h2>When to use</h2>
+      <p>Notebook “Chat message” section: give the model <strong>roles</strong> (system rules, user question, fake prior AI reply). Not memory — you pass the full list each call.</p>
+    </section>
+
+    <section class="section">
+      <h2>Objects</h2>
+      <table>
+        <tr><th>Type</th><th>Role</th></tr>
+        <tr><td><code>SystemMessage</code></td><td>Instructions / persona</td></tr>
+        <tr><td><code>HumanMessage</code></td><td>User text</td></tr>
+        <tr><td><code>AIMessage</code></td><td>Prior assistant line you supply (for fake history)</td></tr>
+      </table>
+      <pre>from langchain_core.messages import HumanMessage, SystemMessage, AIMessage</pre>
+    </section>
+
+    <section class="section">
+      <h2>Call pattern</h2>
+      <pre>llama_llm = make_llm()
+
+msg = llama_llm.invoke([
+    SystemMessage(content="You are a book recommender. One short sentence."),
+    HumanMessage(content="I enjoy mystery novels, what should I read?"),
+])
+print(msg)  # str</pre>
+    </section>
+
+    <section class="section">
+      <h2>vs PromptTemplate (Module 01)</h2>
+      <table>
+        <tr><th></th><th>PromptTemplate</th><th>Message list</th></tr>
+        <tr><td>Shape</td><td>One formatted string</td><td>List of role objects</td></tr>
+        <tr><td>Invoke</td><td><code>chain.invoke({"topic": "cats"})</code></td><td><code>llm.invoke([SystemMessage(...), ...])</code></td></tr>
+      </table>
+    </section>
+
+    <div class="callout"><strong>Trap:</strong> <code>WatsonxLLM</code> text API may ramble or role-play. Tight system text + lower <code>MAX_NEW_TOKENS</code> helps. <code>ChatPromptTemplate</code> (Module 10) wraps the same idea for pipes.</div>
+
+    <section class="section">
+      <h2>Recipe</h2>
+      <p><a href="../recipes/chat-messages.html">Lab 17 — chat messages</a></p>
+    </section>
+  </main>
+</div>
+</body>
+</html>

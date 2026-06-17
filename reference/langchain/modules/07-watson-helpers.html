@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>07 Watson helpers | LangChain Reference</title>
+  <link rel="stylesheet" href="../reference.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <h2>Modules</h2>
+    <ul>
+      <li><a href="../index.html">← LangChain hub</a></li>
+      <li><a href="01-prompt-template.html">01 PromptTemplate</a></li>
+      <li><a href="02-watsonx-llm.html">02 Watsonx LLM</a></li>
+      <li><a href="03-lcel-pipe.html">03 LCEL pipe</a></li>
+      <li><a href="04-output-parser.html">04 Output parser</a></li>
+      <li><a href="05-runnable-lambda.html">05 RunnableLambda</a></li>
+      <li><a href="06-model-inference.html">06 ModelInference</a></li>
+      <li><a href="07-watson-helpers.html" class="active">07 Watson helpers</a></li>
+      <li><a href="08-chat-messages.html">08 Chat messages</a></li>
+      <li><a href="09-gen-params.html">09 GenParams</a></li>
+      <li><a href="10-chat-prompt-template.html">10 ChatPromptTemplate</a></li>
+      <li><a href="11-json-output-parser.html">11 JsonOutputParser</a></li>
+    </ul>
+  </aside>
+  <main class="main">
+    <nav class="breadcrumbs"><a href="../../index.html">Reference</a> › <a href="../index.html">LangChain</a> › <span>07 Watson helpers</span></nav>
+    <header class="hero">
+      <span class="badge">Module 07 · Infra</span>
+      <h1>Watson helper files</h1>
+      <p>Small modules that read <code>WATSONX_*</code> once — you import and plug in, no Skills Network credentials in every cell.</p>
+    </header>
+
+    <section class="section">
+      <h2>Two plugs, same env</h2>
+      <pre>set_env.ps1  →  WATSONX_MODEL_ID, URL, PROJECT_ID, APIKEY
+        ├─ watson_helper / coursera_watsonx_model  →  model (ModelInference)
+        └─ watson_llm / coursera_llm_model         →  make_*_llm() (WatsonxLLM)</pre>
+    </section>
+
+    <section class="section">
+      <h2>File map</h2>
+      <table>
+        <tr><th>File</th><th>Folder</th><th>Builds</th><th>Use when</th></tr>
+        <tr>
+          <td><code>watson_helper.py</code></td>
+          <td><code>playground/langchain/</code></td>
+          <td><code>model</code> (ModelInference)</td>
+          <td>Lab scripts · <code>model.generate()</code></td>
+        </tr>
+        <tr>
+          <td><code>langchain_helper.py</code></td>
+          <td><code>playground/langchain/</code></td>
+          <td><code>make_llm()</code></td>
+          <td>Lab scripts · notebook twin (<code>llama_llm</code>)</td>
+        </tr>
+        <tr>
+          <td><code>watson_llm.py</code></td>
+          <td><code>playground/langchain/</code></td>
+          <td><code>make_watsonx_llm()</code></td>
+          <td>Lab scripts · full LangChain API</td>
+        </tr>
+        <tr>
+          <td><code>coursera_watsonx_model.py</code></td>
+          <td><code>playground/notebooks/</code></td>
+          <td><code>model</code> + <code>credentials</code></td>
+          <td>Jupyter · LOCAL SETUP cell</td>
+        </tr>
+        <tr>
+          <td><code>coursera_llm_model.py</code></td>
+          <td><code>playground/notebooks/</code></td>
+          <td><code>make_llm()</code></td>
+          <td>Jupyter · <code>llama_llm = make_llm()</code></td>
+        </tr>
+        <tr>
+          <td><code>coursera_embeddings.py</code></td>
+          <td><code>playground/notebooks/</code></td>
+          <td><code>make_embeddings()</code></td>
+          <td>Jupyter · RAG / vector store cells</td>
+        </tr>
+      </table>
+    </section>
+
+    <section class="section">
+      <h2>What each helper exports</h2>
+      <div class="card">
+        <h3>IBM path — <code>watson_helper</code></h3>
+        <pre>from watson_helper import model, model_id, credentials, parameters, project_id</pre>
+        <p><code>model</code> is ready. Call <code>model.generate(...)</code>. See <a href="06-model-inference.html">Module 06</a>.</p>
+      </div>
+      <div class="card">
+        <h3>LangChain path — <code>langchain_helper</code> (notebook twin)</h3>
+        <pre>from langchain_helper import make_llm, GenParams
+
+llama_llm = make_llm()
+llama_llm = make_llm({GenParams.TEMPERATURE: 0.8})</pre>
+        <p>Same API as <code>coursera_llm_model</code> in Jupyter. Under the hood calls <code>watson_llm.make_watsonx_llm()</code>.</p>
+        <p><code>llm</code> is <code>WatsonxLLM</code>. Use in <code>prompt | llm | parser</code>. See <a href="02-watsonx-llm.html">Module 02</a>.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Notebook name trap</h2>
+      <p>The LangChain lab uses <code>llama_llm</code> — Coursera’s variable name for a Llama model. Locally it is still <strong>your</strong> <code>WATSONX_MODEL_ID</code> (e.g. Mistral). The name is kept so later cells run unchanged.</p>
+    </section>
+
+    <section class="section">
+      <h2>Recipes</h2>
+      <p>
+        <a href="../recipes/ibm-model-generate.html">IBM generate</a> ·
+        <a href="../recipes/langchain-llm-plug.html">LLM plug-in</a> ·
+        <a href="../recipes/chat-messages.html">Chat messages</a> ·
+        <a href="../recipes/temperature-compare.html">Temperature</a> ·
+        <a href="../recipes/string-template-demo.html">String template</a> ·
+        <a href="../recipes/chat-prompt-template.html">Chat template</a> ·
+        <a href="../recipes/json-joke-parser.html">JSON Joke</a> ·
+        <a href="../recipes/comma-list-parser.html">Comma list</a>
+      </p>
+    </section>
+
+    <section class="section">
+      <h2>Next</h2>
+      <p><a href="08-chat-messages.html">Module 08 — chat message lists</a></p>
+    </section>
+  </main>
+</div>
+</body>
+</html>

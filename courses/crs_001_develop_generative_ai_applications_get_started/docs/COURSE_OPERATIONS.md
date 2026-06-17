@@ -17,13 +17,13 @@ Each training session the agent may:
 
 | Asset | Count | Status |
 |-------|------:|--------|
-| Coursera quizzes (logged) | 2 | 100% · 5 Q + 100% · 7 Q |
+| Coursera quizzes (logged) | 3 | 100% · 5 Q + 100% · 7 Q + **40% · 5 Q** (LangChain components) |
 | RemNote decks | 9 + 1 new | `01`–`04`, `05_01`–`05_05`; **`05_06`** invoke/vocabulary added |
 | RemNote cards (approx.) | ~160 + 12 | See `source_cards/README.md` |
 | Bubble maps | 2 | Landscape (10) · LCEL workflow (11) |
 | Local Python labs | 17 | `lab/python/01`–`13` (+ variants) |
 | Study pages (HTML) | 10+ | Field guide + 3 chapters + patterns + lookup |
-| Training log rows | 8 | See `TRAINING_LOG.md` |
+| Training log rows | 13 | See `TRAINING_LOG.md` |
 
 ## Enforcement checks
 
@@ -52,8 +52,29 @@ Log Coursera grades in `TRAINING_LOG.md`. Re-drill `needs_repetition` rows befor
 | `human` vs `user` | needs_repetition | `05_06`, deck `03` |
 | `from_template` vs `from_messages` | improving → solid on drill | `05_01`, `05_06` |
 | `format()` vs `invoke()` | solid on quizzes | `05_06` vocabulary bridge |
+| Sequential chain vs memory | needs_repetition | Coursera 2026-06-16 · add `05_07` |
+| Agents vs memory (tools) | needs_repetition | Coursera 2026-06-16 · add `05_07` |
+| Chat models vs prompt templates | needs_repetition | Coursera 2026-06-16 · add `05_07` |
+
+## Pedagogy note (Sean feedback)
+
+Imported docs are strong as **reference** (lookup, cards, labs) but weak as **story** — text chains, few images, no Coursera stock visuals. Target model for future passes:
+
+```text
+Story spine (one narrative) → scene images → idea → lab proof → card drill
+```
+
+Not: encyclopedia chapters chained A→B→C without a through-line.
 
 ## Backlog (agent may pull without asking)
+
+### Story + visuals (priority)
+
+- [x] `study_pages/experiments/story_spine.html` — Help Desk narrative (5 scenes)
+- [x] `source_material/screenshots/` + README — drop zone for Coursera captures
+- [ ] Sean adds `scene_01` … `scene_05` PNGs from Coursera slides
+- [ ] Optional: `experiments/story_module_02.html` if spine works
+- [ ] Bubble map image captions when screenshots exist
 
 ### RemNote
 

@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>04 StrOutputParser | LangChain Reference</title>
+  <link rel="stylesheet" href="../reference.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <h2>Modules</h2>
+    <ul>
+      <li><a href="../index.html">← LangChain hub</a></li>
+      <li><a href="01-prompt-template.html">01 PromptTemplate</a></li>
+      <li><a href="02-watsonx-llm.html">02 Watsonx LLM</a></li>
+      <li><a href="03-lcel-pipe.html">03 LCEL pipe</a></li>
+      <li><a href="04-output-parser.html" class="active">04 Output parser</a></li>
+      <li><a href="05-runnable-lambda.html">05 RunnableLambda</a></li>
+      <li><a href="06-model-inference.html">06 ModelInference</a></li>
+      <li><a href="07-watson-helpers.html">07 Watson helpers</a></li>
+      <li><a href="08-chat-messages.html">08 Chat messages</a></li>
+      <li><a href="09-gen-params.html">09 GenParams</a></li>
+      <li><a href="10-chat-prompt-template.html">10 ChatPromptTemplate</a></li>
+      <li><a href="11-json-output-parser.html">11 JsonOutputParser</a></li>
+    </ul>
+  </aside>
+  <main class="main">
+    <nav class="breadcrumbs"><a href="../../index.html">Reference</a> › <a href="../index.html">LangChain</a> › <span>04 StrOutputParser</span></nav>
+    <header class="hero">
+      <span class="badge">Module 04</span>
+      <h1>StrOutputParser</h1>
+      <p>Step 3 — always give you plain text from the model step.</p>
+    </header>
+
+    <section class="section">
+      <h2>When to use</h2>
+      <p>End of pipe when you need a <code>str</code>. Required when using <code>ChatWatsonx</code> (message objects). Optional with <code>WatsonxLLM</code> (often already a string).</p>
+    </section>
+
+    <section class="section">
+      <h2>Object</h2>
+      <table>
+        <tr><th>Object</th><th>Import</th></tr>
+        <tr><td><code>StrOutputParser()</code></td><td><code>from langchain_core.output_parsers import StrOutputParser</code></td></tr>
+      </table>
+    </section>
+
+    <section class="section">
+      <h2>Usage</h2>
+      <pre>from langchain_core.output_parsers import StrOutputParser
+
+parser = StrOutputParser()
+chain = prompt | llm | parser</pre>
+    </section>
+
+    <section class="section">
+      <h2>Job (one line)</h2>
+      <p>Normalize whatever the model returned → <code>str</code> you can print or pass on.</p>
+    </section>
+
+    <div class="callout"><strong>With WatsonxLLM today:</strong> output may look the same with or without parser — keep it in the pipe for consistency when you switch to chat models.</div>
+
+    <section class="section">
+      <h2>Also</h2>
+      <p>Plain <code>str</code> out (this module) vs structured <code>dict</code> / <code>list</code> — see <a href="11-json-output-parser.html">Module 11 — JsonOutputParser</a>.</p>
+    </section>
+  </main>
+</div>
+</body>
+</html>

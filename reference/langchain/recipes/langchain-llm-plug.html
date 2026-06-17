@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Recipe: LLM plug-in | LangChain Reference</title>
+  <link rel="stylesheet" href="../reference.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <h2>Recipes</h2>
+    <ul>
+      <li><a href="../index.html">← LangChain hub</a></li>
+      <li><a href="index.html">All recipes</a></li>
+      <li><a href="summarize.html">Summarize</a></li>
+      <li><a href="qa-context.html">Q&amp;A</a></li>
+      <li><a href="classify.html">Classify</a></li>
+      <li><a href="sql-text.html">SQL text</a></li>
+      <li><a href="chat-loop.html">Chat loop</a></li>
+      <li><a href="review-lambda.html">Review + lambda</a></li>
+      <li><a href="ibm-model-generate.html">IBM generate</a></li>
+      <li><a href="langchain-llm-plug.html" class="active">LLM plug-in</a></li>
+      <li><a href="chat-messages.html">Chat messages</a></li>
+      <li><a href="temperature-compare.html">Temperature</a></li>
+      <li><a href="string-template-demo.html">String template</a></li>
+      <li><a href="chat-prompt-template.html">Chat template</a></li>
+      <li><a href="json-joke-parser.html">JSON Joke</a></li>
+      <li><a href="comma-list-parser.html">Comma list</a></li>
+      <li><a href="movie-json.html">Movie JSON</a></li>
+    </ul>
+  </aside>
+  <main class="main">
+    <nav class="breadcrumbs"><a href="../index.html">LangChain</a> › <a href="index.html">Recipes</a> › <span>LLM plug-in</span></nav>
+    <header class="hero">
+      <span class="badge">Recipe · Module 02 + 07</span>
+      <h1>Plug in WatsonxLLM for LangChain</h1>
+      <p>Helper builds <code>WatsonxLLM</code> from env — use in pipes, chains, and <code>invoke</code>.</p>
+    </header>
+
+    <section class="section">
+      <h2>Problem</h2>
+      <p>You need an <code>llm</code> object for <code>prompt | llm | parser</code> without repeating credentials in every script or notebook cell.</p>
+    </section>
+
+    <section class="section">
+      <h2>Ingredients</h2>
+      <p>
+        <a class="pill" href="../modules/02-watsonx-llm.html">02 WatsonxLLM</a>
+        <a class="pill" href="../modules/07-watson-helpers.html">07 watson_llm</a>
+        <a class="pill" href="../modules/03-lcel-pipe.html">03 pipe</a>
+      </p>
+    </section>
+
+    <section class="section">
+      <h2>Playground lab (Lab 16)</h2>
+      <pre>from langchain_helper import make_llm
+
+llama_llm = make_llm()
+print(llama_llm.invoke("Who is man's best friend?"))</pre>
+    </section>
+
+    <section class="section">
+      <h2>Playground — params override</h2>
+      <pre>from langchain_helper import make_llm, GenParams
+
+llm = make_llm()
+
+# One-shot string (no pipe)
+print(llm.invoke("Who is man's best friend?"))
+
+# Override temperature (Exercise 1 style)
+llm_creative = make_llm({GenParams.TEMPERATURE: 0.8})
+llm_precise = make_llm({GenParams.TEMPERATURE: 0.1})</pre>
+    </section>
+
+    <section class="section">
+      <h2>Jupyter notebook</h2>
+      <pre>from coursera_llm_model import make_llm
+
+llama_llm = make_llm()  # WATSONX_* env; name kept for later cells
+
+print(llama_llm.invoke("Who is man's best friend?"))</pre>
+      <p style="color:var(--muted);font-size:.88rem;"><code>llama_llm</code> is still your <code>WATSONX_MODEL_ID</code> — not Coursera’s Llama unless you set that model in env.</p>
+    </section>
+
+    <section class="section">
+      <h2>Plug into a pipe</h2>
+      <pre>from langchain_core.prompts import PromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+from langchain_helper import make_llm
+
+llm = make_llm()
+prompt = PromptTemplate.from_template("Tell me a {adjective} joke about {content}.")
+chain = prompt | llm | StrOutputParser()
+
+print(chain.invoke({"adjective": "funny", "content": "chickens"}))</pre>
+    </section>
+
+    <section class="section">
+      <h2>Object type check</h2>
+      <table>
+        <tr><th>Variable</th><th>Type</th><th>Works in <code>|</code> pipe?</th></tr>
+        <tr><td><code>llm</code> / <code>llama_llm</code></td><td><code>langchain_ibm.WatsonxLLM</code></td><td>✅ Yes</td></tr>
+        <tr><td><code>model</code> (watson_helper)</td><td><code>ModelInference</code></td><td>❌ No — use <a href="ibm-model-generate.html">IBM generate</a> instead</td></tr>
+      </table>
+    </section>
+
+    <div class="callout"><strong>Trap:</strong> <code>WatsonxLLM(model=model_inference)</code> does not work in <code>langchain_ibm</code> 1.x. Use <code>make_watsonx_llm()</code> / <code>make_llm()</code> — they pass <code>model_id</code> and env directly.</div>
+
+    <section class="section">
+      <h2>Modules</h2>
+      <p><a href="../modules/02-watsonx-llm.html">02</a> · <a href="../modules/07-watson-helpers.html">07</a> · <a href="../modules/03-lcel-pipe.html">03</a></p>
+    </section>
+  </main>
+</div>
+</body>
+</html>

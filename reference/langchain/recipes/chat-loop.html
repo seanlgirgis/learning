@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Recipe: Chat loop | LangChain Reference</title>
+  <link rel="stylesheet" href="../reference.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <h2>Recipes</h2>
+    <ul>
+      <li><a href="../index.html">← LangChain hub</a></li>
+      <li><a href="index.html">All recipes</a></li>
+      <li><a href="summarize.html">Summarize</a></li>
+      <li><a href="qa-context.html">Q&amp;A</a></li>
+      <li><a href="classify.html">Classify</a></li>
+      <li><a href="sql-text.html">SQL text</a></li>
+      <li><a href="chat-loop.html" class="active">Chat loop</a></li>
+      <li><a href="review-lambda.html">Review + lambda</a></li>
+      <li><a href="ibm-model-generate.html">IBM generate</a></li>
+      <li><a href="langchain-llm-plug.html">LLM plug-in</a></li>
+      <li><a href="chat-messages.html">Chat messages</a></li>
+      <li><a href="temperature-compare.html">Temperature</a></li>
+      <li><a href="string-template-demo.html">String template</a></li>
+      <li><a href="chat-prompt-template.html">Chat template</a></li>
+      <li><a href="json-joke-parser.html">JSON Joke</a></li>
+      <li><a href="comma-list-parser.html">Comma list</a></li>
+      <li><a href="movie-json.html">Movie JSON</a></li>
+    </ul>
+  </aside>
+  <main class="main">
+    <nav class="breadcrumbs"><a href="../../index.html">Reference</a> › <a href="../index.html">LangChain</a> › <a href="index.html">Recipes</a> › <span>Chat loop</span></nav>
+    <header class="hero">
+      <span class="badge">Recipe</span>
+      <h1>Interactive chat loop</h1>
+      <p>Role + tone baked into template; one <code>invoke</code> per user line. Not memory — each turn is fresh.</p>
+    </header>
+
+    <section class="section">
+      <h2>Problem</h2>
+      <p>REPL-style bot: read question, run chain, print answer, repeat until quit.</p>
+    </section>
+
+    <section class="section">
+      <h2>Ingredients</h2>
+      <p>
+        <a class="pill" href="../modules/01-prompt-template.html">01</a>
+        <a class="pill" href="../modules/02-watsonx-llm.html">02</a>
+        <a class="pill" href="../modules/03-lcel-pipe.html">03</a>
+        <a class="pill" href="../modules/04-output-parser.html">04</a>
+        + Python <code>while</code> / <code>input()</code>
+      </p>
+    </section>
+
+    <section class="section">
+      <h2>Setup</h2>
+      <pre>from langchain_core.prompts import PromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+from watson_llm import make_watsonx_llm, GenParams
+
+llm = make_watsonx_llm({GenParams.MAX_NEW_TOKENS: 128})</pre>
+      <p style="color:var(--muted);font-size:.88rem;margin:8px 0 0;">Lower <code>MAX_NEW_TOKENS</code> in chat loops so replies finish quickly.</p>
+    </section>
+
+    <section class="section">
+      <h2>Recipe code</h2>
+      <pre>role = "Prediction expert with deep knowledge in the topic asked."
+tone = "engaging and immersive"
+
+template = """
+You are an expert {role}. I have this question {question}.
+I would like our conversation to be {tone}.
+
+Answer:
+"""
+prompt = PromptTemplate.from_template(template)
+roleplay_chain = prompt | llm | StrOutputParser()
+
+while True:
+    query = input("Question: ")
+    if query.lower() in ("quit", "exit", "bye"):
+        print("Answer: Goodbye!")
+        break
+    response = roleplay_chain.invoke({
+        "role": role,
+        "question": query,
+        "tone": tone,
+    })
+    print("Answer:", response)</pre>
+    </section>
+
+    <section class="section">
+      <h2>invoke keys (each turn)</h2>
+      <table>
+        <tr><th>Key</th><th>Value</th></tr>
+        <tr><td><code>role</code></td><td>Persona string (often constant)</td></tr>
+        <tr><td><code>question</code></td><td>Current user line from <code>input()</code></td></tr>
+        <tr><td><code>tone</code></td><td>Style constraint (often constant)</td></tr>
+      </table>
+    </section>
+
+    <div class="callout"><strong>Trap:</strong> Template role/tone wins over a one-word user question. This loop has no memory — for continuity you need a memory module later.</div>
+
+    <section class="section">
+      <h2>Modules</h2>
+      <p><a href="../modules/01-prompt-template.html">01</a> · <a href="../modules/02-watsonx-llm.html">02</a> · <a href="../modules/03-lcel-pipe.html">03</a></p>
+    </section>
+  </main>
+</div>
+</body>
+</html>

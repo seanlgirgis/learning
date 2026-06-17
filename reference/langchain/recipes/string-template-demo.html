@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Recipe: String template demo | LangChain Reference</title>
+  <link rel="stylesheet" href="../reference.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <h2>Recipes</h2>
+    <ul>
+      <li><a href="../index.html">← LangChain hub</a></li>
+      <li><a href="index.html">All recipes</a></li>
+      <li><a href="summarize.html">Summarize</a></li>
+      <li><a href="qa-context.html">Q&amp;A</a></li>
+      <li><a href="classify.html">Classify</a></li>
+      <li><a href="sql-text.html">SQL text</a></li>
+      <li><a href="chat-loop.html">Chat loop</a></li>
+      <li><a href="review-lambda.html">Review + lambda</a></li>
+      <li><a href="ibm-model-generate.html">IBM generate</a></li>
+      <li><a href="langchain-llm-plug.html">LLM plug-in</a></li>
+      <li><a href="chat-messages.html">Chat messages</a></li>
+      <li><a href="temperature-compare.html">Temperature</a></li>
+      <li><a href="string-template-demo.html" class="active">String template</a></li>
+      <li><a href="chat-prompt-template.html">Chat template</a></li>
+      <li><a href="json-joke-parser.html">JSON Joke</a></li>
+      <li><a href="comma-list-parser.html">Comma list</a></li>
+      <li><a href="movie-json.html">Movie JSON</a></li>
+    </ul>
+  </aside>
+  <main class="main">
+    <nav class="breadcrumbs"><a href="../index.html">LangChain</a> › <a href="index.html">Recipes</a> › <span>String template</span></nav>
+    <header class="hero">
+      <span class="badge">Lab 19</span>
+      <h1>String PromptTemplate + pipe</h1>
+      <p>Notebook “String prompt templates” — <code>{adjective}</code> and <code>{topic}</code> holes.</p>
+    </header>
+
+    <section class="section">
+      <h2>Code</h2>
+      <pre>from langchain_core.prompts import PromptTemplate
+from langchain_helper import make_llm, GenParams
+
+prompt = PromptTemplate.from_template("Tell me one {adjective} joke about {topic}")
+input_ = {"adjective": "funny", "topic": "cats"}
+
+llama_llm = make_llm({GenParams.MAX_NEW_TOKENS: 80})
+chain = prompt | llama_llm
+
+print(chain.invoke(input_))</pre>
+    </section>
+
+    <section class="section">
+      <h2>Notebook step you can add</h2>
+      <pre>print(prompt.invoke(input_))  # see filled string before LLM</pre>
+    </section>
+
+    <p><a href="../modules/01-prompt-template.html">Module 01</a> · <a href="../modules/03-lcel-pipe.html">Module 03</a></p>
+  </main>
+</div>
+</body>
+</html>
