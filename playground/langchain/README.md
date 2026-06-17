@@ -16,6 +16,8 @@ Drills for CRS 001 — prompt templates, chat roles, LCEL, providers.
 | 20 | `20.chat_prompt_templates.py` | [Chat template](../../reference/langchain/recipes/chat-prompt-template.html) |
 | 21 | `21.output_parsers.py` | [JSON Joke](../../reference/langchain/recipes/json-joke-parser.html) · [Comma list](../../reference/langchain/recipes/comma-list-parser.html) |
 | 22 | `22.exercise2.movie_json.py` | [Movie JSON](../../reference/langchain/recipes/movie-json.html) |
+| 28–31 | embeddings → Chroma → retriever → RetrievalQA | Labs 28–31 in `playground/langchain/` |
+| 32 | `32.parent_document_retriever.py` | Parent doc retriever (notebook section) |
 
 Earlier LCEL drills: `08.lcel.1.py` … `14.lcel.chain.custom_formatting.py` — see [recipes index](../../reference/langchain/recipes/index.html).
 
