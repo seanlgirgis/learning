@@ -1,14 +1,14 @@
 # start_grok_learning.ps1
 # STABLE — do not modify without explicit request from Sean.
 #
-# Runtime copy (use this):  D:\start_grok_learning.ps1
+# Runtime copy (use this):  C:\scripts\start_grok_learning.ps1
 # Repo archive (git only):  D:\Workarea\learning\start_grok_learning.ps1
 # Keep both files identical when a change is ever required.
 #
 # Location-agnostic launcher: foundation venv -> learning -> Grok Build TUI
 #
 # Usage (from anywhere):
-#   pwsh -ExecutionPolicy Bypass -File "D:\start_grok_learning.ps1"
+#   pwsh -ExecutionPolicy Bypass -File "C:\scripts\start_grok_learning.ps1"
 #
 # Opens a new PowerShell window by default. To run in the current shell:
 #   ...\start_grok_learning.ps1 -NoNewWindow

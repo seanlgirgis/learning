@@ -4,7 +4,7 @@ Agent roles and workflows for the learning workspace.
 
 ## Startup Order
 
-When launched via `start_grok_learning.ps1` (or `D:\start_grok_learning.ps1`):
+When launched via `C:\scripts\start_grok_learning.ps1` (repo archive: `start_grok_learning.ps1`):
 
 1. Read this file (`GROK_AGENTS.md`)
 2. Read `GROK_RUNBOOK.md`

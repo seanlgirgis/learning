@@ -7,12 +7,12 @@ Operational procedures for `D:\Workarea\learning`.
 **Use this to start a session** (opens new window, activates venv, launches Grok Build):
 
 ```powershell
-pwsh -ExecutionPolicy Bypass -File "D:\start_grok_learning.ps1"
+pwsh -ExecutionPolicy Bypass -File "C:\scripts\start_grok_learning.ps1"
 ```
 
 | Copy | Path |
 |------|------|
-| Runtime (daily use) | `D:\start_grok_learning.ps1` |
+| Runtime (daily use) | `C:\scripts\start_grok_learning.ps1` |
 | Repo archive | `D:\Workarea\learning\start_grok_learning.ps1` |
 
 Keep both copies identical. Run in current shell instead: add `-NoNewWindow`.
