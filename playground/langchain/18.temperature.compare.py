@@ -7,19 +7,19 @@ Run set_env.ps1, then:
     python .\\18.temperature.compare.py
 """
 
-# Short answer: With make_llm(), params are fixed when you build the LLM. For different temperatures, make two LLMs — don’t tweak the same object between calls.
+# Short answer: With make_watsonx_llm(), params are fixed when you build the LLM. For different temperatures, make two LLMs — don’t tweak the same object between calls.
 
 import os
 
-from langchain_helper import make_llm, GenParams
+from watson_llm import GenParams, make_watsonx_llm
 
 print("Model:", os.environ["WATSONX_MODEL_ID"])
 print()
 
 
 
-llm_creative = make_llm({GenParams.TEMPERATURE: 0.8,GenParams.MAX_NEW_TOKENS: 80})
-llm_precise = make_llm({GenParams.TEMPERATURE: 0.1,GenParams.MAX_NEW_TOKENS: 80})
+llm_creative = make_watsonx_llm({GenParams.TEMPERATURE: 0.8,GenParams.MAX_NEW_TOKENS: 80})
+llm_precise = make_watsonx_llm({GenParams.TEMPERATURE: 0.1,GenParams.MAX_NEW_TOKENS: 80})
 
 prompts = [
     "Write a short poem about artificial intelligence",

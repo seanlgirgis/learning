@@ -11,7 +11,7 @@ Run set_env.ps1, then:
 from langchain_core.messages import HumanMessage
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
-from langchain_helper import make_llm, GenParams
+from watson_llm import GenParams, make_watsonx_llm
 
 
 def sep(title: str) -> None:
@@ -22,7 +22,7 @@ def sep(title: str) -> None:
 
 
 def main() -> None:
-    llama_llm = make_llm({GenParams.MAX_NEW_TOKENS: 120})
+    llama_llm = make_watsonx_llm({GenParams.MAX_NEW_TOKENS: 120})
 
     # --- Chat prompt template (system + user with {topic}) ---
     sep("1. ChatPromptTemplate — format only (prompt.invoke)")

@@ -33,40 +33,51 @@
   <main class="main">
     <nav class="breadcrumbs"><a href="../../index.html">Reference</a> › <a href="../index.html">LangChain</a> › <a href="index.html">Recipes</a> › <span>Chat loop</span></nav>
     <header class="hero">
-      <span class="badge">Recipe</span>
+      <span class="badge depth-deep">Recipe · depth pass 1</span>
       <h1>Interactive chat loop</h1>
-      <p>Role + tone baked into template; one <code>invoke</code> per user line. Not memory — each turn is fresh.</p>
+      <p>Role + tone + fresh question each turn. Python <code>while</code> / <code>input()</code> wraps one <code>invoke</code> per line — <strong>no memory</strong> between turns.</p>
     </header>
 
     <section class="section">
-      <h2>Problem</h2>
-      <p>REPL-style bot: read question, run chain, print answer, repeat until quit.</p>
+      <h2>1 — Problem</h2>
+      <p>You want a REPL-style bot: read a user line, run the LCEL chain, print the answer, repeat until quit. Persona (<code>role</code>) and style (<code>tone</code>) stay constant; only <code>question</code> changes each iteration.</p>
+      <p><strong>Not this recipe:</strong> conversation history across turns (Module 10), <code>ChatPromptTemplate</code> message lists (<a href="chat-messages.html">chat-messages</a>), or streaming tokens.</p>
     </section>
 
     <section class="section">
-      <h2>Ingredients</h2>
-      <p>
-        <a class="pill" href="../modules/01-prompt-template.html">01</a>
-        <a class="pill" href="../modules/02-watsonx-llm.html">02</a>
-        <a class="pill" href="../modules/03-lcel-pipe.html">03</a>
-        <a class="pill" href="../modules/04-output-parser.html">04</a>
-        + Python <code>while</code> / <code>input()</code>
-      </p>
+      <h2>2 — Prerequisites</h2>
+      <table>
+        <tr><th>Need</th><th>Module</th><th>Check</th></tr>
+        <tr><td>Env vars loaded</td><td><a href="../modules/02-watsonx-llm.html">02</a></td><td><code>set_env.ps1</code> ran in this shell</td></tr>
+        <tr><td><code>WatsonxLLM</code> object</td><td><a href="../modules/07-watson-helpers.html">07</a></td><td><code>make_watsonx_llm()</code> with tuned <code>MAX_NEW_TOKENS</code></td></tr>
+        <tr><td>Template with <code>{role}</code>, <code>{question}</code>, <code>{tone}</code></td><td><a href="../modules/01-prompt-template.html">01</a></td><td>Three holes; <code>question</code> updated per loop</td></tr>
+        <tr><td>Pipe wiring</td><td><a href="../modules/03-lcel-pipe.html">03</a></td><td><code>prompt | llm | StrOutputParser()</code> built once outside loop</td></tr>
+      </table>
     </section>
 
     <section class="section">
-      <h2>Setup</h2>
+      <h2>3 — Wiring diagram</h2>
+      <div class="flow-diagram">
+<pre>while True:
+  query = input("Question: ")
+  if quit → break
+  {"role": role, "question": query, "tone": tone}
+       → PromptTemplate("You are an expert {role}. … {question} … {tone}.")
+       → WatsonxLLM
+       → StrOutputParser()
+       → print answer</pre>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>4 — Script</h2>
       <pre>from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from watson_llm import make_watsonx_llm, GenParams
 
-llm = make_watsonx_llm({GenParams.MAX_NEW_TOKENS: 128})</pre>
-      <p style="color:var(--muted);font-size:.88rem;margin:8px 0 0;">Lower <code>MAX_NEW_TOKENS</code> in chat loops so replies finish quickly.</p>
-    </section>
+llm = make_watsonx_llm({GenParams.MAX_NEW_TOKENS: 128})
 
-    <section class="section">
-      <h2>Recipe code</h2>
-      <pre>role = "Prediction expert with deep knowledge in the topic asked."
+role = "Prediction expert with deep knowledge in the topic asked."
 tone = "engaging and immersive"
 
 template = """
@@ -89,23 +100,66 @@ while True:
         "tone": tone,
     })
     print("Answer:", response)</pre>
+      <p style="color:var(--muted);font-size:.88rem;">Playground: <code>13.lcel.bot.py</code></p>
     </section>
 
     <section class="section">
-      <h2>invoke keys (each turn)</h2>
+      <h2>5 — Critical lines</h2>
       <table>
-        <tr><th>Key</th><th>Value</th></tr>
-        <tr><td><code>role</code></td><td>Persona string (often constant)</td></tr>
-        <tr><td><code>question</code></td><td>Current user line from <code>input()</code></td></tr>
-        <tr><td><code>tone</code></td><td>Style constraint (often constant)</td></tr>
+        <tr><th>Line</th><th>Why it matters</th><th>If you change it wrong…</th></tr>
+        <tr><td><code>roleplay_chain</code> outside <code>while</code></td><td>Build pipe once, reuse</td><td>Re-creating LLM every turn wastes time and creds</td></tr>
+        <tr><td><code>"question": query</code> each turn</td><td>Only dynamic hole per iteration</td><td>Stale answer — same question every time</td></tr>
+        <tr><td><code>MAX_NEW_TOKENS: 128</code></td><td>Short replies in interactive loop</td><td>Long rambling answers; slow turns</td></tr>
+        <tr><td><code>quit</code> / <code>exit</code> / <code>bye</code> check</td><td>Clean exit without API call</td><td>Quit word sent to model as a real question</td></tr>
       </table>
     </section>
 
-    <div class="callout"><strong>Trap:</strong> Template role/tone wins over a one-word user question. This loop has no memory — for continuity you need a memory module later.</div>
+    <section class="section">
+      <h2>6 — Variants</h2>
+      <ul>
+        <li><strong>Chat message objects</strong> — Swap <code>PromptTemplate</code> for <code>ChatPromptTemplate</code> → <a href="chat-prompt-template.html">chat-prompt-template</a>.</li>
+        <li><strong>Memory across turns</strong> — Append prior Q/A to template or use memory module (later labs).</li>
+        <li><strong>Single-shot Q&amp;A</strong> — Drop loop; use <code>{question}</code> + <code>{content}</code> → <a href="qa-context.html">qa-context</a> (Lab 10).</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>7 — Debug</h2>
+      <table>
+        <tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr>
+        <tr><td>Bot forgets prior turn</td><td>No memory by design</td><td>Add history buffer or memory module — not this recipe</td></tr>
+        <tr><td>Answers ignore user question</td><td><code>role</code>/<code>tone</code> dominate short queries</td><td>Shorten persona text; put <code>{question}</code> on its own line</td></tr>
+        <tr><td>Hang on empty input</td><td><code>input()</code> returns <code>""</code></td><td><code>if not query.strip(): continue</code></td></tr>
+        <tr><td>Slow responses</td><td><code>MAX_NEW_TOKENS</code> too high</td><td>Lower via <code>make_watsonx_llm({GenParams.MAX_NEW_TOKENS: 128})</code></td></tr>
+      </table>
+    </section>
+
+    <div class="trap-box">
+      <h3>Traps</h3>
+      <ul>
+        <li><strong>Expecting continuity</strong> — Each <code>invoke</code> is stateless. Turn 2 does not see turn 1 unless you add history yourself.</li>
+        <li><strong>Rebuilding chain inside loop</strong> — Move <code>prompt | llm | StrOutputParser()</code> above <code>while True</code>.</li>
+        <li><strong>Template role wins over one-word questions</strong> — Heavy persona text can swamp a short user line; simplify template if needed.</li>
+      </ul>
+    </div>
+
+    <section class="section">
+      <h2>Rebuild from memory</h2>
+      <div class="rebuild-steps">
+        <p>Close this page. Write the script from these steps only:</p>
+        <ol>
+          <li>Import <code>PromptTemplate</code>, <code>StrOutputParser</code>, <code>make_watsonx_llm</code>, <code>GenParams</code>.</li>
+          <li><code>llm = make_watsonx_llm({GenParams.MAX_NEW_TOKENS: 128})</code>.</li>
+          <li>Set constant <code>role</code> and <code>tone</code>; template with three holes.</li>
+          <li>Build <code>roleplay_chain = prompt | llm | StrOutputParser()</code> once.</li>
+          <li><code>while True</code>: <code>input</code> → quit check → <code>invoke</code> with <code>query</code> as <code>question</code> → print.</li>
+        </ol>
+      </div>
+    </section>
 
     <section class="section">
       <h2>Modules</h2>
-      <p><a href="../modules/01-prompt-template.html">01</a> · <a href="../modules/02-watsonx-llm.html">02</a> · <a href="../modules/03-lcel-pipe.html">03</a></p>
+      <p><a href="../modules/01-prompt-template.html">01</a> · <a href="../modules/02-watsonx-llm.html">02</a> · <a href="../modules/03-lcel-pipe.html">03</a> · <a href="../modules/04-output-parser.html">04</a></p>
     </section>
   </main>
 </div>

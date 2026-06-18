@@ -6,13 +6,13 @@ Run set_env.ps1, then:
     python .\\18.temperature.compare.py
 """
 
-from langchain_helper import make_llm, GenParams
+from watson_llm import GenParams, make_watsonx_llm
 from langchain_core.prompts import PromptTemplate
 
 prompt = PromptTemplate.from_template("Tell me one {adjective} joke about {topic}")
 input_ = {"adjective": "funny", "topic": "cats"}  # create a dictionary to store the corresponding input to placeholders in prompt template
 
-llama_llm = make_llm({GenParams.MAX_NEW_TOKENS: 80})
+llama_llm = make_watsonx_llm({GenParams.MAX_NEW_TOKENS: 80})
 
 chain = prompt | llama_llm
 

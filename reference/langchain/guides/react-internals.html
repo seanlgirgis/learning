@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Guide: ReAct internals | LangChain Reference</title>
+  <link rel="stylesheet" href="../reference.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <h2>Guides</h2>
+    <ul>
+      <li><a href="../index.html">← LangChain hub</a></li>
+      <li><a href="rag-pipeline.html">RAG pipeline</a></li>
+      <li><a href="react-internals.html" class="active">ReAct internals</a></li>
+    </ul>
+    <h2>Modules</h2>
+    <ul>
+      <li><a href="../modules/03-lcel-pipe.html">03 LCEL</a></li>
+      <li><a href="../modules/18-classic-chains.html">18 Chains</a></li>
+      <li><a href="../modules/19-agents-tools.html">19 Agents</a></li>
+    </ul>
+  </aside>
+  <main class="main">
+    <nav class="breadcrumbs"><a href="../../index.html">Reference</a> › <a href="../index.html">LangChain</a> › <span>ReAct internals</span></nav>
+    <header class="hero">
+      <span class="badge depth-deep">Guide · Lab 35</span>
+      <h1>ReAct agent internals</h1>
+      <p><strong>Chain</strong> = you wire fixed steps. <strong>Agent</strong> = LLM writes Thought → picks Action → reads Observation → repeats.</p>
+    </header>
+
+    <section class="section">
+      <h2>Key take — chain vs agent</h2>
+      <table>
+        <tr><th></th><th>Chain / LCEL</th><th>Agent (ReAct)</th></tr>
+        <tr><td>Steps</td><td>Fixed at build time</td><td>LLM chooses each turn</td></tr>
+        <tr><td>API</td><td><code>prompt | llm | parser</code></td><td><code>AgentExecutor.invoke</code></td></tr>
+        <tr><td>When</td><td>Known pipeline</td><td>Tool choice depends on question</td></tr>
+        <tr><td>Module</td><td><a href="../modules/03-lcel-pipe.html">03</a>, <a href="../modules/18-classic-chains.html">18</a></td><td><a href="../modules/19-agents-tools.html">19</a></td></tr>
+      </table>
+      <p style="color:var(--muted);font-size:.88rem;">Memory: <strong>chain = fixed</strong> · <strong>agent = loop + tools</strong></p>
+    </section>
+
+    <section class="section">
+      <h2>ReAct loop (one turn)</h2>
+      <div class="flow-diagram">
+<pre>Question: "What is 1234 * 5678?"
+        │
+        ▼
+Thought: I should use the calculator
+Action: Python_REPL
+Action Input: print(1234 * 5678)
+        │
+        ▼
+Observation: 7006652
+        │
+        ▼
+Thought: I know the final answer
+Final Answer: 7006652</pre>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Building blocks (Lab 35)</h2>
+      <ol class="lifecycle-steps">
+        <li><strong>LLM</strong> — <code>make_watsonx_llm()</code></li>
+        <li><strong>Tools</strong> — <code>Tool(...)</code> or <code>@tool</code> with clear descriptions</li>
+        <li><strong>Prompt</strong> — ReAct template with <code>{tools}</code>, <code>{tool_names}</code>, <code>{input}</code></li>
+        <li><strong>Agent</strong> — <code>create_react_agent(llm, tools, prompt)</code></li>
+        <li><strong>Executor</strong> — <code>AgentExecutor(agent=..., tools=..., verbose=True)</code></li>
+      </ol>
+    </section>
+
+    <section class="section">
+      <h2>Minimal skeleton</h2>
+      <pre>from langchain_classic.agents import AgentExecutor, create_react_agent
+from langchain_core.prompts import PromptTemplate
+from watson_llm import make_watsonx_llm
+
+react_prompt = PromptTemplate.from_template("""... ReAct format ...
+Tools: {tools}
+Tool names: {tool_names}
+Question: {input}
+{agent_scratchpad}""")
+
+agent = create_react_agent(make_watsonx_llm(), tools, react_prompt)
+executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
+executor.invoke({"input": "your question"})</pre>
+      <p style="color:var(--muted);font-size:.88rem;">Full script: <code>playground/langchain/35.agents.py</code></p>
+    </section>
+
+    <div class="trap-box">
+      <h3>Traps</h3>
+      <ul>
+        <li><strong>Agent for fixed workflows</strong> — use LCEL; agents are slower and less predictable.</li>
+        <li><strong>Vague tool descriptions</strong> — the description is how the LLM picks tools.</li>
+        <li><strong><code>PythonREPL</code></strong> — runs real code (<code>langchain_experimental</code>).</li>
+        <li><strong>Confusing with RAG</strong> — RAG chain retrieves docs; agent may call a RAG tool you define (<a href="rag-pipeline.html">RAG guide</a>).</li>
+      </ul>
+    </div>
+
+    <section class="section">
+      <h2>Links</h2>
+      <p>
+        <a href="../modules/19-agents-tools.html">Module 19</a> ·
+        <a href="rag-pipeline.html">RAG pipeline</a> ·
+        Capstone: <a href="../../../planning/langchain_capstone_projects.md">Research Agent (#4)</a>
+      </p>
+    </section>
+  </main>
+</div>
+</body>
+</html>

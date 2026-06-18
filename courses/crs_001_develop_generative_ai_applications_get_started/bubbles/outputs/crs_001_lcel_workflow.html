@@ -672,6 +672,11 @@ body {
       "label": "Back: Gen AI Landscape",
       "type": "map",
       "topic": "crs_001_gen_ai_landscape.studybubble.json"
+    },
+    {
+      "label": "Watson Two Routes (A/B)",
+      "type": "map",
+      "topic": "crs_001_watson_two_routes.studybubble.json"
     }
   ],
   "nodes": [
@@ -872,7 +877,12 @@ body {
       "note": {
         "summary": "Labs 05b (OpenAI), 05c/05d (watsonx), 05f (switching) share the same chain skeleton.\nOnly the model runnable and env vars change."
       },
-      "childTopics": [],
+      "childTopics": [
+        {
+          "label": "Watson Two Routes (A/B)",
+          "topic": "crs_001_watson_two_routes.studybubble.json"
+        }
+      ],
       "externalLinks": [
         {
           "label": "Lab 05f",
@@ -2390,7 +2400,7 @@ body {
   <!-- SECTION: Build Metadata -->
   <script id="studybubble-build-metadata" type="application/json">
 {
-  "generatedAtUtc": "2026-06-16T00:33:04.515418+00:00",
+  "generatedAtUtc": "2026-06-18T18:48:59.841923+00:00",
   "mode": "single-file",
   "sourceTopicPath": "topics/crs_001_lcel_workflow.studybubble.json",
   "topicId": "crs_001_lcel_workflow",

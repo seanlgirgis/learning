@@ -29,8 +29,8 @@ from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.vectorstores import Chroma
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from ibm_watsonx_ai.metanames import EmbedTextParamsMetaNames
-from coursera_embeddings import make_embeddings
-from langchain_helper import make_llm
+from watson_llm import make_watsonx_embeddings
+from watson_llm import make_watsonx_llm
 
 
 # --- Bite 2: ingest ---
@@ -46,14 +46,14 @@ embed_params = {
     EmbedTextParamsMetaNames.TRUNCATE_INPUT_TOKENS: 3,
     EmbedTextParamsMetaNames.RETURN_OPTIONS: {"input_text": True},
 }
-embedding_model = make_embeddings(embed_params)
+embedding_model = make_watsonx_embeddings(embed_params)
 vector_store = Chroma.from_documents(chunks, embedding_model)
 retriever = vector_store.as_retriever(search_kwargs={"k": 3})
 print("Retriever ready")
 
 
 # --- Bite 4: QA chain ---
-llm = make_llm()
+llm = make_watsonx_llm()
 qa = RetrievalQA.from_chain_type(
     llm=llm,
     chain_type="stuff",

@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>16 Retrievers + RAG | LangChain Reference</title>
+  <link rel="stylesheet" href="../reference.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <h2>Modules</h2>
+    <ul>
+      <li><a href="../index.html">← LangChain hub</a></li>
+      <li><a href="01-prompt-template.html">01 PromptTemplate</a></li>
+      <li><a href="02-watsonx-llm.html">02 Watsonx LLM</a></li>
+      <li><a href="03-lcel-pipe.html">03 LCEL pipe</a></li>
+      <li><a href="04-output-parser.html">04 Output parser</a></li>
+      <li><a href="05-runnable-lambda.html">05 RunnableLambda</a></li>
+      <li><a href="06-model-inference.html">06 ModelInference</a></li>
+      <li><a href="07-watson-helpers.html">07 Watson helpers</a></li>
+      <li><a href="08-chat-messages.html">08 Chat messages</a></li>
+      <li><a href="09-gen-params.html">09 GenParams</a></li>
+      <li><a href="10-chat-prompt-template.html">10 ChatPromptTemplate</a></li>
+      <li><a href="11-json-output-parser.html">11 JsonOutputParser</a></li>
+      <li><a href="12-document-loaders.html">12 Document + loaders</a></li>
+      <li><a href="13-text-splitters.html">13 Text splitters</a></li>
+      <li><a href="14-embeddings.html">14 Embeddings</a></li>
+      <li><a href="15-chroma-vectorstore.html">15 Chroma</a></li>
+      <li><a href="16-retrievers-rag.html" class="active">16 Retrievers + RAG</a></li>
+      <li><a href="17-memory.html">17 Memory</a></li>
+      <li><a href="18-classic-chains.html">18 Classic chains</a></li>
+      <li><a href="19-agents-tools.html">19 Agents</a></li>
+    </ul>
+  </aside>
+  <main class="main">
+    <nav class="breadcrumbs"><a href="../../index.html">Reference</a> › <a href="../index.html">LangChain</a> › <span>16 Retrievers + RAG</span></nav>
+    <header class="hero">
+      <span class="badge depth-deep">Module 16 · depth pass 1 · Labs 30–32, 31</span>
+      <h1>Retrievers + RAG</h1>
+      <p><strong>Retrieve</strong> relevant chunks, <strong>augment</strong> the prompt, <strong>generate</strong> an answer — the payoff of modules 12–15.</p>
+    </header>
+
+    <section class="section">
+      <h2>Key take — three levels</h2>
+      <table>
+        <tr><th>Level</th><th>API</th><th>Lab</th></tr>
+        <tr><td><strong>Search</strong></td><td><code>retriever = vector_store.as_retriever(search_kwargs={"k": 3})</code></td><td>30</td></tr>
+        <tr><td><strong>RAG chain</strong></td><td><code>RetrievalQA.from_chain_type(llm, retriever=..., chain_type="stuff")</code></td><td>31</td></tr>
+        <tr><td><strong>Parent retriever</strong></td><td>Small chunks search → large parent <code>Document</code> returned</td><td>32</td></tr>
+      </table>
+      <p style="color:var(--muted);font-size:.88rem;">Memory hook: <strong>retriever finds</strong> · <strong>RetrievalQA finds + answers</strong> · <code>langchain_classic.chains</code> for QA.</p>
+    </section>
+
+    <section class="section">
+      <h2>Job (help-desk story)</h2>
+      <p>Research librarian + writer. Librarian (retriever) pulls three relevant passages; writer (LLM) answers only from that packet — not from memory of the whole internet.</p>
+    </section>
+
+    <section class="section">
+      <h2>Flow (RetrievalQA — Lab 31)</h2>
+      <div class="flow-diagram">
+<pre>Question: "what is this paper discussing?"
+        │
+        ▼
+   retriever.invoke(question)  →  top-k Document chunks
+        │
+        ▼
+   stuff chunks into prompt + LLM
+        │
+        ▼
+   answer str (grounded in PDF)</pre>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Full labs</h2>
+      <pre># Lab 30 — retriever only
+retriever = vector_store.as_retriever(search_kwargs={"k": 3})
+docs = retriever.invoke("What is LangChain?")
+
+# Lab 31 — RetrievalQA
+from langchain_classic.chains import RetrievalQA
+qa = RetrievalQA.from_chain_type(
+    llm=make_watsonx_llm(),
+    retriever=vector_store.as_retriever(),
+    chain_type="stuff",
+)
+qa.invoke("what is this paper discussing?")
+
+# Lab 32 — ParentDocumentRetriever (search small, return big parent)</pre>
+      <p style="color:var(--muted);font-size:.88rem;">Scripts: <code>30.exercise.retriever.py</code> · <code>31.rag.retrieval_qa.py</code> · <code>32.parent_document_retriever.py</code></p>
+    </section>
+
+    <section class="section">
+      <h2>Confused with</h2>
+      <table class="confusion-matrix">
+        <tr><th>Neighbor</th><th>RAG</th><th>Neighbor does</th></tr>
+        <tr><td><a href="15-chroma-vectorstore.html">similarity_search</a></td><td>Retriever + optional QA chain</td><td>Raw search hits only</td></tr>
+        <tr><td><a href="03-lcel-pipe.html">LCEL pipe</a></td><td>RetrievalQA classic API</td><td>Manual <code>prompt | llm | parser</code></td></tr>
+        <tr><td><a href="19-agents-tools.html">Agent</a></td><td>Fixed retrieve-then-answer</td><td>LLM picks tools in a loop</td></tr>
+      </table>
+    </section>
+
+    <div class="trap-box">
+      <h3>Traps</h3>
+      <ul>
+        <li><strong>Wrong PDF source</strong> — Lab 31 uses LangChain paper PDF; random URL → weak answers.</li>
+        <li><strong><code>langchain_classic</code></strong> — <code>RetrievalQA</code> import path in 1.x venv, not bare <code>langchain.chains</code>.</li>
+        <li><strong>Retriever without ingest</strong> — must build vector store first (29 → 30 → 31).</li>
+        <li><strong>Parent vs flat retriever</strong> — Lab 32 QA section may use flat Chroma; parent retriever is a separate pattern in same file.</li>
+      </ul>
+    </div>
+
+    <section class="section">
+      <h2>Recall drills</h2>
+      <details class="recall-drill">
+        <summary>What does RAG stand for in practice here?</summary>
+        <div class="answer">Retrieve chunks → augment prompt with them → generate answer with LLM.</div>
+      </details>
+      <details class="recall-drill">
+        <summary>Lab 30 vs 31?</summary>
+        <div class="answer">30: retriever returns documents only. 31: <code>RetrievalQA</code> returns an answer string.</div>
+      </details>
+      <details class="recall-drill">
+        <summary>ParentDocumentRetriever idea in one line?</summary>
+        <div class="answer">Index small child chunks for search; return larger parent chunk for richer LLM context.</div>
+      </details>
+    </section>
+
+    <section class="section">
+      <h2>Links</h2>
+      <p><a href="15-chroma-vectorstore.html">15 Chroma</a> · Next: <a href="17-memory.html">17 Memory</a> · Labs 30–32</p>
+    </section>
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>19 Agents + tools | LangChain Reference</title>
+  <link rel="stylesheet" href="../reference.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <h2>Modules</h2>
+    <ul>
+      <li><a href="../index.html">← LangChain hub</a></li>
+      <li><a href="01-prompt-template.html">01 PromptTemplate</a></li>
+      <li><a href="02-watsonx-llm.html">02 Watsonx LLM</a></li>
+      <li><a href="03-lcel-pipe.html">03 LCEL pipe</a></li>
+      <li><a href="04-output-parser.html">04 Output parser</a></li>
+      <li><a href="05-runnable-lambda.html">05 RunnableLambda</a></li>
+      <li><a href="06-model-inference.html">06 ModelInference</a></li>
+      <li><a href="07-watson-helpers.html">07 Watson helpers</a></li>
+      <li><a href="08-chat-messages.html">08 Chat messages</a></li>
+      <li><a href="09-gen-params.html">09 GenParams</a></li>
+      <li><a href="10-chat-prompt-template.html">10 ChatPromptTemplate</a></li>
+      <li><a href="11-json-output-parser.html">11 JsonOutputParser</a></li>
+      <li><a href="12-document-loaders.html">12 Document + loaders</a></li>
+      <li><a href="13-text-splitters.html">13 Text splitters</a></li>
+      <li><a href="14-embeddings.html">14 Embeddings</a></li>
+      <li><a href="15-chroma-vectorstore.html">15 Chroma</a></li>
+      <li><a href="16-retrievers-rag.html">16 Retrievers + RAG</a></li>
+      <li><a href="17-memory.html">17 Memory</a></li>
+      <li><a href="18-classic-chains.html">18 Classic chains</a></li>
+      <li><a href="19-agents-tools.html" class="active">19 Agents</a></li>
+    </ul>
+  </aside>
+  <main class="main">
+    <nav class="breadcrumbs"><a href="../../index.html">Reference</a> › <a href="../index.html">LangChain</a> › <span>19 Agents</span></nav>
+    <header class="hero">
+      <span class="badge depth-deep">Module 19 · depth pass 1 · Lab 35</span>
+      <h1>Agents + tools</h1>
+      <p><strong>Chain</strong> = fixed steps you wire. <strong>Agent</strong> = LLM picks tools in a loop — Thought → Action → Observation (ReAct).</p>
+    </header>
+
+    <section class="section">
+      <h2>Key take</h2>
+      <table>
+        <tr><th>Piece</th><th>Role</th></tr>
+        <tr><td><code>Tool</code> / <code>@tool</code></td><td>Named function the agent can call (calculator, weather, format text)</td></tr>
+        <tr><td>ReAct prompt</td><td>Teaches Thought / Action / Action Input / Observation format</td></tr>
+        <tr><td><code>create_react_agent</code></td><td>LLM + tools + prompt → agent Runnable</td></tr>
+        <tr><td><code>AgentExecutor</code></td><td>Runs the loop until final answer or max iterations</td></tr>
+      </table>
+      <p style="color:var(--muted);font-size:.88rem;">Memory hook: <strong>chain = fixed</strong> · <strong>agent = LLM chooses tools</strong>.</p>
+    </section>
+
+    <section class="section">
+      <h2>Job (help-desk story)</h2>
+      <p>Generalist with a tool belt. You do not script “step 1 calculator, step 2 weather.” The agent reads the question, picks a tool, reads the result, repeats until done.</p>
+    </section>
+
+    <section class="section">
+      <h2>Flow (ReAct loop)</h2>
+      <div class="flow-diagram">
+<pre>User question
+        │
+        ▼
+   Thought: "I need math"
+   Action: Python_REPL
+   Action Input: "1234 * 5678"
+        │
+        ▼
+   Observation: 7006652
+        │
+        ▼
+   Thought: "I have the answer"
+   Final Answer: ...</pre>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Full lab (35)</h2>
+      <pre>from langchain_classic.agents import AgentExecutor, create_react_agent
+from langchain_classic.tools import tool
+from langchain_experimental.utilities import PythonREPL
+from watson_llm import make_watsonx_llm
+
+python_repl = PythonREPL()
+repl_tool = Tool(name="Python_REPL", func=python_repl.run, description="...")
+
+@tool
+def search_weather(city: str) -> str:
+    """Look up weather for a city."""
+    ...
+
+agent = create_react_agent(llm, tools, react_prompt)
+executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
+executor.invoke({"input": "What is 1234 * 5678?"})</pre>
+      <p style="color:var(--muted);font-size:.88rem;">Script: <code>35.agents.py</code> · Exercise 7: calculator + <code>format_text</code> tools</p>
+    </section>
+
+    <section class="section">
+      <h2>Confused with</h2>
+      <table class="confusion-matrix">
+        <tr><th>Neighbor</th><th>Agent</th><th>Neighbor does</th></tr>
+        <tr><td><a href="03-lcel-pipe.html">LCEL pipe</a></td><td>Dynamic tool loop</td><td>Fixed <code>prompt | llm | parser</code></td></tr>
+        <tr><td><a href="18-classic-chains.html">SequentialChain</a></td><td>Model picks next action</td><td>You name chains and order at build time</td></tr>
+        <tr><td><a href="16-retrievers-rag.html">RetrievalQA</a></td><td>General tools (math, APIs)</td><td>One retrieve + answer pattern for docs</td></tr>
+        <tr><td><a href="05-runnable-lambda.html">RunnableLambda</a></td><td>Tool = external capability</td><td>Lambda = inline function in a pipe</td></tr>
+      </table>
+    </section>
+
+    <div class="trap-box">
+      <h3>Traps</h3>
+      <ul>
+        <li><strong>Agent when a chain suffices</strong> — slower, less predictable; use pipes for fixed workflows.</li>
+        <li><strong>Bad tool descriptions</strong> — agent picks wrong tool; description is the API doc for the LLM.</li>
+        <li><strong><code>langchain_experimental</code></strong> — <code>PythonREPL</code> runs real code — sandbox awareness.</li>
+        <li><strong><code>langchain_classic.agents</code></strong> — import path in your 1.x venv.</li>
+      </ul>
+    </div>
+
+    <section class="section">
+      <h2>Recall drills</h2>
+      <details class="recall-drill">
+        <summary>Chain vs agent in one line?</summary>
+        <div class="answer">Chain: you wire steps. Agent: LLM chooses tools in a loop until done.</div>
+      </details>
+      <details class="recall-drill">
+        <summary>What is ReAct?</summary>
+        <div class="answer">Reason + Act — alternate Thought, Action (tool call), Observation until Final Answer.</div>
+      </details>
+      <details class="recall-drill">
+        <summary>Two building blocks after tools + prompt?</summary>
+        <div class="answer"><code>create_react_agent</code> + <code>AgentExecutor</code>.</div>
+      </details>
+    </section>
+
+    <section class="section">
+      <h2>Links</h2>
+      <p><a href="18-classic-chains.html">18 Classic chains</a> · <a href="03-lcel-pipe.html">03 LCEL</a> · Lab 35 · <a href="../index.html">Hub — full book 01–19</a></p>
+    </section>
+  </main>
+</div>
+</body>
+</html>

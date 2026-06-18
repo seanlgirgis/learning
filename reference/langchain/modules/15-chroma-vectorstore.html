@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>15 Chroma vector store | LangChain Reference</title>
+  <link rel="stylesheet" href="../reference.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <h2>Modules</h2>
+    <ul>
+      <li><a href="../index.html">← LangChain hub</a></li>
+      <li><a href="01-prompt-template.html">01 PromptTemplate</a></li>
+      <li><a href="02-watsonx-llm.html">02 Watsonx LLM</a></li>
+      <li><a href="03-lcel-pipe.html">03 LCEL pipe</a></li>
+      <li><a href="04-output-parser.html">04 Output parser</a></li>
+      <li><a href="05-runnable-lambda.html">05 RunnableLambda</a></li>
+      <li><a href="06-model-inference.html">06 ModelInference</a></li>
+      <li><a href="07-watson-helpers.html">07 Watson helpers</a></li>
+      <li><a href="08-chat-messages.html">08 Chat messages</a></li>
+      <li><a href="09-gen-params.html">09 GenParams</a></li>
+      <li><a href="10-chat-prompt-template.html">10 ChatPromptTemplate</a></li>
+      <li><a href="11-json-output-parser.html">11 JsonOutputParser</a></li>
+      <li><a href="12-document-loaders.html">12 Document + loaders</a></li>
+      <li><a href="13-text-splitters.html">13 Text splitters</a></li>
+      <li><a href="14-embeddings.html">14 Embeddings</a></li>
+      <li><a href="15-chroma-vectorstore.html" class="active">15 Chroma</a></li>
+      <li><a href="16-retrievers-rag.html">16 Retrievers + RAG</a></li>
+      <li><a href="17-memory.html">17 Memory</a></li>
+      <li><a href="18-classic-chains.html">18 Classic chains</a></li>
+      <li><a href="19-agents-tools.html">19 Agents</a></li>
+    </ul>
+  </aside>
+  <main class="main">
+    <nav class="breadcrumbs"><a href="../../index.html">Reference</a> › <a href="../index.html">LangChain</a> › <span>15 Chroma</span></nav>
+    <header class="hero">
+      <span class="badge depth-deep">Module 15 · depth pass 1 · Lab 29</span>
+      <h1>Chroma vector store</h1>
+      <p>Embed chunks, store vectors, search by meaning — <code>similarity_search(query, k=3)</code> returns the closest <code>Document</code>s.</p>
+    </header>
+
+    <section class="section">
+      <h2>Key take</h2>
+      <pre>docsearch = Chroma.from_documents(chunks, embedding_model)
+hits = docsearch.similarity_search("What is LangChain?", k=3)</pre>
+      <p style="color:var(--muted);font-size:.88rem;">Memory hook: <strong>from_documents</strong> (build + store) · <strong>similarity_search</strong> (query → top-k chunks). Full ingest: load → split → embed → Chroma.</p>
+    </section>
+
+    <section class="section">
+      <h2>Job (help-desk story)</h2>
+      <p>Filing cabinet indexed by meaning. Clerk (<a href="14-embeddings.html">embeddings</a>) tags each chunk; you ask a question and get the three closest folders — not alphabetical lookup.</p>
+    </section>
+
+    <section class="section">
+      <h2>RAG ingest pipeline (Labs 29+)</h2>
+      <ol class="lifecycle-steps">
+        <li><code>WebBaseLoader</code> / <code>PyPDFLoader</code> → documents (<a href="12-document-loaders.html">12</a>)</li>
+        <li><code>RecursiveCharacterTextSplitter</code> → chunks (<a href="13-text-splitters.html">13</a>)</li>
+        <li><code>make_watsonx_embeddings()</code> (<a href="14-embeddings.html">14</a>)</li>
+        <li><code>Chroma.from_documents(chunks, embedding_model)</code> — this module</li>
+        <li><code>similarity_search</code> or <code>as_retriever()</code> (<a href="16-retrievers-rag.html">16</a>)</li>
+      </ol>
+    </section>
+
+    <section class="section">
+      <h2>Full lab (29)</h2>
+      <pre>from langchain_community.vectorstores import Chroma
+from watson_llm import make_watsonx_embeddings
+
+vector_store = Chroma.from_documents(chunks, embedding_model)
+hits = vector_store.similarity_search(query, k=3)
+print(hits[0].page_content[:200])</pre>
+      <p style="color:var(--muted);font-size:.88rem;">Script: <code>29.chroma.store_search.py</code></p>
+    </section>
+
+    <section class="section">
+      <h2>Confused with</h2>
+      <table class="confusion-matrix">
+        <tr><th>Neighbor</th><th>Chroma</th><th>Neighbor does</th></tr>
+        <tr><td><code>as_retriever()</code></td><td>Low-level search API</td><td>Runnable wrapper — <code>retriever.invoke(query)</code> (Lab 30)</td></tr>
+        <tr><td><a href="16-retrievers-rag.html">RetrievalQA</a></td><td>Find chunks</td><td>Find chunks + LLM answer in one chain</td></tr>
+      </table>
+    </section>
+
+    <div class="trap-box">
+      <h3>Traps</h3>
+      <ul>
+        <li><strong>Empty chunks</strong> — load/split failed → Chroma builds but search returns garbage.</li>
+        <li><strong><code>k</code> too small</strong> — miss context; too large — stuff too much into later RAG prompt.</li>
+        <li><strong>Needs network + env</strong> — Lab 29 loads web URL and calls Watsonx embeddings.</li>
+      </ul>
+    </div>
+
+    <section class="section">
+      <h2>Recall drills</h2>
+      <details class="recall-drill">
+        <summary>One-liner to build the store from chunks?</summary>
+        <div class="answer"><code>Chroma.from_documents(chunks, embedding_model)</code>.</div>
+      </details>
+      <details class="recall-drill">
+        <summary>What does <code>similarity_search</code> return?</summary>
+        <div class="answer"><code>list[Document]</code> — top-k closest chunks by embedding distance.</div>
+      </details>
+      <details class="recall-drill">
+        <summary>Steps before Chroma in Lab 29?</summary>
+        <div class="answer">Load web → split → embed model → <code>from_documents</code>.</div>
+      </details>
+    </section>
+
+    <section class="section">
+      <h2>Links</h2>
+      <p>Prev: <a href="14-embeddings.html">14</a> · Next: <a href="16-retrievers-rag.html">16 Retrievers + RAG</a> · Lab 29</p>
+    </section>
+  </main>
+</div>
+</body>
+</html>

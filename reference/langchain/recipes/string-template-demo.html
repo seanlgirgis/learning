@@ -31,33 +31,115 @@
     </ul>
   </aside>
   <main class="main">
-    <nav class="breadcrumbs"><a href="../index.html">LangChain</a> › <a href="index.html">Recipes</a> › <span>String template</span></nav>
+    <nav class="breadcrumbs"><a href="../../index.html">Reference</a> › <a href="../index.html">LangChain</a> › <a href="index.html">Recipes</a> › <span>String template</span></nav>
     <header class="hero">
-      <span class="badge">Lab 19</span>
+      <span class="badge depth-deep">Recipe · depth pass 1</span>
       <h1>String PromptTemplate + pipe</h1>
-      <p>Notebook “String prompt templates” — <code>{adjective}</code> and <code>{topic}</code> holes.</p>
+      <p>Lab 19 — <code>{adjective}</code> and <code>{topic}</code> holes filled from a dict, then sent through <code>prompt | llm</code>.</p>
     </header>
 
     <section class="section">
-      <h2>Code</h2>
+      <h2>1 — Problem</h2>
+      <p>You want a reusable joke prompt with two variable slots — adjective and topic — without f-strings scattered through the code. LangChain’s string <code>PromptTemplate</code> plus LCEL pipe is the minimal pattern before chat templates.</p>
+      <p><strong>Not this recipe:</strong> single-hole summarize (<a href="summarize.html">Lab 09</a>), role-based <code>ChatPromptTemplate</code> (<a href="chat-prompt-template.html">Lab 20</a>), or raw string <code>invoke</code> (<a href="langchain-llm-plug.html">Lab 16</a>).</p>
+    </section>
+
+    <section class="section">
+      <h2>2 — Prerequisites</h2>
+      <table>
+        <tr><th>Need</th><th>Module</th><th>Check</th></tr>
+        <tr><td><code>PromptTemplate</code></td><td><a href="../modules/01-prompt-template.html">01</a></td><td>Holes <code>{adjective}</code>, <code>{topic}</code></td></tr>
+        <tr><td>Pipe wiring</td><td><a href="../modules/03-lcel-pipe.html">03</a></td><td><code>prompt | llama_llm</code></td></tr>
+        <tr><td><code>make_watsonx_llm()</code></td><td><a href="../modules/07-watson-helpers.html">07</a></td><td>Not <code>make_llm</code> or <code>model</code></td></tr>
+        <tr><td><code>MAX_NEW_TOKENS</code></td><td><a href="../modules/09-gen-params.html">09</a></td><td><code>{GenParams.MAX_NEW_TOKENS: 80}</code></td></tr>
+      </table>
+    </section>
+
+    <section class="section">
+      <h2>3 — Wiring diagram</h2>
+      <div class="flow-diagram">
+<pre>{"adjective": "funny", "topic": "cats"}
+       → PromptTemplate("Tell me one {adjective} joke about {topic}")
+       → make_watsonx_llm({MAX_NEW_TOKENS: 80})
+       → str printed</pre>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>4 — Script</h2>
       <pre>from langchain_core.prompts import PromptTemplate
-from langchain_helper import make_llm, GenParams
+from watson_llm import GenParams, make_watsonx_llm
 
 prompt = PromptTemplate.from_template("Tell me one {adjective} joke about {topic}")
 input_ = {"adjective": "funny", "topic": "cats"}
 
-llama_llm = make_llm({GenParams.MAX_NEW_TOKENS: 80})
+llama_llm = make_watsonx_llm({GenParams.MAX_NEW_TOKENS: 80})
 chain = prompt | llama_llm
 
 print(chain.invoke(input_))</pre>
+      <p style="color:var(--muted);font-size:.88rem;">Playground: <code>19.params.py</code></p>
+      <p style="color:var(--muted);font-size:.88rem;">Notebook step: <code>print(prompt.invoke(input_))</code> — see filled string before the LLM runs.</p>
     </section>
 
     <section class="section">
-      <h2>Notebook step you can add</h2>
-      <pre>print(prompt.invoke(input_))  # see filled string before LLM</pre>
+      <h2>5 — Critical lines</h2>
+      <table>
+        <tr><th>Line</th><th>Why it matters</th><th>If you change it wrong…</th></tr>
+        <tr><td><code>from_template("…{adjective}…{topic}")</code></td><td>Declares both holes</td><td>Missing <code>{topic}</code> → unused key or format error</td></tr>
+        <tr><td><code>input_</code> dict keys</td><td>Must match hole names</td><td><code>KeyError</code> on invoke</td></tr>
+        <tr><td><code>make_watsonx_llm({…})</code></td><td>Param override at build</td><td><code>make_llm()</code> → NameError</td></tr>
+        <tr><td><code>prompt | llama_llm</code></td><td>Template formats, then LLM runs</td><td>Reversing order → type error</td></tr>
+      </table>
     </section>
 
-    <p><a href="../modules/01-prompt-template.html">Module 01</a> · <a href="../modules/03-lcel-pipe.html">Module 03</a></p>
+    <section class="section">
+      <h2>6 — Variants</h2>
+      <ul>
+        <li><strong>Preview formatted prompt</strong> — <code>prompt.invoke(input_)</code> before adding <code>| llm</code>.</li>
+        <li><strong>Add parser</strong> — Append <code>StrOutputParser()</code> for stable <code>str</code> → <a href="summarize.html">summarize recipe</a>.</li>
+        <li><strong>Lower temperature</strong> — <code>make_watsonx_llm({GenParams.TEMPERATURE: 0.1, …})</code> → <a href="temperature-compare.html">temperature compare</a>.</li>
+        <li><strong>Chat roles</strong> — Swap to <code>ChatPromptTemplate</code> → <a href="chat-prompt-template.html">Lab 20</a>.</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>7 — Debug</h2>
+      <table>
+        <tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr>
+        <tr><td><code>KeyError</code> on invoke</td><td>Dict key ≠ template hole</td><td>Align <code>adjective</code> / <code>topic</code> names</td></tr>
+        <tr><td><code>NameError: make_llm</code></td><td>Old helper name</td><td>Use <code>make_watsonx_llm</code></td></tr>
+        <tr><td>Literal <code>{adjective}</code> in output</td><td>Never invoked chain</td><td>Call <code>chain.invoke(input_)</code></td></tr>
+        <tr><td>Type error in pipe</td><td><code>ModelInference</code> in chain</td><td>Swap to <code>make_watsonx_llm()</code></td></tr>
+      </table>
+    </section>
+
+    <div class="trap-box">
+      <h3>Traps</h3>
+      <ul>
+        <li><strong><code>make_llm()</code></strong> — Playground uses <code>make_watsonx_llm()</code> only.</li>
+        <li><strong><code>prompt.format(…)</code> only</strong> — Formats text but never calls the model. Need <code>chain.invoke</code>.</li>
+        <li><strong>Wrong hole name</strong> — Notebook uses <code>{topic}</code>; older drafts used <code>{content}</code>. Match the template exactly.</li>
+      </ul>
+    </div>
+
+    <section class="section">
+      <h2>Rebuild from memory</h2>
+      <div class="rebuild-steps">
+        <p>Close this page. Write the script from these steps only:</p>
+        <ol>
+          <li>Import <code>PromptTemplate</code>, <code>GenParams</code>, <code>make_watsonx_llm</code>.</li>
+          <li><code>PromptTemplate.from_template</code> with <code>{adjective}</code> and <code>{topic}</code>.</li>
+          <li>Build <code>input_ = {"adjective": "funny", "topic": "cats"}</code>.</li>
+          <li><code>llama_llm = make_watsonx_llm({GenParams.MAX_NEW_TOKENS: 80})</code>.</li>
+          <li>Wire <code>chain = prompt | llama_llm</code> and <code>print(chain.invoke(input_))</code>.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Modules</h2>
+      <p><a href="../modules/01-prompt-template.html">01</a> · <a href="../modules/03-lcel-pipe.html">03</a> · <a href="../modules/09-gen-params.html">09</a> · <a href="../modules/07-watson-helpers.html">07</a></p>
+    </section>
   </main>
 </div>
 </body>

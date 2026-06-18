@@ -1,14 +1,14 @@
-timestamp: 2026-06-16T00:33:04.516672+00:00
-source topic path: topics/crs_001_lcel_workflow.studybubble.json
-output HTML path: outputs/crs_001_lcel_workflow.html
+timestamp: 2026-06-18T18:52:30.289867+00:00
+source topic path: topics/crs_001_watson_two_routes.studybubble.json
+output HTML path: outputs/crs_001_watson_two_routes.html
 mode: single-file
-topic id: crs_001_lcel_workflow
-topic title: CRS 001 — LCEL Code Workflow
-node count: 11
+topic id: crs_001_watson_two_routes
+topic title: CRS 001 — Watson Two Routes
+node count: 10
 link count: 10
 path count: 3
 validation result: PASS
-generated HTML byte size: 82430
+generated HTML byte size: 81193
 manual smoke test steps:
 1. Open outputs/single_file/tiny_capacity_demo.html directly from File Explorer.
 2. Confirm title and subtitle render.

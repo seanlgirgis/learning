@@ -31,51 +31,128 @@
     </ul>
   </aside>
   <main class="main">
-    <nav class="breadcrumbs"><a href="../index.html">LangChain</a> › <a href="index.html">Recipes</a> › <span>Chat messages</span></nav>
+    <nav class="breadcrumbs"><a href="../../index.html">Reference</a> › <a href="../index.html">LangChain</a> › <a href="index.html">Recipes</a> › <span>Chat messages</span></nav>
     <header class="hero">
-      <span class="badge">Lab 17</span>
+      <span class="badge depth-deep">Recipe · depth pass 1</span>
       <h1>Chat messages invoke</h1>
-      <p><code>SystemMessage</code> + <code>HumanMessage</code> + optional <code>AIMessage</code> → <code>llama_llm.invoke([...])</code></p>
+      <p>Lab 17 — <code>SystemMessage</code> + <code>HumanMessage</code> + optional <code>AIMessage</code> list → <code>make_watsonx_llm().invoke([…])</code>.</p>
     </header>
 
     <section class="section">
-      <h2>Setup</h2>
-      <pre>from langchain_helper import make_llm, GenParams
+      <h2>1 — Problem</h2>
+      <p>A chatbot needs role-tagged turns: system instructions, user questions, and optional fake prior assistant replies. Passing one bare string cannot express “you are a book recommender” separately from the user’s question.</p>
+      <p><strong>Not this recipe:</strong> persistent memory (Lab 33), <code>ChatPromptTemplate</code> pipes (<a href="chat-prompt-template.html">Lab 20</a>), or plain string <code>invoke</code> (<a href="langchain-llm-plug.html">Lab 16</a>).</p>
+    </section>
+
+    <section class="section">
+      <h2>2 — Prerequisites</h2>
+      <table>
+        <tr><th>Need</th><th>Module</th><th>Check</th></tr>
+        <tr><td><code>make_watsonx_llm()</code></td><td><a href="../modules/07-watson-helpers.html">07</a></td><td>Lab 16 invoke works</td></tr>
+        <tr><td>Message classes</td><td><a href="../modules/08-chat-messages.html">08</a></td><td><code>SystemMessage</code>, <code>HumanMessage</code>, <code>AIMessage</code></td></tr>
+        <tr><td><code>MAX_NEW_TOKENS</code> cap</td><td><a href="../modules/09-gen-params.html">09</a></td><td>Short answers: <code>{GenParams.MAX_NEW_TOKENS: 80}</code></td></tr>
+        <tr><td>List input to <code>invoke</code></td><td><a href="../modules/02-watsonx-llm.html">02</a></td><td>Order = conversation order</td></tr>
+      </table>
+    </section>
+
+    <section class="section">
+      <h2>3 — Wiring diagram</h2>
+      <div class="flow-diagram">
+<pre>[SystemMessage, HumanMessage, AIMessage?, HumanMessage?]
+       → make_watsonx_llm({MAX_NEW_TOKENS: 80})
+       → llama_llm.invoke([...])
+       → str printed</pre>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>4 — Script</h2>
+      <pre>from watson_llm import GenParams, make_watsonx_llm
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
 
-llama_llm = make_llm({GenParams.MAX_NEW_TOKENS: 80})</pre>
-    </section>
+llama_llm = make_watsonx_llm({GenParams.MAX_NEW_TOKENS: 80})
 
-    <section class="section">
-      <h2>Example 1 — system + human</h2>
-      <pre>msg = llama_llm.invoke([
-    SystemMessage(content="Book recommender. One short sentence."),
+# Example 1 — system + human
+msg = llama_llm.invoke([
+    SystemMessage(content="You are a helpful AI bot that assists a user in choosing the perfect book to read in one short sentence"),
     HumanMessage(content="I enjoy mystery novels, what should I read?"),
 ])
-print(msg)</pre>
-    </section>
+print(msg)
 
-    <section class="section">
-      <h2>Example 2 — include AIMessage (fake prior turn)</h2>
-      <pre>msg = llama_llm.invoke([
-    SystemMessage(content="Fitness bot. One short sentence."),
-    HumanMessage(content="I like HIIT, what should I do?"),
-    AIMessage(content="Try a CrossFit class."),
+# Example 2 — include AIMessage (fake prior turn)
+msg = llama_llm.invoke([
+    SystemMessage(content="You are a supportive AI bot that suggests fitness activities to a user in one short sentence"),
+    HumanMessage(content="I like high-intensity workouts, what should I do?"),
+    AIMessage(content="You should try a CrossFit class"),
     HumanMessage(content="How often should I attend?"),
 ])
-print(msg)</pre>
+print(msg)
+
+# Example 3 — human only
+print(llama_llm.invoke([
+    HumanMessage(content="What month follows June?"),
+]))</pre>
+      <p style="color:var(--muted);font-size:.88rem;">Playground: <code>17.chat_messages.invoke_test.py</code></p>
     </section>
 
     <section class="section">
-      <h2>Example 3 — human only</h2>
-      <pre>print(llama_llm.invoke([
-    HumanMessage(content="What month follows June?"),
-]))</pre>
+      <h2>5 — Critical lines</h2>
+      <table>
+        <tr><th>Line</th><th>Why it matters</th><th>If you change it wrong…</th></tr>
+        <tr><td><code>invoke([...])</code> list</td><td>Chat API expects ordered turns</td><td>Single string loses role separation</td></tr>
+        <tr><td><code>SystemMessage</code> first</td><td>Sets behavior before user text</td><td>Model may ignore instructions if buried later</td></tr>
+        <tr><td><code>AIMessage</code> mid-list</td><td>Simulates prior assistant reply</td><td>Not real memory — you fabricate the turn</td></tr>
+        <tr><td><code>MAX_NEW_TOKENS: 80</code></td><td>Keeps demo output short</td><td>Omit → longer rambling answers</td></tr>
+      </table>
     </section>
 
-    <div class="callout"><strong>Not memory:</strong> each call is fresh unless you put history in the list. For pipes with roles use <a href="chat-prompt-template.html">Lab 20</a>.</div>
+    <section class="section">
+      <h2>6 — Variants</h2>
+      <ul>
+        <li><strong>Human only</strong> — Single <code>HumanMessage</code> when no system persona needed (Example 3).</li>
+        <li><strong>Multi-turn fake history</strong> — Alternate <code>HumanMessage</code> / <code>AIMessage</code> before the final user question (Example 2).</li>
+        <li><strong>Template + pipe</strong> — Roles in <code>ChatPromptTemplate</code> → <a href="chat-prompt-template.html">chat template recipe</a> (Lab 20).</li>
+      </ul>
+    </section>
 
-    <p><a href="../modules/08-chat-messages.html">Module 08</a></p>
+    <section class="section">
+      <h2>7 — Debug</h2>
+      <table>
+        <tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr>
+        <tr><td>Model ignores system prompt</td><td>System message missing or last</td><td>Put <code>SystemMessage</code> first in list</td></tr>
+        <tr><td>Verbose answers</td><td>Default token limit high</td><td>Pass <code>GenParams.MAX_NEW_TOKENS</code> in factory</td></tr>
+        <tr><td>“Forgets” prior question</td><td>Expected automatic memory</td><td>Include history in the list or use Lab 33 memory</td></tr>
+        <tr><td>Validation error on invoke</td><td>Wrong message type</td><td>Use <code>langchain_core.messages</code> classes</td></tr>
+      </table>
+    </section>
+
+    <div class="trap-box">
+      <h3>Traps</h3>
+      <ul>
+        <li><strong>Thinking this is memory</strong> — Each <code>invoke</code> is stateless unless you pass prior turns in the list.</li>
+        <li><strong><code>AIMessage</code> from the model</strong> — Example 2 uses a hand-written fake reply to set context, not a stored prior call.</li>
+        <li><strong>Mixing string and list invoke</strong> — Same <code>llm</code> accepts both, but list invoke is the chat-message pattern.</li>
+      </ul>
+    </div>
+
+    <section class="section">
+      <h2>Rebuild from memory</h2>
+      <div class="rebuild-steps">
+        <p>Close this page. Write the script from these steps only:</p>
+        <ol>
+          <li>Import <code>GenParams</code>, <code>make_watsonx_llm</code>, and message classes.</li>
+          <li>Build <code>llama_llm = make_watsonx_llm({GenParams.MAX_NEW_TOKENS: 80})</code>.</li>
+          <li>Call <code>invoke</code> with a list: <code>SystemMessage</code> then <code>HumanMessage</code>.</li>
+          <li>Add a second example with <code>AIMessage</code> between human turns.</li>
+          <li>Try human-only list with one <code>HumanMessage</code>.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Modules</h2>
+      <p><a href="../modules/08-chat-messages.html">08</a> · <a href="../modules/02-watsonx-llm.html">02</a> · <a href="../modules/09-gen-params.html">09</a> · <a href="../modules/07-watson-helpers.html">07</a></p>
+    </section>
   </main>
 </div>
 </body>

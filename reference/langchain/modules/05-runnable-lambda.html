@@ -23,47 +23,280 @@
       <li><a href="09-gen-params.html">09 GenParams</a></li>
       <li><a href="10-chat-prompt-template.html">10 ChatPromptTemplate</a></li>
       <li><a href="11-json-output-parser.html">11 JsonOutputParser</a></li>
+      <li><a href="12-document-loaders.html">12 Document + loaders</a></li>
+      <li><a href="13-text-splitters.html">13 Text splitters</a></li>
+      <li><a href="14-embeddings.html">14 Embeddings</a></li>
+      <li><a href="15-chroma-vectorstore.html">15 Chroma</a></li>
+      <li><a href="16-retrievers-rag.html">16 Retrievers + RAG</a></li>
+      <li><a href="17-memory.html">17 Memory</a></li>
+      <li><a href="18-classic-chains.html">18 Classic chains</a></li>
+      <li><a href="19-agents-tools.html">19 Agents</a></li>
     </ul>
   </aside>
   <main class="main">
     <nav class="breadcrumbs"><a href="../../index.html">Reference</a> › <a href="../index.html">LangChain</a> › <span>05 RunnableLambda</span></nav>
     <header class="hero">
-      <span class="badge">Module 05 · optional</span>
+      <span class="badge depth-deep">Module 05 · depth pass 1 · optional step</span>
       <h1>RunnableLambda</h1>
-      <p>Wrap any Python function as a pipe step — Coursera uses it for <code>.format()</code>.</p>
+      <p>Wrap any Python function as a pipe step — Coursera’s way to call <code>prompt.format(**variables)</code> inside LCEL.</p>
     </header>
 
     <section class="section">
-      <h2>When to use</h2>
-      <p>Custom logic between steps. For plain template fill-in, <code>prompt | llm</code> is enough — lambda is optional.</p>
+      <h2>Job (help-desk story)</h2>
+      <p>Custom prep desk before the specialist. Something the template object cannot do alone — reshape the invoke dict, strip text, merge fields — runs as step 1 instead of <code>PromptTemplate</code>.</p>
     </section>
 
     <section class="section">
-      <h2>Object &amp; import</h2>
-      <pre>from langchain_core.runnables import RunnableLambda</pre>
+      <h2>Problem without it</h2>
+      <ul>
+        <li>Coursera notebooks teach <code>def format_prompt(variables): return prompt.format(**variables)</code> — you need a Runnable wrapper to put that in a pipe.</li>
+        <li>Some transforms are awkward in template strings (heavy string ops, conditional logic).</li>
+        <li>Without lambda, you might format outside the chain and break the single <code>invoke(dict)</code> pattern.</li>
+      </ul>
+      <p><strong>But:</strong> for plain hole-filling, <code>PromptTemplate</code> is already a Runnable — lambda is redundant. See direct equivalent below.</p>
     </section>
 
     <section class="section">
-      <h2>Coursera pattern</h2>
-      <pre>def format_prompt(variables):
-    return prompt.format(**variables)
-
-chain = RunnableLambda(format_prompt) | llm | StrOutputParser()
-chain.invoke({"content": passage})</pre>
-      <p><code>variables</code> = the dict from <code>invoke</code>. <code>**variables</code> unpacks to keyword args for <code>format</code>.</p>
+      <h2>Legitimate technical uses (not just Coursera)</h2>
+      <p>Coursera’s <code>format(**variables)</code> wrapper is <strong>teaching habit</strong> from pre-LCEL notebooks. In 1.x, <code>prompt | llm</code> replaces it. RunnableLambda still matters when step 1 (or any step) must be <strong>real Python</strong>:</p>
+      <table>
+        <tr><th>Use case</th><th>Why template alone fails</th><th>Sketch</th></tr>
+        <tr>
+          <td>Normalize / clean input</td>
+          <td>Strip whitespace, truncate to token budget, regex scrub</td>
+          <td><code>lambda d: prompt.format(content=d["content"].strip()[:4000])</code></td>
+        </tr>
+        <tr>
+          <td>Reshape invoke dict</td>
+          <td>API gives <code>{"q": ...}</code> but template expects <code>{question}</code></td>
+          <td><code>lambda d: prompt.format(question=d["q"])</code></td>
+        </tr>
+        <tr>
+          <td>Merge multiple fields</td>
+          <td>Build one string from several keys + logic</td>
+          <td><code>lambda d: f"Q: {d['q']}\nContext: {d['ctx'][:2000]}"</code></td>
+        </tr>
+        <tr>
+          <td>Conditional prep</td>
+          <td>Different prefix if <code>d["lang"] == "fr"</code></td>
+          <td>if/else inside function — templates are weak here</td>
+        </tr>
+        <tr>
+          <td>Post-LLM cleanup</td>
+          <td>Strip markdown fences before <code>JsonOutputParser</code></td>
+          <td><code>llm | RunnableLambda(strip_fences) | json_parser</code></td>
+        </tr>
+        <tr>
+          <td>Bridge legacy code</td>
+          <td>Existing <code>def build_prompt(row): ...</code> not rewritten yet</td>
+          <td>Wrap once, keep pipe uniform</td>
+        </tr>
+      </table>
+      <p style="color:var(--muted);font-size:.88rem;"><strong>Rule of thumb:</strong> if it fits in one <code>PromptTemplate</code> string with <code>{holes}</code> → no lambda. If you need Python control flow or string ops → lambda (or a small named function) is the right tool.</p>
     </section>
 
     <section class="section">
-      <h2>Direct equivalent (preferred)</h2>
-      <pre>chain = prompt | llm | StrOutputParser()
-chain.invoke({"content": passage})</pre>
+      <h2>Practical example (4-stage pipe)</h2>
+      <p>Chains are not limited to 3 steps. Lambda can sit <strong>after</strong> <code>prompt</code> — it receives <code>PromptValue</code>, not the invoke dict.</p>
+      <pre>qa_prompt = PromptTemplate.from_template(
+    "Context:\n{context}\n\nQuestion: {question}\n\nAnswer in one short sentence:"
+)
+
+def cap_filled_prompt(prompt_value) -> str:
+    text = prompt_value.to_string()
+    marker = "\n\nQuestion:"
+    idx = text.find(marker)
+    if idx == -1 or len(text) <= 500:
+        return text[:500] if len(text) > 500 else text
+    tail = text[idx:]  # keep Question + Answer instruction
+    head = text[:idx][: 500 - len(tail) - 25]
+    return head + "\n… [context truncated]" + tail
+
+# 4 stages — not just prompt | llm | parser
+chain = (
+    qa_prompt
+    | RunnableLambda(cap_filled_prompt)
+    | llm
+    | StrOutputParser()
+)
+
+chain.invoke({"question": q, "context": huge_document})</pre>
+      <p style="color:var(--muted);font-size:.88rem;">Run: <code>playground/langchain/14b.runnable_lambda.practical.py</code> (Part A prints lengths before/after cap).</p>
     </section>
 
-    <div class="callout"><strong>Trap:</strong> <code>RunnableLambda(prompt)</code> is wrong — pass a <em>function</em>, not a PromptTemplate object.</div>
+    <section class="section">
+      <h2>Practical example (post-LLM cleanup)</h2>
+      <p>Lambda after the LLM — strip markdown fences so the next step gets plain text.</p>
+      <pre>def strip_markdown_fences(text: str) -> str:
+    t = text.strip()
+    if not t.startswith("```"):
+        return t
+    lines = t.splitlines()[1:]
+    if lines and lines[-1].strip() == "```":
+        lines = lines[:-1]
+    return "\n".join(lines).strip()
+
+chain = prompt | llm | RunnableLambda(strip_markdown_fences) | StrOutputParser()  # 4 stages
+# or 5: prompt | RunnableLambda(cap) | llm | RunnableLambda(strip) | StrOutputParser()</pre>
+      <p style="color:var(--muted);font-size:.88rem;">Part B in <code>14b.runnable_lambda.practical.py</code> — local demo, no watsonx call.</p>
+    </section>
 
     <section class="section">
-      <h2>When lambda is worth it</h2>
-      <p>Strip text, rename keys, merge fields — any Python before the model sees the string.</p>
+      <h2>Object lifecycle</h2>
+      <ol class="lifecycle-steps">
+        <li><strong>Build</strong> — Define a function <code>fn(input) → output</code>, then <code>RunnableLambda(fn)</code>. <code>fn</code> must accept what the previous step would pass (usually the invoke <code>dict</code>).</li>
+        <li><strong>Configure</strong> — Function closes over objects (e.g. <code>product_review_prompt</code> defined above).</li>
+        <li><strong>Invoke</strong> — <code>chain.invoke({"review": text})</code> → lambda receives <code>{"review": text}</code> as <code>variables</code>.</li>
+        <li><strong>Output</strong> — Whatever your function returns. For Coursera format pattern → <code>str</code> → LLM → <code>StrOutputParser</code> → <code>str</code>.</li>
+      </ol>
+    </section>
+
+    <section class="section">
+      <h2>Data flow (Coursera review pattern)</h2>
+      <div class="flow-diagram">
+<pre>invoke({"review": "I love this phone..."})
+        │
+        ▼
+┌─────────────────────────┐
+│ RunnableLambda(         │
+│   format_review_prompt) │  dict → str (filled template via .format)
+└───────────┬─────────────┘
+            ▼
+┌─────────────────────────┐
+│ WatsonxLLM              │  str → model text
+└───────────┬─────────────┘
+            ▼
+┌─────────────────────────┐
+│ StrOutputParser         │  → str (sentiment block printed)
+└─────────────────────────┘</pre>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Properties</h2>
+      <table>
+        <tr><th>Name</th><th>Rule</th><th>If wrong then…</th></tr>
+        <tr><td>Argument to <code>RunnableLambda</code></td><td>A <strong>callable</strong> (function)</td><td><code>RunnableLambda(prompt)</code> — passing PromptTemplate object fails or behaves wrong</td></tr>
+        <tr><td>Function input</td><td>Usually the invoke dict</td><td>Expecting separate kwargs — use <code>**variables</code> inside function</td></tr>
+        <tr><td>Function output</td><td>Must match what next step expects (<code>str</code> for text LLM)</td><td>Returning dict to LLM → type error or garbage prompt</td></tr>
+        <tr><td>Position</td><td>Often step 1 (replaces <code>PromptTemplate</code> in pipe)</td><td>Lambda after LLM — different pattern (post-processing)</td></tr>
+        <tr><td>Import</td><td><code>langchain_core.runnables</code></td><td>Old <code>langchain.schema.runnable</code> paths in 0.x notebooks</td></tr>
+      </table>
+    </section>
+
+    <section class="section">
+      <h2>Minimal example</h2>
+      <pre>def format_review_prompt(variables):
+    return product_review_prompt.format(**variables)
+
+chain = RunnableLambda(format_review_prompt) | llm | StrOutputParser()
+chain.invoke({"review": review_text})</pre>
+    </section>
+
+    <section class="section">
+      <h2>Full lab (your playground)</h2>
+      <pre>product_review_prompt = PromptTemplate.from_template(template)
+
+def format_review_prompt(variables):
+    return product_review_prompt.format(**variables)
+
+review_analysis_chain = (
+    RunnableLambda(format_review_prompt)
+    | llm
+    | StrOutputParser()
+)
+
+for review in reviews:
+    result = review_analysis_chain.invoke({"review": review})
+    print(result)</pre>
+      <p style="color:var(--muted);font-size:.88rem;">Script: <code>playground/langchain/14.lcel.chain.custom_formatting.py</code> · Recipe: <a href="../recipes/review-lambda.html">Review + lambda</a></p>
+    </section>
+
+    <section class="section">
+      <h2>Direct equivalent (preferred when possible)</h2>
+      <pre># Same template, same invoke dict — no lambda needed:
+review_analysis_chain = product_review_prompt | llm | StrOutputParser()
+review_analysis_chain.invoke({"review": review})</pre>
+      <p style="color:var(--muted);font-size:.88rem;">Use lambda when Coursera shows it or when step 1 is real Python logic, not just template fill.</p>
+    </section>
+
+    <section class="section">
+      <h2>Confused with</h2>
+      <table class="confusion-matrix">
+        <tr><th>Neighbor</th><th>RunnableLambda</th><th>Neighbor</th></tr>
+        <tr>
+          <td><a href="01-prompt-template.html">PromptTemplate</a></td>
+          <td>Custom function as step 1</td>
+          <td>Built-in Runnable — <code>prompt | llm</code> fills holes without lambda</td>
+        </tr>
+        <tr>
+          <td><a href="03-lcel-pipe.html">LCEL pipe</a></td>
+          <td>One optional step type</td>
+          <td>The whole <code>a | b | c</code> wiring mechanism</td>
+        </tr>
+        <tr>
+          <td>Plain <code>prompt.format()</code></td>
+          <td>Inside chain via lambda</td>
+          <td>Outside chain — breaks single-invoke pattern</td>
+        </tr>
+        <tr>
+          <td>Agent tools (Lab 35)</td>
+          <td>Fixed function in fixed pipe</td>
+          <td>Model chooses which tool to call each turn</td>
+        </tr>
+      </table>
+    </section>
+
+    <section class="section">
+      <h2>Imports (Coursera → your venv)</h2>
+      <div class="import-block">
+        <h3>Coursera notebook</h3>
+        <pre>from langchain.schema.runnable import RunnableLambda
+# same idea in langchain_core in newer cells</pre>
+      </div>
+      <div class="import-block">
+        <h3>Your playground (1.x)</h3>
+        <pre>from langchain_core.runnables import RunnableLambda
+
+chain = RunnableLambda(format_review_prompt) | make_watsonx_llm() | StrOutputParser()</pre>
+      </div>
+    </section>
+
+    <div class="trap-box">
+      <h3>Traps (from your labs)</h3>
+      <ul>
+        <li><strong><code>RunnableLambda(prompt)</code></strong> — Pass a <em>function</em>, not the <code>PromptTemplate</code> instance. Coursera always wraps <code>format_review_prompt</code>.</li>
+        <li><strong>Forgetting <code>**variables</code></strong> — <code>format(variables)</code> fails; need <code>prompt.format(**variables)</code> so dict keys become keyword args matching <code>{review}</code>.</li>
+        <li><strong>Lambda when <code>prompt | llm</code> suffices</strong> — Labs 08–13 work without lambda. Extra step = extra confusion unless you need real Python prep.</li>
+        <li><strong>Output format drift</strong> — Lab 14: model may add extra sections (e.g. Recommendation). Lower <code>TEMPERATURE</code> (0.2) or tighten template bullets.</li>
+      </ul>
+    </div>
+
+    <section class="section">
+      <h2>Recall drills</h2>
+      <details class="recall-drill">
+        <summary>What does <code>format_review_prompt(variables)</code> receive when you call <code>chain.invoke({"review": text})</code>?</summary>
+        <div class="answer">The dict <code>{"review": text}</code> as the single argument <code>variables</code>.</div>
+      </details>
+      <details class="recall-drill">
+        <summary>Rewrite Lab 14 without RunnableLambda — one line for the chain.</summary>
+        <div class="answer"><code>review_analysis_chain = product_review_prompt | llm | StrOutputParser()</code> — same <code>invoke({"review": review})</code>.</div>
+      </details>
+      <details class="recall-drill">
+        <summary>When is RunnableLambda worth keeping (not replacing with <code>prompt | llm</code>)?</summary>
+        <div class="answer">When step 1 needs real Python — strip/normalize text, rename keys, merge multiple inputs — not just template hole fill.</div>
+      </details>
+    </section>
+
+    <section class="section">
+      <h2>Links</h2>
+      <p>
+        Labs: <code>14.lcel.chain.custom_formatting.py</code> (Coursera),
+        <code>14b.runnable_lambda.practical.py</code> (reshape + truncate) ·
+        Recipe: <a href="../recipes/review-lambda.html">Review + lambda</a> ·
+        Compare: <a href="01-prompt-template.html">01 PromptTemplate</a>, <a href="03-lcel-pipe.html">03 pipe</a> ·
+        Next: <a href="06-model-inference.html">06 ModelInference</a> (non-LCEL path)
+      </p>
     </section>
   </main>
 </div>

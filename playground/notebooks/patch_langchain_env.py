@@ -14,9 +14,9 @@ LOCAL_NOTE = (
 )
 
 LOCAL_MODEL_CELL = """# LOCAL SETUP — ModelInference from WATSONX_* env
-from coursera_watsonx_model import credentials, model, model_id, parameters, project_id
+from watson_helper import credentials, model, model_id, parameters, project_id
 
-print("Loaded coursera_watsonx_model.py")
+print("Loaded watson_helper.py")
 print("Model:", model_id)
 print("URL:", credentials["url"])
 """
@@ -24,8 +24,8 @@ print("URL:", credentials["url"])
 LOCAL_RUNNING_MD = (
     "### Running Locally\n\n"
     "This copy uses **`start_jupyter.ps1`** (runs `set_env.ps1`). "
-    "Helpers `coursera_watsonx_model.py`, `coursera_llm_model.py`, and "
-    "`coursera_embeddings.py` read **`WATSONX_MODEL_ID`**, **`WATSONX_URL`**, "
+    "Helpers **`watson_helper.py`** (IBM) and **`watson_llm.py`** (LangChain + embeddings) in "
+    "`../langchain/` read **`WATSONX_MODEL_ID`**, **`WATSONX_URL`**, "
     "**`WATSONX_PROJECT_ID`**, **`WATSONX_APIKEY`**.\n"
 )
 
@@ -34,20 +34,20 @@ LOCAL_MODEL_MD = (
     "(not Coursera's `ibm/granite-4-h-small` demo):\n"
 )
 
-CHAT_LLM_CELL = """from coursera_llm_model import make_llm
+CHAT_LLM_CELL = """from watson_llm import make_watsonx_llm
 
-llama_llm = make_llm()  # LOCAL: WATSONX_* env (name kept for later cells)
+llama_llm = make_watsonx_llm()  # LOCAL: WATSONX_* env (name kept for later cells)
 """
 
 EMBEDDING_CELL = """# LOCAL: WatsonxEmbeddings from WATSONX_* env
-from coursera_embeddings import make_embeddings
+from watson_llm import make_watsonx_embeddings
 
-watsonx_embedding = make_embeddings(embed_params)
+watsonx_embedding = make_watsonx_embeddings(embed_params)
 """
 
 EXERCISE_1_STARTER = """# LOCAL: compare temperature on WATSONX_MODEL_ID
 # (Coursera compares Granite vs Llama on Skills Network)
-from coursera_llm_model import make_llm
+from watson_llm import make_watsonx_llm
 import os
 
 print("Model:", os.environ["WATSONX_MODEL_ID"])
@@ -62,8 +62,8 @@ parameters_precise = {
     GenParams.TEMPERATURE: 0.1,
 }
 
-llm_creative = make_llm(parameters_creative)
-llm_precise = make_llm(parameters_precise)
+llm_creative = make_watsonx_llm(parameters_creative)
+llm_precise = make_watsonx_llm(parameters_precise)
 
 prompts = [
     "Write a short poem about artificial intelligence",
@@ -75,7 +75,7 @@ prompts = [
 """
 
 EXERCISE_1_SOLUTION = """# LOCAL: same model, two temperatures
-from coursera_llm_model import make_llm
+from watson_llm import make_watsonx_llm
 import os
 
 print("Model:", os.environ["WATSONX_MODEL_ID"])
@@ -90,8 +90,8 @@ parameters_precise = {
     GenParams.TEMPERATURE: 0.1,
 }
 
-llm_creative = make_llm(parameters_creative)
-llm_precise = make_llm(parameters_precise)
+llm_creative = make_watsonx_llm(parameters_creative)
+llm_precise = make_watsonx_llm(parameters_precise)
 
 prompts = [
     "Write a short poem about artificial intelligence",
@@ -134,13 +134,13 @@ EXERCISE_5_MODEL_BLOCK_RE = re.compile(
     re.DOTALL,
 )
 
-EXERCISE_5_MAKE_LLM = """from coursera_llm_model import make_llm
+EXERCISE_5_MAKE_LLM = """from watson_llm import make_watsonx_llm
 
 parameters = {
     GenParams.MAX_NEW_TOKENS: 256,
     GenParams.TEMPERATURE: 0.2,
 }
-llm = make_llm(parameters)"""
+llm = make_watsonx_llm(parameters)"""
 
 LANGCHAIN_CHAIN_IMPORTS = (
     ("from langchain.chains import LLMChain, SequentialChain", "from langchain_classic.chains import LLMChain, SequentialChain"),
@@ -162,17 +162,17 @@ def _patch_imports(src: str) -> str:
 
 
 def _ensure_embedding_import(src: str) -> str:
-    if "make_embeddings" in src and "from coursera_embeddings import" not in src:
-        src = "from coursera_embeddings import make_embeddings\n" + src
+    if "make_watsonx_embeddings" in src and "from watson_llm import make_watsonx_embeddings" not in src:
+        src = "from watson_llm import make_watsonx_embeddings\n" + src
     return src
 
 
 def _patch_embeddings(src: str) -> str:
     if WATSONX_EMBEDDINGS_RE.search(src):
-        src = WATSONX_EMBEDDINGS_RE.sub("embedding_model = make_embeddings(embed_params)", src)
+        src = WATSONX_EMBEDDINGS_RE.sub("embedding_model = make_watsonx_embeddings(embed_params)", src)
         src = src.replace(
-            "embedding_model = make_embeddings(embed_params)",
-            "watsonx_embedding = make_embeddings(embed_params)",
+            "embedding_model = make_watsonx_embeddings(embed_params)",
+            "watsonx_embedding = make_watsonx_embeddings(embed_params)",
             1,
         ) if "watsonx_embedding = WatsonxEmbeddings" in src else src
         # fix double replacement: handle watsonx_embedding vs embedding_model separately
@@ -202,7 +202,7 @@ def _patch_cell(src: str, cell_type: str) -> tuple[str, bool]:
         if "embedding_model = ##TODO: use ibm/slate-125m-english-rtrvr-v2" in src:
             src = src.replace(
                 "embedding_model = ##TODO: use ibm/slate-125m-english-rtrvr-v2 model\n)",
-                "embedding_model = make_embeddings(embed_params)",
+                "embedding_model = make_watsonx_embeddings(embed_params)",
             )
             src = _ensure_embedding_import(src)
 
@@ -220,7 +220,7 @@ def _patch_cell(src: str, cell_type: str) -> tuple[str, bool]:
             src = re.sub(r"\n# Initialize the model\nmodel = ##TODO\n", "\n", src)
             src = re.sub(r"model = ##TODO\n", "", src)
 
-        if "llm = make_llm(parameters)" in src and "ConversationChain" in src:
+        if "llm = make_watsonx_llm(parameters)" in src and "ConversationChain" in src:
             drop = (
                 "from ibm_watsonx_ai.foundation_models import ModelInference\n",
                 "from langchain_ibm import WatsonxLLM  # local: not ibm_watson_machine_learning (Py 3.13)\n",
@@ -259,23 +259,23 @@ def _patch_cell(src: str, cell_type: str) -> tuple[str, bool]:
 
         if "embedding_model = WatsonxEmbeddings" in src and "skills-network" in src:
             block = (
-                "embedding_model = make_embeddings(embed_params)"
+                "embedding_model = make_watsonx_embeddings(embed_params)"
             )
             src = WATSONX_EMBEDDINGS_RE.sub(block, src)
-            if "from coursera_embeddings import make_embeddings" not in src:
+            if "from watson_llm import make_watsonx_embeddings" not in src:
                 src = src.replace(
                     "```python\n",
-                    "```python\nfrom coursera_embeddings import make_embeddings\n",
+                    "```python\nfrom watson_llm import make_watsonx_embeddings\n",
                     1,
                 )
 
     # generic embedding blocks in any cell
     if "skills-network" in src and "WatsonxEmbeddings" in src:
         var = "watsonx_embedding" if "watsonx_embedding" in src else "embedding_model"
-        src = WATSONX_EMBEDDINGS_RE.sub(f"{var} = make_embeddings(embed_params)", src)
+        src = WATSONX_EMBEDDINGS_RE.sub(f"{var} = make_watsonx_embeddings(embed_params)", src)
         src = _ensure_embedding_import(src)
 
-    src = src.replace('project_id = "skills-network"', "project_id = project_id  # from coursera_watsonx_model")
+    src = src.replace('project_id = "skills-network"', "project_id = project_id  # from watson_helper")
     src = src.replace("project_id=\"skills-network\"", 'project_id=os.environ["WATSONX_PROJECT_ID"]')
 
     return src, src != original

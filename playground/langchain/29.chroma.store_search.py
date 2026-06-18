@@ -8,7 +8,7 @@ Run:
 """
 
 from ibm_watsonx_ai.metanames import EmbedTextParamsMetaNames
-from coursera_embeddings import make_embeddings
+from watson_llm import make_watsonx_embeddings
 from langchain_community.document_loaders import WebBaseLoader
 from langchain_community.vectorstores import Chroma
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -25,7 +25,7 @@ embed_params = {
     EmbedTextParamsMetaNames.TRUNCATE_INPUT_TOKENS: 3,
     EmbedTextParamsMetaNames.RETURN_OPTIONS: {"input_text": True},
 }
-embedding_model = make_embeddings(embed_params)
+embedding_model = make_watsonx_embeddings(embed_params)
 
 docsearch = Chroma.from_documents(chunks, embedding_model)
 print("Chroma collection ready")

@@ -31,30 +31,57 @@
     </ul>
   </aside>
   <main class="main">
-    <nav class="breadcrumbs"><a href="../index.html">LangChain</a> › <a href="index.html">Recipes</a> › <span>JSON Joke</span></nav>
+    <nav class="breadcrumbs"><a href="../../index.html">Reference</a> › <a href="../index.html">LangChain</a> › <a href="index.html">Recipes</a> › <span>JSON Joke</span></nav>
     <header class="hero">
-      <span class="badge">Lab 21 · Part A</span>
+      <span class="badge depth-deep">Recipe · depth pass 1 · Lab 21 Part A</span>
       <h1>JsonOutputParser + Joke</h1>
-      <p>Data class → format instructions → <code>prompt | llm | parser</code> → <code>dict</code>.</p>
+      <p>Pydantic class defines the JSON shape → parser auto-generates format instructions → pipe returns a <code>dict</code> with named fields.</p>
     </header>
 
     <section class="section">
-      <h2>Shape + parser</h2>
+      <h2>1 — Problem</h2>
+      <p>Your app needs structured data from the LLM — not a blob of text. A joke bot must return <code>setup</code> and <code>punchline</code> as separate fields for UI rendering or API export. Hand-parsing JSON from model output breaks when the model adds markdown fences or extra prose.</p>
+      <p><strong>Not this recipe:</strong> comma-separated lists (<a href="comma-list-parser.html">Lab 21 Part B</a>), hand-written JSON rules without Pydantic (<a href="movie-json.html">Lab 22</a>), plain text out (<a href="summarize.html">StrOutputParser recipes</a>).</p>
+    </section>
+
+    <section class="section">
+      <h2>2 — Prerequisites</h2>
+      <table>
+        <tr><th>Need</th><th>Module</th><th>Check</th></tr>
+        <tr><td>Env vars loaded</td><td><a href="../modules/02-watsonx-llm.html">02</a></td><td><code>set_env.ps1</code> ran in this shell</td></tr>
+        <tr><td><code>WatsonxLLM</code> object</td><td><a href="../modules/07-watson-helpers.html">07</a></td><td><code>make_watsonx_llm()</code> not <code>watson_helper.model</code></td></tr>
+        <tr><td>Template with <code>{query}</code></td><td><a href="../modules/01-prompt-template.html">01</a></td><td>Hole name matches invoke key</td></tr>
+        <tr><td>Pipe wiring</td><td><a href="../modules/03-lcel-pipe.html">03</a></td><td><code>prompt | llm | parser</code> — parser last</td></tr>
+        <tr><td>Pydantic + JsonOutputParser</td><td><a href="../modules/11-json-output-parser.html">11</a></td><td><code>from pydantic import BaseModel, Field</code></td></tr>
+      </table>
+    </section>
+
+    <section class="section">
+      <h2>3 — Wiring diagram</h2>
+      <div class="flow-diagram">
+<pre>class Joke(BaseModel)  — setup, punchline fields
+       → JsonOutputParser(pydantic_object=Joke)
+       → get_format_instructions()  (auto from class)
+       → PromptTemplate(..., partial_variables={"format_instructions": ...})
+       → WatsonxLLM
+       → joke_parser
+       → dict printed  {"setup": "...", "punchline": "..."}</pre>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>4 — Script</h2>
       <pre>from pydantic import BaseModel, Field
 from langchain_core.output_parsers import JsonOutputParser
+from langchain_core.prompts import PromptTemplate
+from watson_llm import make_watsonx_llm
 
 class Joke(BaseModel):
     setup: str = Field(description="question to set up a joke")
     punchline: str = Field(description="answer to resolve the joke")
 
 joke_parser = JsonOutputParser(pydantic_object=Joke)
-format_instructions = joke_parser.get_format_instructions()</pre>
-    </section>
-
-    <section class="section">
-      <h2>Prompt + chain (finish Lab 21)</h2>
-      <pre>from langchain_core.prompts import PromptTemplate
-from langchain_helper import make_llm, GenParams
+format_instructions = joke_parser.get_format_instructions()
 
 joke_prompt = PromptTemplate(
     template="Answer the user query.\n{format_instructions}\n{query}\n",
@@ -62,14 +89,77 @@ joke_prompt = PromptTemplate(
     partial_variables={"format_instructions": format_instructions},
 )
 
-chain = joke_prompt | make_llm() | joke_parser
+chain = joke_prompt | make_watsonx_llm() | joke_parser
 result = chain.invoke({"query": "Tell me a joke."})
 print(result)  # dict with setup, punchline</pre>
+      <p style="color:var(--muted);font-size:.88rem;">Playground: <code>21.output_parsers.py</code> (Part A)</p>
     </section>
 
-    <div class="callout"><strong>Key line:</strong> <code>JsonOutputParser(pydantic_object=Joke)</code> — automation recipe tying class shape to prompt + parse.</div>
+    <section class="section">
+      <h2>5 — Critical lines</h2>
+      <table>
+        <tr><th>Line</th><th>Why it matters</th><th>If you change it wrong…</th></tr>
+        <tr><td><code>from pydantic import BaseModel, Field</code></td><td>Your venv uses Pydantic v2</td><td><code>langchain_core.pydantic_v1</code> is course-only — import errors in playground</td></tr>
+        <tr><td><code>JsonOutputParser(pydantic_object=Joke)</code></td><td>Class drives JSON schema + instructions</td><td>Bare <code>JsonOutputParser()</code> — you must hand-write rules (Lab 22 path)</td></tr>
+        <tr><td><code>get_format_instructions()</code></td><td>Auto text block for the prompt</td><td>Omit from template → model guesses shape → parse fails</td></tr>
+        <tr><td><code>partial_variables={"format_instructions": ...}</code></td><td>Bakes instructions at build time</td><td>Pass in <code>invoke</code> every call → redundant, easy to forget</td></tr>
+        <tr><td><code>joke_parser</code> last in pipe</td><td>Parser runs on LLM text output</td><td>Parser before LLM → nonsense</td></tr>
+        <tr><td><code>{"query": "Tell me a joke."}</code></td><td>Must match <code>{query}</code> hole</td><td><code>KeyError</code> before LLM runs</td></tr>
+      </table>
+    </section>
 
-    <p><a href="../modules/11-json-output-parser.html">Module 11</a></p>
+    <section class="section">
+      <h2>6 — Variants</h2>
+      <ul>
+        <li><strong>Comma list</strong> — Same pipe pattern, returns <code>list</code> not <code>dict</code> → <a href="comma-list-parser.html">comma-list recipe</a> (Lab 21 Part B).</li>
+        <li><strong>Hand-written JSON shape</strong> — No Pydantic class; you write <code>format_instructions</code> → <a href="movie-json.html">movie-json recipe</a> (Lab 22).</li>
+        <li><strong>Stricter output</strong> — Lower <code>TEMPERATURE</code> via <code>make_watsonx_llm({GenParams.TEMPERATURE: 0.1})</code> to reduce JSON drift.</li>
+        <li><strong>Different schema</strong> — Swap <code>Joke</code> for any <code>BaseModel</code> with <code>Field</code> descriptions; parser regenerates instructions automatically.</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>7 — Debug</h2>
+      <table>
+        <tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr>
+        <tr><td><code>KeyError: WATSONX_*</code></td><td>Env not loaded</td><td>Run <code>set_env.ps1</code></td></tr>
+        <tr><td><code>KeyError</code> on invoke</td><td>Wrong dict key</td><td>Align with <code>{query}</code> in template</td></tr>
+        <tr><td>JSON parse error</td><td>Model added markdown fences or prose</td><td>Tighten prompt; lower temperature; check <code>{format_instructions}</code> is in template</td></tr>
+        <tr><td>Wrong keys in <code>dict</code></td><td>Field names don't match class</td><td>Fix <code>BaseModel</code> fields or <code>Field(description=...)</code></td></tr>
+        <tr><td><code>ImportError</code> on pydantic</td><td>Wrong import path</td><td><code>from pydantic import BaseModel, Field</code> — not <code>pydantic_v1</code></td></tr>
+        <tr><td>Returns <code>str</code> not <code>dict</code></td><td>Used <code>StrOutputParser</code> or omitted parser</td><td>End pipe with <code>JsonOutputParser</code></td></tr>
+      </table>
+    </section>
+
+    <div class="trap-box">
+      <h3>Traps</h3>
+      <ul>
+        <li><strong><code>langchain_core.pydantic_v1</code> in playground</strong> — Coursera notebooks use it; your venv needs <code>from pydantic import BaseModel, Field</code>.</li>
+        <li><strong>Instructions not in prompt</strong> — <code>{format_instructions}</code> must appear in template AND be set via <code>partial_variables</code>.</li>
+        <li><strong>Calling <code>parser.parse()</code> manually</strong> — The pipe handles it; manual parse skips prompt enforcement.</li>
+        <li><strong>Expecting a Pydantic object back</strong> — <code>invoke</code> returns a plain <code>dict</code>, not a <code>Joke</code> instance.</li>
+      </ul>
+    </div>
+
+    <section class="section">
+      <h2>Rebuild from memory</h2>
+      <div class="rebuild-steps">
+        <p>Close this page. Write the script from these steps only:</p>
+        <ol>
+          <li>Import <code>BaseModel</code>, <code>Field</code> from <code>pydantic</code>; <code>JsonOutputParser</code>, <code>PromptTemplate</code>, <code>make_watsonx_llm</code>.</li>
+          <li>Define <code>class Joke(BaseModel)</code> with <code>setup</code> and <code>punchline</code> <code>Field</code>s.</li>
+          <li><code>joke_parser = JsonOutputParser(pydantic_object=Joke)</code>.</li>
+          <li><code>PromptTemplate</code> with <code>{format_instructions}</code> + <code>{query}</code>; bake instructions in <code>partial_variables</code>.</li>
+          <li>Wire <code>prompt | make_watsonx_llm() | joke_parser</code>.</li>
+          <li><code>chain.invoke({"query": "Tell me a joke."})</code> — expect <code>dict</code>.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Modules</h2>
+      <p><a href="../modules/01-prompt-template.html">01</a> · <a href="../modules/03-lcel-pipe.html">03</a> · <a href="../modules/07-watson-helpers.html">07</a> · <a href="../modules/11-json-output-parser.html">11</a></p>
+    </section>
   </main>
 </div>
 </body>

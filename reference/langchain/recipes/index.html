@@ -33,9 +33,9 @@
   <main class="main">
     <nav class="breadcrumbs"><a href="../../index.html">Reference</a> › <a href="../index.html">LangChain</a> › <span>Recipes</span></nav>
     <header class="hero">
-      <span class="badge">15 recipes</span>
+      <span class="badge depth-deep">15 recipes · 19 modules · depth pass 1</span>
       <h1>Recipes</h1>
-      <p>Problem → ingredients → short inline code. LCEL core (01–05), watson infra (06–07), notebook track (08–11).</p>
+      <p>Problem → prerequisites → wiring → script → critical lines → variants → debug. Each recipe maps to playground scripts and the 19 reference modules (01–19).</p>
     </header>
 
     <section class="section">
@@ -56,12 +56,12 @@
       <table>
         <tr><th>Recipe</th><th>Modules</th><th>Playground</th><th>Link</th></tr>
         <tr><td>Test watsonx — <code>model.generate</code></td><td>06, 07</td><td><code>15.watson_helper.generate_test.py</code></td><td><a href="ibm-model-generate.html">Open</a></td></tr>
-        <tr><td>Plug in <code>WatsonxLLM</code> for LangChain</td><td>02, 07</td><td><code>16.langchain_helper.invoke_test.py</code></td><td><a href="langchain-llm-plug.html">Open</a></td></tr>
+        <tr><td>Plug in <code>WatsonxLLM</code> for LangChain</td><td>02, 07</td><td><code>16.watson_llm.invoke_test.py</code></td><td><a href="langchain-llm-plug.html">Open</a></td></tr>
       </table>
     </section>
 
     <section class="section">
-      <h2>Notebook track (Labs 17–21)</h2>
+      <h2>Notebook track (Labs 17–22)</h2>
       <table>
         <tr><th>Recipe</th><th>Modules</th><th>Playground</th><th>Link</th></tr>
         <tr><td>Chat messages invoke</td><td>07, 08</td><td><code>17.chat_messages.invoke_test.py</code></td><td><a href="chat-messages.html">Open</a></td></tr>
@@ -71,6 +71,22 @@
         <tr><td>JsonOutputParser — Joke</td><td>01, 07, 11</td><td><code>21.output_parsers.py</code> (Part A)</td><td><a href="json-joke-parser.html">Open</a></td></tr>
         <tr><td>CommaSeparatedListOutputParser</td><td>01, 07, 11</td><td><code>21.output_parsers.py</code> (Part B)</td><td><a href="comma-list-parser.html">Open</a></td></tr>
         <tr><td>Movie JSON (Exercise 2)</td><td>01, 07, 11</td><td><code>22.exercise2.movie_json.py</code></td><td><a href="movie-json.html">Open</a></td></tr>
+      </table>
+    </section>
+
+    <section class="section">
+      <h2>RAG track (Labs 23–35)</h2>
+      <p>No standalone recipes yet — use the reference modules directly. Each module has depth-pass content, traps, and rebuild drills.</p>
+      <table>
+        <tr><th>Module</th><th>Topic</th><th>Link</th></tr>
+        <tr><td>12</td><td>Document + loaders</td><td><a href="../modules/12-document-loaders.html">Open</a></td></tr>
+        <tr><td>13</td><td>Text splitters</td><td><a href="../modules/13-text-splitters.html">Open</a></td></tr>
+        <tr><td>14</td><td>Embeddings</td><td><a href="../modules/14-embeddings.html">Open</a></td></tr>
+        <tr><td>15</td><td>Chroma vectorstore</td><td><a href="../modules/15-chroma-vectorstore.html">Open</a></td></tr>
+        <tr><td>16</td><td>Retrievers + RAG</td><td><a href="../modules/16-retrievers-rag.html">Open</a></td></tr>
+        <tr><td>17</td><td>Memory</td><td><a href="../modules/17-memory.html">Open</a></td></tr>
+        <tr><td>18</td><td>Classic chains</td><td><a href="../modules/18-classic-chains.html">Open</a></td></tr>
+        <tr><td>19</td><td>Agents + tools</td><td><a href="../modules/19-agents-tools.html">Open</a></td></tr>
       </table>
     </section>
   </main>

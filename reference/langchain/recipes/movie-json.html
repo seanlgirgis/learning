@@ -31,46 +31,153 @@
     </ul>
   </aside>
   <main class="main">
-    <nav class="breadcrumbs"><a href="../index.html">LangChain</a> › <a href="index.html">Recipes</a> › <span>Movie JSON</span></nav>
+    <nav class="breadcrumbs"><a href="../../index.html">Reference</a> › <a href="../index.html">LangChain</a> › <a href="index.html">Recipes</a> › <span>Movie JSON</span></nav>
     <header class="hero">
-      <span class="badge">Lab 22 · Exercise 2</span>
+      <span class="badge depth-deep">Recipe · depth pass 1 · Lab 22</span>
       <h1>Movie JSON parser</h1>
-      <p>Notebook exercise — <code>JsonOutputParser()</code> without Pydantic; you write the JSON shape in <code>format_instructions</code>.</p>
+      <p>Bare <code>JsonOutputParser()</code> + hand-written <code>format_instructions</code> — no Pydantic class. You define the JSON shape in the prompt yourself.</p>
     </header>
 
     <section class="section">
-      <h2>vs Lab 21 Part A</h2>
+      <h2>1 — Problem</h2>
+      <p>A movie lookup tool needs <code>title</code>, <code>director</code>, <code>year</code>, and <code>genre</code> as separate fields from the LLM. Lab 21 used a Pydantic class to auto-generate format rules; Lab 22 drops the class and makes you write the JSON contract explicitly — closer to real prompts where schema lives in the template, not Python types.</p>
+      <p><strong>Not this recipe:</strong> Pydantic-driven JSON (<a href="json-joke-parser.html">Lab 21 Part A</a>), comma lists (<a href="comma-list-parser.html">Lab 21 Part B</a>), plain text summarize (<a href="summarize.html">StrOutputParser</a>).</p>
+    </section>
+
+    <section class="section">
+      <h2>2 — Prerequisites</h2>
       <table>
-        <tr><th>Lab 21 Joke</th><th>Lab 22 Movie</th></tr>
+        <tr><th>Need</th><th>Module</th><th>Check</th></tr>
+        <tr><td>Env vars loaded</td><td><a href="../modules/02-watsonx-llm.html">02</a></td><td><code>set_env.ps1</code> ran in this shell</td></tr>
+        <tr><td><code>WatsonxLLM</code> object</td><td><a href="../modules/07-watson-helpers.html">07</a></td><td><code>make_watsonx_llm()</code> not <code>watson_helper.model</code></td></tr>
+        <tr><td>Template with <code>{movie_name}</code></td><td><a href="../modules/01-prompt-template.html">01</a></td><td>Hole name matches invoke key</td></tr>
+        <tr><td>Pipe wiring</td><td><a href="../modules/03-lcel-pipe.html">03</a></td><td><code>prompt | llm | json_parser</code> — parser last</td></tr>
+        <tr><td>Hand-written format rules</td><td><a href="../modules/11-json-output-parser.html">11</a></td><td>Bare <code>JsonOutputParser()</code> — no <code>pydantic_object</code></td></tr>
+      </table>
+    </section>
+
+    <section class="section">
+      <h2>3 — Wiring diagram</h2>
+      <div class="flow-diagram">
+<pre>format_instructions = """JSON only… title, director, year, genre"""
+       → JsonOutputParser()  (no Pydantic)
+       → PromptTemplate("movie {movie_name}", partial_variables=...)
+       → WatsonxLLM
+       → json_parser
+       → dict printed  {"title": "...", "director": "...", "year": 1999, "genre": "..."}</pre>
+      </div>
+      <table style="margin-top:1rem;">
+        <tr><th>Lab 21 Joke</th><th>Lab 22 Movie (this)</th></tr>
         <tr><td><code>JsonOutputParser(pydantic_object=Joke)</code></td><td><code>JsonOutputParser()</code></td></tr>
-        <tr><td>Format from <code>get_format_instructions()</code></td><td>Hand-written <code>format_instructions</code> string</td></tr>
+        <tr><td><code>get_format_instructions()</code> auto</td><td>Hand-written <code>format_instructions</code> string</td></tr>
         <tr><td>Class defines keys</td><td>Template shows example JSON keys</td></tr>
       </table>
     </section>
 
     <section class="section">
-      <h2>Code</h2>
+      <h2>4 — Script</h2>
       <pre>from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.prompts import PromptTemplate
-from langchain_helper import make_llm
+from watson_llm import make_watsonx_llm
 
 json_parser = JsonOutputParser()
-format_instructions = """... title, director, year, genre ..."""
+
+format_instructions = """RESPONSE FORMAT: Return ONLY a single JSON object—no markdown, no examples, no extra keys.  It must look exactly like:
+{
+  "title": "movie title",
+  "director": "director name",
+  "year": 2000,
+  "genre": "movie genre"
+}
+
+IMPORTANT: Your response must be *only* that JSON.  Do NOT include any illustrative or example JSON."""
 
 prompt_template = PromptTemplate(
     template="""You are a JSON-only assistant.
+
 Task: Generate info about the movie "{movie_name}" in JSON format.
+
 {format_instructions}
 """,
     input_variables=["movie_name"],
     partial_variables={"format_instructions": format_instructions},
 )
 
-movie_chain = prompt_template | make_llm() | json_parser
-result = movie_chain.invoke({"movie_name": "The Matrix"})</pre>
+movie_chain = prompt_template | make_watsonx_llm() | json_parser
+result = movie_chain.invoke({"movie_name": "The Matrix"})
+
+print(f"Title: {result['title']}")
+print(f"Director: {result['director']}")
+print(f"Year: {result['year']}")
+print(f"Genre: {result['genre']}")</pre>
+      <p style="color:var(--muted);font-size:.88rem;">Playground: <code>22.exercise2.movie_json.py</code></p>
     </section>
 
-    <p><a href="../modules/11-json-output-parser.html">Module 11</a> · <code>22.exercise2.movie_json.py</code></p>
+    <section class="section">
+      <h2>5 — Critical lines</h2>
+      <table>
+        <tr><th>Line</th><th>Why it matters</th><th>If you change it wrong…</th></tr>
+        <tr><td><code>JsonOutputParser()</code> bare</td><td>No class — you own the schema text</td><td>Adding <code>pydantic_object=</code> → Lab 21 path, not this recipe</td></tr>
+        <tr><td>Hand-written <code>format_instructions</code></td><td>Explicit JSON contract in prompt</td><td>Vague rules → wrong keys, markdown fences, parse error</td></tr>
+        <tr><td>"ONLY JSON, no markdown"</td><td>Stops <code>```json</code> fences</td><td>Model wraps output → <code>json.loads</code> fails</td></tr>
+        <tr><td><code>partial_variables</code></td><td>Bakes instructions at build time</td><td>Pass each <code>invoke</code> → redundant, easy to drift</td></tr>
+        <tr><td><code>{"movie_name": "The Matrix"}</code></td><td>Must match <code>{movie_name}</code> hole</td><td><code>KeyError</code> before LLM runs</td></tr>
+        <tr><td><code>result['title']</code> etc.</td><td>Parser returns plain <code>dict</code></td><td>Key names must match your format_instructions example</td></tr>
+      </table>
+    </section>
+
+    <section class="section">
+      <h2>6 — Variants</h2>
+      <ul>
+        <li><strong>Pydantic auto-schema</strong> — Class drives instructions → <a href="json-joke-parser.html">JSON Joke recipe</a> (Lab 21 Part A).</li>
+        <li><strong>More fields</strong> — Add <code>"rating"</code>, <code>"cast"</code> to the example JSON in <code>format_instructions</code>.</li>
+        <li><strong>Stricter output</strong> — Lower <code>TEMPERATURE</code> via <code>make_watsonx_llm({GenParams.TEMPERATURE: 0.1})</code>.</li>
+        <li><strong>Different entity</strong> — Swap movie for book, album — same bare-parser pattern, new format string.</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>7 — Debug</h2>
+      <table>
+        <tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr>
+        <tr><td><code>KeyError: WATSONX_*</code></td><td>Env not loaded</td><td>Run <code>set_env.ps1</code></td></tr>
+        <tr><td><code>KeyError</code> on invoke</td><td>Wrong dict key</td><td>Align with <code>{movie_name}</code> in template</td></tr>
+        <tr><td>JSON parse error</td><td>Markdown fences or extra prose</td><td>Strengthen "ONLY JSON" in <code>format_instructions</code></td></tr>
+        <tr><td><code>KeyError</code> on <code>result['title']</code></td><td>Model used different key names</td><td>Tighten example JSON; lower temperature</td></tr>
+        <tr><td><code>year</code> is a string</td><td>Model quoted the number</td><td>Specify <code>"year": 2000</code> (no quotes) in format example</td></tr>
+        <tr><td>Example JSON in output</td><td>Model copied placeholder text</td><td>Add "Do NOT include illustrative or example JSON" (as in script)</td></tr>
+      </table>
+    </section>
+
+    <div class="trap-box">
+      <h3>Traps</h3>
+      <ul>
+        <li><strong>Calling <code>get_format_instructions()</code> on bare parser</strong> — Works but gives generic rules; Lab 22 wants you to hand-write the movie-specific contract.</li>
+        <li><strong>Adding a Pydantic class here</strong> — Valid pattern, but that's Lab 21 Part A, not this exercise.</li>
+        <li><strong>Model returns example placeholder values</strong> — "movie title" instead of real title — prompt must say generate real data for <code>{movie_name}</code>.</li>
+        <li><strong>Markdown fences</strong> — Even with instructions, some models wrap JSON; tighten prompt or post-strip fences before parse.</li>
+      </ul>
+    </div>
+
+    <section class="section">
+      <h2>Rebuild from memory</h2>
+      <div class="rebuild-steps">
+        <p>Close this page. Write the script from these steps only:</p>
+        <ol>
+          <li>Import <code>JsonOutputParser</code>, <code>PromptTemplate</code>, <code>make_watsonx_llm</code> — no Pydantic.</li>
+          <li><code>json_parser = JsonOutputParser()</code> — bare, no <code>pydantic_object</code>.</li>
+          <li>Write <code>format_instructions</code> string with example JSON keys: title, director, year, genre.</li>
+          <li><code>PromptTemplate</code> with <code>{movie_name}</code> + <code>{format_instructions}</code>; bake instructions in <code>partial_variables</code>.</li>
+          <li>Wire <code>prompt | make_watsonx_llm() | json_parser</code>.</li>
+          <li><code>chain.invoke({"movie_name": "The Matrix"})</code> — access <code>result['title']</code> etc.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Modules</h2>
+      <p><a href="../modules/01-prompt-template.html">01</a> · <a href="../modules/03-lcel-pipe.html">03</a> · <a href="../modules/07-watson-helpers.html">07</a> · <a href="../modules/11-json-output-parser.html">11</a></p>
+    </section>
   </main>
 </div>
 </body>

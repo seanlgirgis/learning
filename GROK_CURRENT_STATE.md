@@ -4,16 +4,15 @@ Last updated: 2026-06-17
 
 ## Session Summary
 
-LangChain reference treasure updated: modules 08–11, 14 recipes, lab track 15–21, synced sidebars across all reference pages.
+Reference depth revamp: **reference first → crs_001 sync → re-education** (locked in `planning/langchain_reference_depth_track.md`). Phase A: 01–07 deep pass 1 done; NEXT 08 Chat messages. Helpers consolidated: only `watson_helper` + `watson_llm` (notebooks + labs). crs_001 not touched until reference topic is deep.
 
 ## Latest (2026-06-17)
 
-- **Reference hub** — `reference/langchain/index.html`: 11 modules, playground lab table (15–21), all recipe cards
-- **Recipes index** — three sections (LCEL core, watson infra, notebook track) with playground script links
-- **Sidebars** — modules 01–11 and all recipe pages now share full nav
-- **Cross-links** — module 04 → 11; module 07 → notebook recipes + module 08
-- **Playground README** — lab track table with recipe links
-- **Learning hub** — `index.html` LangChain link text updated
+- **Depth audit** — `reference/langchain/index.html`: 11-point checklist scores per module/recipe; work order documented
+- **Gold standard** — `modules/01-prompt-template.html`, `02-watsonx-llm.html`, `03-lcel-pipe.html` (full depth pass 1)
+- **Recipe template** — `recipes/summarize.html` (7-section + rebuild-from-memory)
+- **CSS** — `reference.css`: lifecycle, trap-box, confusion matrix, recall drills, depth badges
+- **Prior** — 11 modules, 16 recipes, lab table 15–21, synced sidebars
 
 ## Prior session summary
 
@@ -41,8 +40,8 @@ crs_001 migrated into `learning/` as canonical home; hub and cert-path navigatio
 
 ## Next Steps
 
-1. **Lab 21** — finish `21.output_parsers.py` (chain invoke + comma list Part B) with Sean.
-2. **Lab 22** — optional movie JSON exercise.
+1. **Phase A reference** — track: `planning/langchain_reference_depth_track.md` · **NEXT: Module 04** after Sean go. Phase B (crs_001) after A gate.
+2. **Lab 21** — finish `21.output_parsers.py` with Sean (if switching back to playground).
 3. Migrate crs_002 when ready.
 4. Initial git commit when Sean is ready.
 

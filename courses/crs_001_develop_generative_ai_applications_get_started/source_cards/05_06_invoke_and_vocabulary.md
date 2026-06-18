@@ -35,3 +35,23 @@
     - Always required before the pipe operator
     - Required only for OpenAI models
     - Required only for JSON parsers
+- Watson Route A import and call? >>A)
+    - `from watson_helper import model` · `model.generate()`
+    - `from watson_llm import make_watsonx_llm` · `invoke`
+    - `from watson_helper import llm` · `pipe`
+    - Same file for both routes
+- Watson Route B for LCEL pipes? >>A)
+    - `from watson_llm import make_watsonx_llm`
+    - `from watson_helper import model`
+    - `from ibm_watsonx_ai import ModelInference` inline every script
+    - `llm_model` only — no make_watsonx_llm
+- RAG vs conversation memory — different because >>A)
+    - RAG retrieves document chunks; memory stores chat turns
+    - They are the same ConversationBufferMemory object
+    - RAG uses Route A generate only
+    - Memory requires Chroma
+- Agent vs fixed LCEL chain? >>A)
+    - Agent: LLM picks tools in a loop; chain: fixed steps at build time
+    - Agent is always faster than a pipe
+    - Chains use ReAct Thought/Action format
+    - Agents cannot use watson_llm

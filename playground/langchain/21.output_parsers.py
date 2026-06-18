@@ -14,7 +14,7 @@ from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.prompts import PromptTemplate
 from pydantic import BaseModel, Field
 
-from langchain_helper import make_llm
+from watson_llm import make_watsonx_llm
 
 
 class Joke(BaseModel):
@@ -33,7 +33,7 @@ joke_prompt = PromptTemplate(
     partial_variables={"format_instructions": joke_format},
 )
 
-joke_chain = joke_prompt | make_llm() | joke_parser
+joke_chain = joke_prompt | make_watsonx_llm() | joke_parser
 print("Part A — joke:")
 print(joke_chain.invoke({"query": "Tell me a joke."}))
 print()
@@ -49,6 +49,6 @@ list_prompt = PromptTemplate(
     partial_variables={"format_instructions": list_format},
 )
 
-list_chain = list_prompt | make_llm() | list_parser
+list_chain = list_prompt | make_watsonx_llm() | list_parser
 print("Part B — languages:")
 print(list_chain.invoke({"subject": "programming languages"}))

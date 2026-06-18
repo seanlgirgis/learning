@@ -1,0 +1,225 @@
+{
+  "id": "crs_001_watson_two_routes",
+  "title": "CRS 001 — Watson Two Routes",
+  "subtitle": "Route A: IBM generate() · Route B: LangChain invoke & pipes — two bites only",
+  "parentTopic": {
+    "label": "LCEL Code Workflow",
+    "topic": "crs_001_lcel_workflow.studybubble.json"
+  },
+  "groups": [
+    { "id": "foundation", "label": "Foundation", "color": "#6B7280" },
+    { "id": "route_a", "label": "Route A — IBM SDK", "color": "#F58518" },
+    { "id": "route_b", "label": "Route B — LangChain", "color": "#54A24B" },
+    { "id": "traps", "label": "Traps", "color": "#E45756" }
+  ],
+  "mapResources": [
+    { "label": "Reference Module 07", "type": "page", "href": "../../../../reference/langchain/modules/07-watson-helpers.html" },
+    { "label": "Module 06 ModelInference", "type": "page", "href": "../../../../reference/langchain/modules/06-model-inference.html" },
+    { "label": "Module 02 WatsonxLLM", "type": "page", "href": "../../../../reference/langchain/modules/02-watsonx-llm.html" },
+    { "label": "LCEL Workflow Map", "type": "map", "topic": "crs_001_lcel_workflow.studybubble.json" },
+    { "label": "Course Home", "type": "page", "href": "../../index.html" }
+  ],
+  "nodes": [
+    {
+      "id": "set_env",
+      "label": "set_env.ps1",
+      "size": "core",
+      "group": "Foundation",
+      "definition": "Loads WATSONX_MODEL_ID, URL, PROJECT_ID, APIKEY into the shell — once per session before any helper import.",
+      "whyItMatters": "Both routes read the same four env vars. No env → KeyError or model is None.",
+      "safeSentence": "Run set_env.ps1 first; both IBM and LangChain routes use WATSONX_*.",
+      "commonTrap": "Importing watson_helper or watson_llm before env is loaded.",
+      "interviewAnswer": "Credentials live in environment variables loaded by a setup script; helpers read them at import.",
+      "note": {
+        "summary": "D:\\py_venv\\rag_application_builder_foundation\\set_env.ps1\n\nThen:\n  cd playground\\langchain\n  python your_lab.py"
+      },
+      "childTopics": [],
+      "externalLinks": []
+    },
+    {
+      "id": "route_a_hub",
+      "label": "Route A — IBM",
+      "size": "core",
+      "group": "Route A — IBM SDK",
+      "definition": "Low-level watsonx: ModelInference, model.generate(str), dict out — you slice generated_text.",
+      "whyItMatters": "Coursera LOCAL SETUP, Lab 15, raw API shape — not LangChain.",
+      "safeSentence": "Route A = generate() → dict → results[0].generated_text.",
+      "commonTrap": "Putting model in prompt | model | parser.",
+      "interviewAnswer": "IBM SDK path uses ModelInference.generate and returns vendor JSON; not a Runnable.",
+      "note": {
+        "summary": "Remember ONE file:\n  from watson_helper import model\n\nNOT watson_llm for Route A."
+      },
+      "childTopics": [],
+      "externalLinks": [
+        { "label": "Lab 15", "href": "../../../../playground/langchain/15.watson_helper.generate_test.py" }
+      ]
+    },
+    {
+      "id": "watson_helper",
+      "label": "watson_helper",
+      "size": "support",
+      "group": "Route A — IBM SDK",
+      "definition": "Playground plug-in that exports model (ModelInference) built from WATSONX_* env.",
+      "whyItMatters": "Single import for IBM path in .py labs — no credentials in script.",
+      "safeSentence": "watson_helper.model is ModelInference — IBM door only.",
+      "commonTrap": "Confusing watson_helper with watson_llm (LangChain file).",
+      "interviewAnswer": "watson_helper wraps ModelInference for direct generate() calls.",
+      "note": {
+        "summary": "from watson_helper import model, model_id, credentials\n\nmsg = model.generate(\"Hello\")\ntext = msg[\"results\"][0][\"generated_text\"]"
+      },
+      "childTopics": [],
+      "externalLinks": []
+    },
+    {
+      "id": "model_generate",
+      "label": "model.generate()",
+      "size": "core",
+      "group": "Route A — IBM SDK",
+      "definition": "IBM text generation call — string prompt in, full response dict out. Not invoke().",
+      "whyItMatters": "Different method name and return type than LangChain — mixing them breaks pipes.",
+      "safeSentence": "generate() returns a dict; extract generated_text yourself.",
+      "commonTrap": "Calling llm.invoke on ModelInference or expecting a plain str back.",
+      "interviewAnswer": "ModelInference uses generate(); response is structured JSON, not a LangChain string.",
+      "note": {
+        "summary": "msg = model.generate(\"In today's sales meeting, we \")\nprint(msg[\"results\"][0][\"generated_text\"])"
+      },
+      "childTopics": [],
+      "externalLinks": []
+    },
+    {
+      "id": "route_b_hub",
+      "label": "Route B — LangChain",
+      "size": "core",
+      "group": "Route B — LangChain",
+      "definition": "WatsonxLLM via make_watsonx_llm(): invoke(str) or prompt | llm | parser — str out.",
+      "whyItMatters": "All LCEL labs, chains, agents — everything composable uses this route.",
+      "safeSentence": "Route B = make_watsonx_llm() → invoke or pipes.",
+      "commonTrap": "Using watson_helper.model inside a pipe.",
+      "interviewAnswer": "LangChain wraps watsonx as WatsonxLLM Runnable for invoke and LCEL composition.",
+      "note": {
+        "summary": "Remember ONE file for Route B:\n  from watson_llm import make_watsonx_llm\n\nNotebooks + labs share the same two files (PYTHONPATH)."
+      },
+      "childTopics": [],
+      "externalLinks": [
+        { "label": "Lab 16", "href": "../../../../playground/langchain/16.watson_llm.invoke_test.py" },
+        { "label": "Lab 08 LCEL", "href": "../../../../playground/langchain/08.lcel.1.py" }
+      ]
+    },
+    {
+      "id": "watson_llm",
+      "label": "watson_llm",
+      "size": "core",
+      "group": "Route B — LangChain",
+      "definition": "Canonical LangChain builder: make_watsonx_llm(), make_watsonx_chat(), one-shot llm_model().",
+      "whyItMatters": "Thick helper — the only LangChain file you need in memory.",
+      "safeSentence": "watson_llm builds WatsonxLLM for invoke and LCEL.",
+      "commonTrap": "Thinking watson_llm is low-level IBM (name sounds like watson_helper).",
+      "interviewAnswer": "watson_llm is the LangChain factory; watson_helper is the IBM SDK factory.",
+      "note": {
+        "summary": "from watson_llm import make_watsonx_llm, llm_model, GenParams\n\nllm = make_watsonx_llm()\nllm.invoke(\"Capital of France?\")\n\n# one-shot:\nllm_model(\"Capital of France?\")"
+      },
+      "childTopics": [],
+      "externalLinks": []
+    },
+    {
+      "id": "llm_invoke",
+      "label": "llm.invoke()",
+      "size": "support",
+      "group": "Route B — LangChain",
+      "definition": "LangChain call on WatsonxLLM — plain string in, string out (text API).",
+      "whyItMatters": "Standalone tests and simple scripts without building a full pipe.",
+      "safeSentence": "invoke() on WatsonxLLM — not generate() on ModelInference.",
+      "commonTrap": "Using generate() on the LangChain object.",
+      "interviewAnswer": "LangChain LLMs expose invoke for Runnable-compatible calls.",
+      "note": {
+        "summary": "llm = make_watsonx_llm()\nprint(llm.invoke(\"Who is man's best friend?\"))"
+      },
+      "childTopics": [],
+      "externalLinks": []
+    },
+    {
+      "id": "lcel_pipe",
+      "label": "prompt | llm | parser",
+      "size": "support",
+      "group": "Route B — LangChain",
+      "definition": "LCEL pipe — WatsonxLLM must be step 2; StrOutputParser or JsonOutputParser last.",
+      "whyItMatters": "Main application pattern after templates (Module 03).",
+      "safeSentence": "Only WatsonxLLM in the pipe — never watson_helper.model.",
+      "commonTrap": "prompt | model | parser with ModelInference.",
+      "interviewAnswer": "LCEL requires Runnable steps; WatsonxLLM is Runnable, ModelInference is not.",
+      "note": {
+        "summary": "chain = prompt | make_watsonx_llm() | StrOutputParser()\nchain.invoke({\"content\": passage})"
+      },
+      "childTopics": [
+        { "label": "LCEL Code Workflow Map", "topic": "crs_001_lcel_workflow.studybubble.json" }
+      ],
+      "externalLinks": []
+    },
+    {
+      "id": "trap_wrong_plug",
+      "label": "Trap: model in pipe",
+      "size": "core",
+      "group": "Traps",
+      "definition": "Using watson_helper.model after | in LCEL — ModelInference is not a Runnable.",
+      "whyItMatters": "Most common wiring mistake when both routes share the same env.",
+      "safeSentence": "Pipes need make_watsonx_llm(); generate path needs watson_helper alone.",
+      "commonTrap": "Same WATSONX_* env so you assume any imported model works in chains.",
+      "interviewAnswer": "IBM SDK and LangChain wrappers are different types despite shared credentials.",
+      "note": {
+        "summary": "❌ prompt | model | parser   (model from watson_helper)\n✅ prompt | make_watsonx_llm() | StrOutputParser()"
+      },
+      "childTopics": [],
+      "externalLinks": []
+    },
+    {
+      "id": "brain_two_bites",
+      "label": "2 bites only",
+      "size": "support",
+      "group": "Traps",
+      "definition": "Memory budget: generate()? → watson_helper. Else → watson_llm.make_watsonx_llm().",
+      "whyItMatters": "Project uses two files only — notebooks import same helpers as .py labs.",
+      "safeSentence": "Two routes, two files — watson_helper and watson_llm.",
+      "commonTrap": "Memorizing six helper filenames instead of two decisions.",
+      "interviewAnswer": "I pick IBM SDK for raw generate or LangChain WatsonxLLM for invoke and composition.",
+      "note": {
+        "summary": "A) watson_helper  →  model.generate()\nB) watson_llm       →  make_watsonx_llm() / invoke / |\n\nEnv: set_env.ps1 (both)"
+      },
+      "childTopics": [],
+      "externalLinks": [
+        { "label": "Reference 07", "href": "../../../../reference/langchain/modules/07-watson-helpers.html" }
+      ]
+    }
+  ],
+  "links": [
+    { "source": "set_env", "target": "route_a_hub", "label": "feeds" },
+    { "source": "set_env", "target": "route_b_hub", "label": "feeds" },
+    { "source": "route_a_hub", "target": "watson_helper", "label": "import" },
+    { "source": "watson_helper", "target": "model_generate", "label": "call" },
+    { "source": "route_b_hub", "target": "watson_llm", "label": "import" },
+    { "source": "watson_llm", "target": "llm_invoke", "label": "or" },
+    { "source": "watson_llm", "target": "lcel_pipe", "label": "or" },
+    { "source": "trap_wrong_plug", "target": "route_b_hub", "label": "fix →" },
+    { "source": "brain_two_bites", "target": "route_a_hub", "label": "A" },
+    { "source": "brain_two_bites", "target": "route_b_hub", "label": "B" }
+  ],
+  "paths": [
+    {
+      "id": "route_a_lane",
+      "label": "Route A lane",
+      "description": "IBM SDK: env → watson_helper → generate → slice text.",
+      "nodeIds": ["set_env", "route_a_hub", "watson_helper", "model_generate"]
+    },
+    {
+      "id": "route_b_lane",
+      "label": "Route B lane",
+      "description": "LangChain: env → watson_llm → invoke or pipe.",
+      "nodeIds": ["set_env", "route_b_hub", "watson_llm", "llm_invoke", "lcel_pipe"]
+    },
+    {
+      "id": "trap_lane",
+      "label": "Trap lane",
+      "description": "Wrong plug + 2-bite memory rule.",
+      "nodeIds": ["brain_two_bites", "trap_wrong_plug", "route_a_hub", "route_b_hub"]
+    }
+  ]
+}

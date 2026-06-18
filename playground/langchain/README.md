@@ -2,22 +2,30 @@
 
 Drills for CRS 001 — prompt templates, chat roles, LCEL, providers.
 
-**LangChain reference:** [../../reference/langchain/index.html](../../reference/langchain/index.html) — 11 modules, 14 recipes; scripts stay here.
+**LangChain reference:** [../../reference/langchain/index.html](../../reference/langchain/index.html) — **19 modules**, 16 recipes; full lab map Labs 08–35.
+
+**Capstones (you type):** [capstone/capstones.md](capstone/capstones.md) → [capstone01.md](capstone/capstone01.md) · `capstone_01_ingest.py` + `capstone_01_chat.py`
 
 ## Lab track (Coursera notebook → local)
 
 | Lab | Script | Reference |
 |-----|--------|-----------|
 | 15 | `15.watson_helper.generate_test.py` | [IBM generate](../../reference/langchain/recipes/ibm-model-generate.html) |
-| 16 | `16.langchain_helper.invoke_test.py` | [LLM plug-in](../../reference/langchain/recipes/langchain-llm-plug.html) |
+| 16 | `16.watson_llm.invoke_test.py` | [LLM plug-in](../../reference/langchain/recipes/langchain-llm-plug.html) |
 | 17 | `17.chat_messages.invoke_test.py` | [Chat messages](../../reference/langchain/recipes/chat-messages.html) |
 | 18 | `18.temperature.compare.py` | [Temperature](../../reference/langchain/recipes/temperature-compare.html) |
 | 19 | `19.params.py` | [String template](../../reference/langchain/recipes/string-template-demo.html) |
 | 20 | `20.chat_prompt_templates.py` | [Chat template](../../reference/langchain/recipes/chat-prompt-template.html) |
 | 21 | `21.output_parsers.py` | [JSON Joke](../../reference/langchain/recipes/json-joke-parser.html) · [Comma list](../../reference/langchain/recipes/comma-list-parser.html) |
 | 22 | `22.exercise2.movie_json.py` | [Movie JSON](../../reference/langchain/recipes/movie-json.html) |
-| 28–31 | embeddings → Chroma → retriever → RetrievalQA | Labs 28–31 in `playground/langchain/` |
-| 32 | `32.parent_document_retriever.py` | Parent doc retriever (notebook section) |
+| 23–25 | `23` … `25` | [12 Document + loaders](../../reference/langchain/modules/12-document-loaders.html) |
+| 26–27 | splitters | [13 Text splitters](../../reference/langchain/modules/13-text-splitters.html) |
+| 28 | embeddings | [14 Embeddings](../../reference/langchain/modules/14-embeddings.html) |
+| 29 | Chroma | [15 Chroma](../../reference/langchain/modules/15-chroma-vectorstore.html) |
+| 30–32 | retriever + RAG + parent | [16 Retrievers + RAG](../../reference/langchain/modules/16-retrievers-rag.html) |
+| 33 | memory | [17 Memory](../../reference/langchain/modules/17-memory.html) |
+| 34 | chains | [18 Classic chains](../../reference/langchain/modules/18-classic-chains.html) |
+| 35 | agents | [19 Agents](../../reference/langchain/modules/19-agents-tools.html) |
 
 Earlier LCEL drills: `08.lcel.1.py` … `14.lcel.chain.custom_formatting.py` — see [recipes index](../../reference/langchain/recipes/index.html).
 

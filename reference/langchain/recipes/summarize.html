@@ -33,39 +33,48 @@
   <main class="main">
     <nav class="breadcrumbs"><a href="../../index.html">Reference</a> › <a href="../index.html">LangChain</a> › <a href="index.html">Recipes</a> › <span>Summarize</span></nav>
     <header class="hero">
-      <span class="badge">Recipe</span>
+      <span class="badge depth-deep">Recipe · depth pass 1</span>
       <h1>Summarize in one sentence</h1>
-      <p>Long text in → short summary out. One template variable: <code>content</code>.</p>
+      <p>Long text in → short summary out. Canonical LCEL recipe — every other 01–04 recipe is this shape with different template text.</p>
     </header>
 
     <section class="section">
-      <h2>Problem</h2>
-      <p>Turn a long passage into a single-sentence summary without hand-writing the prompt each time.</p>
+      <h2>1 — Problem</h2>
+      <p>Analyst pastes a long report; you need a one-line summary for a ticket title. Re-typing the prompt per document wastes time and drifts wording. You need one reusable pipe: variable slot for the passage, fixed instruction sentence.</p>
+      <p><strong>Not this recipe:</strong> multi-document RAG (Labs 28–31), chat history (Module 10), structured JSON out (Module 11).</p>
     </section>
 
     <section class="section">
-      <h2>Ingredients</h2>
-      <p>
-        <a class="pill" href="../modules/01-prompt-template.html">01 PromptTemplate</a>
-        <a class="pill" href="../modules/02-watsonx-llm.html">02 WatsonxLLM</a>
-        <a class="pill" href="../modules/03-lcel-pipe.html">03 pipe</a>
-        <a class="pill" href="../modules/04-output-parser.html">04 parser</a>
-      </p>
+      <h2>2 — Prerequisites</h2>
+      <table>
+        <tr><th>Need</th><th>Module</th><th>Check</th></tr>
+        <tr><td>Env vars loaded</td><td><a href="../modules/02-watsonx-llm.html">02</a></td><td><code>set_env.ps1</code> ran in this shell</td></tr>
+        <tr><td><code>WatsonxLLM</code> object</td><td><a href="../modules/07-watson-helpers.html">07</a></td><td><code>make_watsonx_llm()</code> not <code>watson_helper.model</code></td></tr>
+        <tr><td>Template with <code>{content}</code></td><td><a href="../modules/01-prompt-template.html">01</a></td><td>Hole name matches invoke key</td></tr>
+        <tr><td>Pipe wiring</td><td><a href="../modules/03-lcel-pipe.html">03</a></td><td><code>prompt | llm | StrOutputParser()</code></td></tr>
+      </table>
     </section>
 
     <section class="section">
-      <h2>Setup (every LCEL recipe)</h2>
+      <h2>3 — Wiring diagram</h2>
+      <div class="flow-diagram">
+<pre>{"content": passage}
+       → PromptTemplate("Summarize the {content} in one sentence.")
+       → WatsonxLLM
+       → StrOutputParser()
+       → str printed</pre>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>4 — Script</h2>
       <pre>from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from watson_llm import make_watsonx_llm
 
-llm = make_watsonx_llm()  # WatsonxLLM from WATSONX_* env</pre>
-      <p style="color:var(--muted);font-size:.88rem;margin:8px 0 0;">Run <code>set_env.ps1</code> first. Infra only: <a href="langchain-llm-plug.html">LLM plug-in</a> · IBM SDK: <a href="ibm-model-generate.html">model.generate</a> (not for pipes).</p>
-    </section>
+llm = make_watsonx_llm()
 
-    <section class="section">
-      <h2>Recipe code</h2>
-      <pre>passage = """
+passage = """
 The rapid advancement of technology in the 21st century has transformed
 healthcare, education, and transportation. AI, ML, and IoT are changing
 how we solve everyday and complex problems.
@@ -73,29 +82,65 @@ how we solve everyday and complex problems.
 
 template = "Summarize the {content} in one sentence."
 prompt = PromptTemplate.from_template(template)
-
 summarize_chain = prompt | llm | StrOutputParser()
 
 print(summarize_chain.invoke({"content": passage}))</pre>
+      <p style="color:var(--muted);font-size:.88rem;">Playground: <code>09.LCEL.Summurization.py</code></p>
     </section>
 
     <section class="section">
-      <h2>invoke keys</h2>
+      <h2>5 — Critical lines</h2>
       <table>
-        <tr><th>Key</th><th>Value</th></tr>
-        <tr><td><code>content</code></td><td>Full text to summarize</td></tr>
+        <tr><th>Line</th><th>Why it matters</th><th>If you change it wrong…</th></tr>
+        <tr><td><code>make_watsonx_llm()</code></td><td>Runnable for <code>|</code></td><td>Using <code>ModelInference</code> breaks the pipe</td></tr>
+        <tr><td><code>{"content": passage}</code></td><td>Must match <code>{content}</code></td><td><code>KeyError</code> before LLM runs</td></tr>
+        <tr><td><code>StrOutputParser()</code> last</td><td>Stable <code>str</code> contract</td><td>OK to omit with WatsonxLLM today; breaks when you switch to chat model</td></tr>
+        <tr><td>Whole passage in one key</td><td>Single-shot summarize</td><td>Very long text may hit token limits — then chunk (Labs 26–27), not this recipe</td></tr>
       </table>
     </section>
 
     <section class="section">
-      <h2>Flow</h2>
-      <pre>{"content": passage}
-  → prompt fills template
-  → llm generates one sentence
-  → StrOutputParser → str</pre>
+      <h2>6 — Variants</h2>
+      <ul>
+        <li><strong>Q&amp;A</strong> — Add <code>{question}</code> hole → <a href="qa-context.html">qa-context recipe</a> (Lab 10).</li>
+        <li><strong>Lambda style</strong> — Coursera <code>RunnableLambda(format_prompt) | llm</code> → <a href="review-lambda.html">review-lambda</a> (Lab 14).</li>
+        <li><strong>Stricter output</strong> — Lower <code>TEMPERATURE</code> via <code>make_watsonx_llm({GenParams.TEMPERATURE: 0.1})</code>.</li>
+      </ul>
     </section>
 
-    <div class="callout"><strong>Trap:</strong> Use <code>chain.invoke({"content": passage})</code> — not <code>prompt.format()</code> alone. Coursera sometimes wraps format in <code>RunnableLambda</code>; direct <code>prompt | llm</code> is equivalent.</div>
+    <section class="section">
+      <h2>7 — Debug</h2>
+      <table>
+        <tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr>
+        <tr><td><code>KeyError: WATSONX_*</code></td><td>Env not loaded</td><td>Run <code>set_env.ps1</code></td></tr>
+        <tr><td><code>KeyError</code> on invoke</td><td>Wrong dict key</td><td>Align with <code>{content}</code> in template</td></tr>
+        <tr><td>Empty or nonsense summary</td><td>Passage too long / temp high</td><td>Trim input or lower temperature</td></tr>
+        <tr><td>Type error in pipe</td><td>Wrong LLM type</td><td>Swap to <code>make_watsonx_llm()</code></td></tr>
+      </table>
+    </section>
+
+    <div class="trap-box">
+      <h3>Traps</h3>
+      <ul>
+        <li><strong><code>prompt.format(content=passage)</code> only</strong> — Formats text but never calls the model. Need <code>chain.invoke</code>.</li>
+        <li><strong>Passing passage as positional arg</strong> — <code>invoke</code> always takes a dict for PromptTemplate-first chains.</li>
+        <li><strong>Duplicating this for RAG</strong> — Retrieval adds retriever + context hole; use Lab 31 recipe when built, not this page.</li>
+      </ul>
+    </div>
+
+    <section class="section">
+      <h2>Rebuild from memory</h2>
+      <div class="rebuild-steps">
+        <p>Close this page. Write the script from these steps only:</p>
+        <ol>
+          <li>Import <code>PromptTemplate</code>, <code>StrOutputParser</code>, <code>make_watsonx_llm</code>.</li>
+          <li>Build <code>llm = make_watsonx_llm()</code> after env is set.</li>
+          <li><code>PromptTemplate.from_template</code> with exactly one hole: <code>{content}</code>.</li>
+          <li>Wire <code>prompt | llm | StrOutputParser()</code>.</li>
+          <li><code>chain.invoke({"content": passage})</code> and print.</li>
+        </ol>
+      </div>
+    </section>
 
     <section class="section">
       <h2>Modules</h2>

@@ -1,6 +1,6 @@
 """IBM watsonx ModelInference from WATSONX_* env — playground lab helper.
 
-Same idea as playground/notebooks/coursera_watsonx_model.py, for .py labs here.
+Route A (IBM SDK): ModelInference from WATSONX_* env — used by .py labs and notebooks.
 
 Run set_env.ps1 before importing:
 

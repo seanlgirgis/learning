@@ -33,29 +33,41 @@
   <main class="main">
     <nav class="breadcrumbs"><a href="../../index.html">Reference</a> › <a href="../index.html">LangChain</a> › <a href="index.html">Recipes</a> › <span>Review</span></nav>
     <header class="hero">
-      <span class="badge">Recipe · module 05</span>
+      <span class="badge depth-deep">Recipe · depth pass 1</span>
       <h1>Product review analysis</h1>
-      <p>Structured sentiment + features + summary — Coursera style with <code>RunnableLambda</code>.</p>
+      <p>Batch of reviews in → structured sentiment + features + summary out. Coursera pattern: <code>RunnableLambda(format_review_prompt) | llm | StrOutputParser()</code>.</p>
     </header>
 
     <section class="section">
-      <h2>Problem</h2>
-      <p>Run the same analysis template over a batch of review strings. Output format is fixed in the prompt.</p>
+      <h2>1 — Problem</h2>
+      <p>E-commerce team has many product review strings; you need the same analysis format on each: sentiment, features mentioned, one-line summary. A plain loop over <code>invoke</code> is enough — no separate prompt file per review.</p>
+      <p><strong>Not this recipe:</strong> JSON schema enforcement with parsers (Module 11), or the simpler <code>prompt | llm</code> one-liner (equivalent here — lambda is for learning the Runnable step).</p>
     </section>
 
     <section class="section">
-      <h2>Ingredients</h2>
-      <p>
-        <a class="pill" href="../modules/01-prompt-template.html">01</a>
-        <a class="pill" href="../modules/02-watsonx-llm.html">02</a>
-        <a class="pill" href="../modules/03-lcel-pipe.html">03</a>
-        <a class="pill" href="../modules/04-output-parser.html">04</a>
-        <a class="pill" href="../modules/05-runnable-lambda.html">05 RunnableLambda</a>
-      </p>
+      <h2>2 — Prerequisites</h2>
+      <table>
+        <tr><th>Need</th><th>Module</th><th>Check</th></tr>
+        <tr><td>Env vars loaded</td><td><a href="../modules/02-watsonx-llm.html">02</a></td><td><code>set_env.ps1</code> ran in this shell</td></tr>
+        <tr><td><code>WatsonxLLM</code> object</td><td><a href="../modules/07-watson-helpers.html">07</a></td><td><code>make_watsonx_llm()</code> with lower temp for format stability</td></tr>
+        <tr><td><code>RunnableLambda</code></td><td><a href="../modules/05-runnable-lambda.html">05</a></td><td>Formatter returns a <code>str</code> (formatted prompt text)</td></tr>
+        <tr><td>Template with <code>{review}</code></td><td><a href="../modules/01-prompt-template.html">01</a></td><td><code>format(**variables)</code> inside lambda</td></tr>
+      </table>
     </section>
 
     <section class="section">
-      <h2>Setup</h2>
+      <h2>3 — Wiring diagram</h2>
+      <div class="flow-diagram">
+<pre>{"review": review_text}
+       → RunnableLambda(format_review_prompt)  → str prompt
+       → WatsonxLLM
+       → StrOutputParser()
+       → analysis str printed (loop over reviews[])</pre>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>4 — Script</h2>
       <pre>from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnableLambda
@@ -64,12 +76,9 @@ from watson_llm import make_watsonx_llm, GenParams
 llm = make_watsonx_llm({
     GenParams.MAX_NEW_TOKENS: 512,
     GenParams.TEMPERATURE: 0.2,
-})</pre>
-    </section>
+})
 
-    <section class="section">
-      <h2>Recipe code (Coursera pattern)</h2>
-      <pre>template = """
+template = """
 Analyze the following product review:
 "{review}"
 
@@ -90,35 +99,74 @@ review_analysis_chain = (
 )
 
 reviews = [
-    "I love this smartphone! The camera quality is exceptional...",
-    "This laptop is terrible. It's slow, crashes frequently...",
+    "I love this smartphone! The camera quality is exceptional and the battery lasts all day. The only downside is that it heats up a bit during gaming.",
+    "This laptop is terrible. It's slow, crashes frequently, and the keyboard stopped working after just two months. Customer service was unhelpful.",
 ]
 
 for i, review in enumerate(reviews):
     print(f"==== Review #{i + 1} ====")
     print(review_analysis_chain.invoke({"review": review}))
     print()</pre>
+      <p style="color:var(--muted);font-size:.88rem;">Playground: <code>14.lcel.chain.custom_formatting.py</code></p>
     </section>
 
     <section class="section">
-      <h2>Direct equivalent (your pattern)</h2>
-      <pre>review_analysis_chain = product_review_prompt | llm | StrOutputParser()
-# same invoke: {"review": review}</pre>
-    </section>
-
-    <section class="section">
-      <h2>invoke keys</h2>
+      <h2>5 — Critical lines</h2>
       <table>
-        <tr><th>Key</th><th>Value</th></tr>
-        <tr><td><code>review</code></td><td>One product review string</td></tr>
+        <tr><th>Line</th><th>Why it matters</th><th>If you change it wrong…</th></tr>
+        <tr><td><code>RunnableLambda(format_review_prompt)</code></td><td>First pipe step; turns dict → str</td><td>LLM receives dict instead of text → type error</td></tr>
+        <tr><td><code>product_review_prompt.format(**variables)</code></td><td>Fills <code>{review}</code> hole</td><td>Missing <code>review</code> key → <code>KeyError</code> in lambda</td></tr>
+        <tr><td><code>TEMPERATURE: 0.2</code></td><td>Keeps bullet format stable</td><td>Extra sections (e.g. Recommendation) appear</td></tr>
+        <tr><td><code>for … invoke({"review": review})</code></td><td>Same chain, many inputs</td><td>Rebuilding chain per review works but wastes setup</td></tr>
       </table>
     </section>
 
-    <div class="callout"><strong>Trap:</strong> Model may add extra sections (e.g. Recommendation). Tighten the template or lower temperature if format drifts.</div>
+    <section class="section">
+      <h2>6 — Variants</h2>
+      <ul>
+        <li><strong>Direct LCEL (equivalent)</strong> — <code>product_review_prompt | llm | StrOutputParser()</code> — same <code>invoke({"review": review})</code>; lambda is optional.</li>
+        <li><strong>Summarize shape</strong> — One hole, shorter instruction → <a href="summarize.html">summarize</a> (Lab 09).</li>
+        <li><strong>Lab 10 lambda</strong> — Same <code>RunnableLambda(format_prompt)</code> trick on Q&amp;A → <a href="qa-context.html">qa-context</a>.</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>7 — Debug</h2>
+      <table>
+        <tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr>
+        <tr><td>Type error after lambda</td><td>Formatter returned dict not str</td><td>Return <code>prompt.format(**variables)</code> string only</td></tr>
+        <tr><td>Extra bullet sections</td><td>Model improvises format</td><td>Lower temperature; add <code>Use only the three bullets listed.</code></td></tr>
+        <tr><td><code>KeyError</code> in lambda</td><td>Wrong invoke key</td><td>Use <code>{"review": review}</code></td></tr>
+        <tr><td>Identical output for every review</td><td>Same string passed each loop</td><td>Check <code>for</code> loop variable shadows outer name</td></tr>
+      </table>
+    </section>
+
+    <div class="trap-box">
+      <h3>Traps</h3>
+      <ul>
+        <li><strong>Lambda returns PromptTemplate object</strong> — Must return formatted <code>str</code>; LLM expects text in this chain.</li>
+        <li><strong>Skipping <code>**variables</code></strong> — <code>format(review=…)</code> breaks when you add more holes later.</li>
+        <li><strong>Thinking lambda is required</strong> — <code>prompt | llm</code> does the same job here; lambda teaches the explicit formatting step.</li>
+      </ul>
+    </div>
+
+    <section class="section">
+      <h2>Rebuild from memory</h2>
+      <div class="rebuild-steps">
+        <p>Close this page. Write the script from these steps only:</p>
+        <ol>
+          <li>Import <code>PromptTemplate</code>, <code>StrOutputParser</code>, <code>RunnableLambda</code>, <code>make_watsonx_llm</code>, <code>GenParams</code>.</li>
+          <li><code>llm = make_watsonx_llm({MAX_NEW_TOKENS: 512, TEMPERATURE: 0.2})</code>.</li>
+          <li>Build <code>product_review_prompt</code> with <code>{review}</code> and three bullet format lines.</li>
+          <li>Define <code>format_review_prompt(variables)</code> returning <code>product_review_prompt.format(**variables)</code>.</li>
+          <li>Chain <code>RunnableLambda(format_review_prompt) | llm | StrOutputParser()</code>; loop reviews; invoke and print.</li>
+        </ol>
+      </div>
+    </section>
 
     <section class="section">
       <h2>Modules</h2>
-      <p><a href="../modules/05-runnable-lambda.html">05 RunnableLambda</a> · <a href="../modules/03-lcel-pipe.html">03 pipe</a></p>
+      <p><a href="../modules/01-prompt-template.html">01</a> · <a href="../modules/02-watsonx-llm.html">02</a> · <a href="../modules/03-lcel-pipe.html">03</a> · <a href="../modules/04-output-parser.html">04</a> · <a href="../modules/05-runnable-lambda.html">05</a></p>
     </section>
   </main>
 </div>

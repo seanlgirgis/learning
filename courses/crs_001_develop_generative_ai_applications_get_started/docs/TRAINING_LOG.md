@@ -19,6 +19,8 @@ Sean study questions and recall tracking. Agent appends rows during training ses
 | 2026-06-16 | LangChain · memory | Q2 — continuity across interactions? | Sequential chains link outputs/inputs | **Memory** reads/writes historical data | Confused pipeline wiring with conversation history | needs_repetition |
 | 2026-06-16 | LangChain · agents | Q3 — Italy population via agent? | Store query in memory | **LLM picks options + queries database** | Agent = reason + use tools, not just remember | needs_repetition |
 | 2026-06-16 | LangChain · chat models | Q5 — workout bot, direct responses, no predefined instructions? | Prompt templates | **Chat models** | Prompt templates *are* predefined structure | needs_repetition |
+| 2026-06-18 | Reference book | Modules 01–19 + recipes + guides shipped | — | — | Full playground 08–35 map live | new_material |
+| 2026-06-18 | Phase B spine | crs_001 code patterns + quick lookup synced to reference | — | — | Watson routes, RAG, agents cards added | new_material |
 
 ## Concepts to revisit
 

@@ -1,0 +1,49 @@
+{
+  "description": "Recommended RAG study corpus for capstone 01. Ingest one at a time or run: python capstone_01_ingest.py --corpus",
+  "sources": [
+    {
+      "id": "langchain-paper",
+      "tier": 1,
+      "title": "LangChain: A framework for building LLM-powered apps (course paper)",
+      "url": "https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/96-FDF8f7coh0ooim7NyEQ/langchain-paper.pdf",
+      "topics": ["LangChain", "chains", "agents", "components", "course anchor"]
+    },
+    {
+      "id": "rag-lewis-2020",
+      "tier": 1,
+      "title": "Retrieval-Augmented Generation for Knowledge-Intensive NLP (Lewis et al.)",
+      "url": "https://arxiv.org/pdf/2005.11401.pdf",
+      "topics": ["RAG definition", "retriever + generator", "open-domain QA", "foundational paper"]
+    },
+    {
+      "id": "dpr-karpukhin-2020",
+      "tier": 2,
+      "title": "Dense Passage Retrieval for Open-Domain QA (Karpukhin et al.)",
+      "url": "https://arxiv.org/pdf/2004.04906.pdf",
+      "topics": ["dense retrieval", "bi-encoder", "FAISS", "why embeddings matter"]
+    },
+    {
+      "id": "lost-in-the-middle-2023",
+      "tier": 2,
+      "title": "Lost in the Middle: How LLMs Use Long Context (Liu et al.)",
+      "url": "https://arxiv.org/pdf/2307.03172.pdf",
+      "topics": ["chunk order", "context window", "retrieval quality", "stuff chain limits"]
+    }
+  ],
+  "web_phase2": [
+    {
+      "id": "langchain-rag-concepts",
+      "title": "LangChain RAG concepts (HTML — use WebBaseLoader in a later bite)",
+      "url": "https://python.langchain.com/docs/concepts/rag/"
+    },
+    {
+      "id": "langchain-intro-v02",
+      "title": "LangChain intro page (labs 25/29)",
+      "url": "https://python.langchain.com/v0.2/docs/introduction/"
+    }
+  ],
+  "local_suggestions": [
+    "Export your own study notes or TRAINING_LOG highlights to PDF → ingest with a file path",
+    "Course deck PDFs you save under capstone/data/pdfs/ (kept out of git)"
+  ]
+}

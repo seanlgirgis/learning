@@ -31,30 +31,44 @@
     </ul>
   </aside>
   <main class="main">
-    <nav class="breadcrumbs"><a href="../index.html">LangChain</a> › <a href="index.html">Recipes</a> › <span>IBM generate</span></nav>
+    <nav class="breadcrumbs"><a href="../../index.html">Reference</a> › <a href="../index.html">LangChain</a> › <a href="index.html">Recipes</a> › <span>IBM generate</span></nav>
     <header class="hero">
-      <span class="badge">Recipe · Module 06</span>
+      <span class="badge depth-deep">Recipe · depth pass 1</span>
       <h1>Test watsonx with model.generate</h1>
-      <p>Lab 15 pattern — IBM SDK, dict response. <strong>Not</strong> for LangChain pipes.</p>
+      <p>Lab 15 — IBM SDK smoke test via <code>watson_helper</code>. Dict response, no LangChain pipe.</p>
     </header>
 
     <section class="section">
-      <h2>Problem</h2>
-      <p>Confirm <code>WATSONX_*</code> env is loaded and watsonx returns text — same as the notebook LOCAL SETUP demo.</p>
+      <h2>1 — Problem</h2>
+      <p>Before wiring LCEL chains, you need proof that <code>WATSONX_*</code> env vars load and IBM <code>ModelInference</code> returns text. This is the notebook LOCAL SETUP check — one string in, one completion out.</p>
+      <p><strong>Not this recipe:</strong> LangChain pipes (<a href="langchain-llm-plug.html">Lab 16</a>), chat roles (<a href="chat-messages.html">Lab 17</a>), or template holes (<a href="string-template-demo.html">Lab 19</a>).</p>
     </section>
 
     <section class="section">
-      <h2>Ingredients</h2>
-      <p>
-        <a class="pill" href="../modules/06-model-inference.html">06 ModelInference</a>
-        <a class="pill" href="../modules/07-watson-helpers.html">07 watson_helper</a>
-      </p>
+      <h2>2 — Prerequisites</h2>
+      <table>
+        <tr><th>Need</th><th>Module</th><th>Check</th></tr>
+        <tr><td>Env vars loaded</td><td><a href="../modules/02-watsonx-llm.html">02</a></td><td><code>set_env.ps1</code> ran in this shell</td></tr>
+        <tr><td><code>watson_helper</code> import</td><td><a href="../modules/07-watson-helpers.html">07</a></td><td><code>from watson_helper import credentials, model, model_id</code></td></tr>
+        <tr><td><code>ModelInference</code> object</td><td><a href="../modules/06-model-inference.html">06</a></td><td><code>model</code> is SDK client — not <code>WatsonxLLM</code></td></tr>
+        <tr><td>Dict response shape</td><td><a href="../modules/06-model-inference.html">06</a></td><td><code>msg["results"][0]["generated_text"]</code></td></tr>
+      </table>
     </section>
 
     <section class="section">
-      <h2>Playground lab (<code>15.watson_helper.generate_test.py</code>)</h2>
-      <pre># Run set_env.ps1 before this script
-from watson_helper import credentials, model, model_id
+      <h2>3 — Wiring diagram</h2>
+      <div class="flow-diagram">
+<pre>prompt str
+       → watson_helper.model  (ModelInference)
+       → model.generate(prompt)
+       → dict  msg["results"][0]["generated_text"]
+       → str printed</pre>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>4 — Script</h2>
+      <pre>from watson_helper import credentials, model, model_id
 
 print("Model:", model_id)
 print("URL:", credentials["url"])
@@ -62,32 +76,62 @@ print("URL:", credentials["url"])
 prompt = "In today's sales meeting, we "
 msg = model.generate(prompt)
 print(msg["results"][0]["generated_text"])</pre>
+      <p style="color:var(--muted);font-size:.88rem;">Playground: <code>15.watson_helper.generate_test.py</code></p>
     </section>
 
     <section class="section">
-      <h2>Jupyter notebook equivalent</h2>
-      <pre>from coursera_watsonx_model import credentials, model, model_id
-
-print("Model:", model_id)
-print("URL:", credentials["url"])
-
-msg = model.generate("In today's sales meeting, we ")
-print(msg["results"][0]["generated_text"])</pre>
-    </section>
-
-    <section class="section">
-      <h2>Reading the response</h2>
+      <h2>5 — Critical lines</h2>
       <table>
-        <tr><th>Expression</th><th>What you get</th></tr>
-        <tr><td><code>msg</code></td><td>Full IBM JSON as a Python dict</td></tr>
-        <tr><td><code>msg["results"][0]</code></td><td>First completion object</td></tr>
-        <tr><td><code>["generated_text"]</code></td><td>The actual model text (string)</td></tr>
+        <tr><th>Line</th><th>Why it matters</th><th>If you change it wrong…</th></tr>
+        <tr><td><code>model.generate(prompt)</code></td><td>IBM SDK entry point</td><td>Returns dict — not a plain string</td></tr>
+        <tr><td><code>msg["results"][0]</code></td><td>First completion slot</td><td><code>IndexError</code> if batch size ≠ 1</td></tr>
+        <tr><td><code>["generated_text"]</code></td><td>Text field name is fixed</td><td><code>KeyError</code> — wrong key for this API</td></tr>
+        <tr><td><code>watson_helper.model</code></td><td>Pre-built from env</td><td>Do not put this object in <code>prompt | llm</code></td></tr>
       </table>
     </section>
 
-    <div class="callout"><strong>Open prompt trap:</strong> A half-sentence like <code>"In today's sales meeting, we "</code> may produce odd completions (e.g. grammar drills). That is model behavior, not a broken helper.</div>
+    <section class="section">
+      <h2>6 — Variants</h2>
+      <ul>
+        <li><strong>LangChain path</strong> — Swap to <code>make_watsonx_llm()</code> → <a href="langchain-llm-plug.html">LLM plug-in recipe</a> (Lab 16).</li>
+        <li><strong>Param tuning</strong> — Override generation params when building the model in <code>watson_helper.py</code>, or use <a href="temperature-compare.html">temperature compare</a> with two <code>make_watsonx_llm()</code> instances.</li>
+        <li><strong>Closed prompt</strong> — Use a full question instead of a half-sentence if completions look like grammar drills.</li>
+      </ul>
+    </section>
 
-    <div class="callout"><strong>Next step:</strong> For LangChain, switch to <a href="langchain-llm-plug.html">LLM plug-in recipe</a> — do not put <code>model</code> in a pipe.</div>
+    <section class="section">
+      <h2>7 — Debug</h2>
+      <table>
+        <tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr>
+        <tr><td><code>KeyError: WATSONX_*</code></td><td>Env not loaded</td><td>Run <code>set_env.ps1</code></td></tr>
+        <tr><td><code>KeyError</code> on <code>generated_text</code></td><td>Wrong response path</td><td>Print full <code>msg</code> dict once</td></tr>
+        <tr><td>Odd or off-topic completion</td><td>Open-ended prompt fragment</td><td>Try a complete sentence prompt</td></tr>
+        <tr><td>Type error in <code>|</code> pipe</td><td>Used <code>model</code> in LCEL</td><td>Use <code>make_watsonx_llm()</code> instead</td></tr>
+      </table>
+    </section>
+
+    <div class="trap-box">
+      <h3>Traps</h3>
+      <ul>
+        <li><strong>Putting <code>model</code> in a pipe</strong> — <code>ModelInference</code> is not a LangChain Runnable. Use <a href="langchain-llm-plug.html">Lab 16</a>.</li>
+        <li><strong>Expecting a string from <code>generate</code></strong> — You must index into <code>results[0]["generated_text"]</code>.</li>
+        <li><strong>Skipping this smoke test</strong> — If Lab 15 fails, fix env/credentials before Labs 16–20.</li>
+      </ul>
+    </div>
+
+    <section class="section">
+      <h2>Rebuild from memory</h2>
+      <div class="rebuild-steps">
+        <p>Close this page. Write the script from these steps only:</p>
+        <ol>
+          <li>Import <code>credentials</code>, <code>model</code>, <code>model_id</code> from <code>watson_helper</code>.</li>
+          <li>Print <code>model_id</code> and <code>credentials["url"]</code> to confirm env.</li>
+          <li>Set a test <code>prompt</code> string.</li>
+          <li><code>msg = model.generate(prompt)</code>.</li>
+          <li>Print <code>msg["results"][0]["generated_text"]</code>.</li>
+        </ol>
+      </div>
+    </section>
 
     <section class="section">
       <h2>Modules</h2>

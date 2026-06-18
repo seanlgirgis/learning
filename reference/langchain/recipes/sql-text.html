@@ -33,38 +33,48 @@
   <main class="main">
     <nav class="breadcrumbs"><a href="../../index.html">Reference</a> › <a href="../index.html">LangChain</a> › <a href="index.html">Recipes</a> › <span>SQL text</span></nav>
     <header class="hero">
-      <span class="badge">Recipe</span>
+      <span class="badge depth-deep">Recipe · depth pass 1</span>
       <h1>Generate SQL text</h1>
-      <p>English description → SQL string. <strong>No database connection.</strong></p>
+      <p>English spec in → SQL string out. One hole: <code>{description}</code>. <strong>No database connection.</strong></p>
     </header>
 
     <section class="section">
-      <h2>Problem</h2>
-      <p>Write a query from a natural-language spec. Output is text only — you run it elsewhere (or not at all).</p>
+      <h2>1 — Problem</h2>
+      <p>Analyst describes tables, columns, and filters in plain English; you need a query string to paste into a SQL client. The chain returns text only — it does not execute against a live database.</p>
+      <p><strong>Not this recipe:</strong> SQL agents with tool calls, schema introspection from a connected DB, or validating results row-by-row.</p>
     </section>
 
     <section class="section">
-      <h2>Ingredients</h2>
-      <p>
-        <a class="pill" href="../modules/01-prompt-template.html">01</a>
-        <a class="pill" href="../modules/02-watsonx-llm.html">02</a>
-        <a class="pill" href="../modules/03-lcel-pipe.html">03</a>
-        <a class="pill" href="../modules/04-output-parser.html">04</a>
-      </p>
+      <h2>2 — Prerequisites</h2>
+      <table>
+        <tr><th>Need</th><th>Module</th><th>Check</th></tr>
+        <tr><td>Env vars loaded</td><td><a href="../modules/02-watsonx-llm.html">02</a></td><td><code>set_env.ps1</code> ran in this shell</td></tr>
+        <tr><td><code>WatsonxLLM</code> object</td><td><a href="../modules/07-watson-helpers.html">07</a></td><td><code>make_watsonx_llm()</code> not inline <code>WatsonxLLM(...)</code></td></tr>
+        <tr><td>Template with <code>{description}</code></td><td><a href="../modules/01-prompt-template.html">01</a></td><td>Invoke key is <code>description</code> even if Python var is named <code>story</code></td></tr>
+        <tr><td>Pipe wiring</td><td><a href="../modules/03-lcel-pipe.html">03</a></td><td><code>prompt | llm | StrOutputParser()</code></td></tr>
+      </table>
     </section>
 
     <section class="section">
-      <h2>Setup</h2>
+      <h2>3 — Wiring diagram</h2>
+      <div class="flow-diagram">
+<pre>{"description": english_spec}
+       → PromptTemplate("Generate an SQL query only … based on the {description}")
+       → WatsonxLLM
+       → StrOutputParser()
+       → SQL str printed</pre>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>4 — Script</h2>
       <pre>from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from watson_llm import make_watsonx_llm
 
-llm = make_watsonx_llm()</pre>
-    </section>
+llm = make_watsonx_llm()
 
-    <section class="section">
-      <h2>Recipe code</h2>
-      <pre>description = """
+description = """
 Retrieve the names and email addresses of all customers from the
 'customers' table who have made a purchase in the last 30 days.
 The table 'purchases' contains a column 'purchase_date'.
@@ -79,21 +89,66 @@ prompt = PromptTemplate.from_template(template)
 sql_generation_chain = prompt | llm | StrOutputParser()
 
 print(sql_generation_chain.invoke({"description": description}))</pre>
+      <p style="color:var(--muted);font-size:.88rem;">Playground: <code>12.lcel.generatesql.py</code> (lab stores the spec in a variable named <code>story</code> but invokes with <code>{"description": story}</code>).</p>
     </section>
 
     <section class="section">
-      <h2>invoke keys</h2>
+      <h2>5 — Critical lines</h2>
       <table>
-        <tr><th>Key</th><th>Value</th></tr>
-        <tr><td><code>description</code></td><td>Tables, columns, filters in plain English</td></tr>
+        <tr><th>Line</th><th>Why it matters</th><th>If you change it wrong…</th></tr>
+        <tr><td><code>{"description": description}</code></td><td>Key must match <code>{description}</code> hole</td><td><code>KeyError</code> — common when var is named <code>story</code> but key is wrong</td></tr>
+        <tr><td><code>SQL query only with no explanation</code></td><td>Suppresses prose around the query</td><td>Model wraps SQL in markdown or commentary</td></tr>
+        <tr><td><code>SQL Query:</code> suffix</td><td>Anchors output to statement start</td><td>Preamble text before <code>SELECT</code></td></tr>
+        <tr><td>Table/column names in <code>description</code></td><td>Only schema hint the model gets</td><td>Wrong table aliases or invented columns</td></tr>
       </table>
     </section>
 
-    <div class="callout"><strong>Not agentic:</strong> No DB tool. Fixed chain ≠ agent that queries Italy’s population from a live database.</div>
+    <section class="section">
+      <h2>6 — Variants</h2>
+      <ul>
+        <li><strong>Summarize shape</strong> — One hole, different instruction → <a href="summarize.html">summarize</a> (Lab 09).</li>
+        <li><strong>Lower creativity</strong> — <code>make_watsonx_llm({GenParams.TEMPERATURE: 0.1})</code> for stabler syntax.</li>
+        <li><strong>RunnableLambda formatter</strong> — Pre-process description before LLM → <a href="review-lambda.html">review-lambda</a> (Lab 14).</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>7 — Debug</h2>
+      <table>
+        <tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr>
+        <tr><td><code>KeyError</code> on invoke</td><td>Used <code>story</code> as dict key</td><td>Invoke with <code>{"description": …}</code></td></tr>
+        <tr><td>SQL inside markdown fences</td><td>Model ignores “no commentary”</td><td>Add <code>Return raw SQL only, no backticks.</code></td></tr>
+        <tr><td>Wrong join / missing filter</td><td>Vague <code>description</code></td><td>Spell table names, join keys, and date logic explicitly</td></tr>
+        <tr><td>Query fails at runtime</td><td>No DB validation in this recipe</td><td>Review SQL manually before executing</td></tr>
+      </table>
+    </section>
+
+    <div class="trap-box">
+      <h3>Traps</h3>
+      <ul>
+        <li><strong>Variable name ≠ invoke key</strong> — Lab calls the string <code>story</code>; template hole is still <code>{description}</code>.</li>
+        <li><strong>Expecting execution</strong> — This chain prints text. Connecting to SQLite/Postgres is a different pattern.</li>
+        <li><strong>Agent confusion</strong> — Fixed <code>prompt | llm</code> is not an agent that looks up Italy’s population from a live DB.</li>
+      </ul>
+    </div>
+
+    <section class="section">
+      <h2>Rebuild from memory</h2>
+      <div class="rebuild-steps">
+        <p>Close this page. Write the script from these steps only:</p>
+        <ol>
+          <li>Import <code>PromptTemplate</code>, <code>StrOutputParser</code>, <code>make_watsonx_llm</code>.</li>
+          <li>Build <code>llm = make_watsonx_llm()</code> after env is set.</li>
+          <li>English spec in <code>description</code> with tables, columns, filters.</li>
+          <li>Template: generate SQL only from <code>{description}</code>; end with <code>SQL Query:</code>.</li>
+          <li>Wire <code>prompt | llm | StrOutputParser()</code>; <code>invoke({"description": description})</code>; print.</li>
+        </ol>
+      </div>
+    </section>
 
     <section class="section">
       <h2>Modules</h2>
-      <p><a href="../modules/01-prompt-template.html">01</a> · <a href="../modules/03-lcel-pipe.html">03</a></p>
+      <p><a href="../modules/01-prompt-template.html">01</a> · <a href="../modules/02-watsonx-llm.html">02</a> · <a href="../modules/03-lcel-pipe.html">03</a> · <a href="../modules/04-output-parser.html">04</a></p>
     </section>
   </main>
 </div>

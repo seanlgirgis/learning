@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Guide: RAG pipeline | LangChain Reference</title>
+  <link rel="stylesheet" href="../reference.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <h2>Guides</h2>
+    <ul>
+      <li><a href="../index.html">← LangChain hub</a></li>
+      <li><a href="rag-pipeline.html" class="active">RAG pipeline</a></li>
+      <li><a href="react-internals.html">ReAct internals</a></li>
+    </ul>
+    <h2>Modules</h2>
+    <ul>
+      <li><a href="../modules/12-document-loaders.html">12 Loaders</a></li>
+      <li><a href="../modules/13-text-splitters.html">13 Splitters</a></li>
+      <li><a href="../modules/14-embeddings.html">14 Embeddings</a></li>
+      <li><a href="../modules/15-chroma-vectorstore.html">15 Chroma</a></li>
+      <li><a href="../modules/16-retrievers-rag.html">16 RAG</a></li>
+    </ul>
+  </aside>
+  <main class="main">
+    <nav class="breadcrumbs"><a href="../../index.html">Reference</a> › <a href="../index.html">LangChain</a> › <span>RAG pipeline guide</span></nav>
+    <header class="hero">
+      <span class="badge depth-deep">Guide · Labs 23–31</span>
+      <h1>RAG pipeline end-to-end</h1>
+      <p>One spine: <strong>load → split → embed → store → retrieve → answer</strong>. No LLM until the last step.</p>
+    </header>
+
+    <section class="section">
+      <h2>Key take — six steps</h2>
+      <table>
+        <tr><th>Step</th><th>Action</th><th>Module</th><th>Lab</th></tr>
+        <tr><td>1</td><td><code>loader.load()</code></td><td><a href="../modules/12-document-loaders.html">12</a></td><td>23–25</td></tr>
+        <tr><td>2</td><td><code>splitter.split_documents()</code></td><td><a href="../modules/13-text-splitters.html">13</a></td><td>26–27</td></tr>
+        <tr><td>3</td><td><code>make_watsonx_embeddings()</code></td><td><a href="../modules/14-embeddings.html">14</a></td><td>28</td></tr>
+        <tr><td>4</td><td><code>Chroma.from_documents()</code></td><td><a href="../modules/15-chroma-vectorstore.html">15</a></td><td>29</td></tr>
+        <tr><td>5</td><td><code>as_retriever()</code> or <code>similarity_search</code></td><td><a href="../modules/16-retrievers-rag.html">16</a></td><td>30</td></tr>
+        <tr><td>6</td><td><code>RetrievalQA.invoke(question)</code></td><td><a href="../modules/16-retrievers-rag.html">16</a></td><td>31</td></tr>
+      </table>
+      <p style="color:var(--muted);font-size:.88rem;">Memory: <strong>ingest first, LLM last</strong>. Embeddings are Route B (<code>watson_llm</code>), not <code>generate()</code>.</p>
+    </section>
+
+    <section class="section">
+      <h2>Flow diagram</h2>
+      <div class="flow-diagram">
+<pre>PDF / Web URL
+    → PyPDFLoader / WebBaseLoader
+    → list[Document]
+    → RecursiveCharacterTextSplitter
+    → chunks
+    → make_watsonx_embeddings + Chroma.from_documents
+    → vector_store
+    → retriever.invoke(question) OR RetrievalQA
+    → answer str (grounded in chunks)</pre>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Minimal working chain (Lab 31)</h2>
+      <pre>from langchain_classic.chains import RetrievalQA
+from langchain_community.document_loaders import PyPDFLoader
+from langchain_community.vectorstores import Chroma
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from watson_llm import make_watsonx_embeddings, make_watsonx_llm
+
+loader = PyPDFLoader(PDF_URL)
+chunks = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50).split_documents(loader.load())
+store = Chroma.from_documents(chunks, make_watsonx_embeddings())
+qa = RetrievalQA.from_chain_type(
+    llm=make_watsonx_llm(),
+    retriever=store.as_retriever(),
+    chain_type="stuff",
+)
+qa.invoke("what is this paper discussing?")</pre>
+    </section>
+
+    <section class="section">
+      <h2>Parent document variant (Lab 32)</h2>
+      <p>Search <strong>small</strong> child chunks; return <strong>large</strong> parent for LLM context. See <a href="../modules/16-retrievers-rag.html">Module 16</a> · <code>32.parent_document_retriever.py</code>.</p>
+    </section>
+
+    <div class="trap-box">
+      <h3>Traps</h3>
+      <ul>
+        <li><strong>Skipping split</strong> — whole PDF as one vector → useless search.</li>
+        <li><strong>Web URL for factual PDF QA</strong> — Lab 31 uses LangChain paper PDF on purpose; random URLs → weak answers.</li>
+        <li><strong>Confusing RAG with memory</strong> — RAG = external docs; memory = chat turns (<a href="../modules/17-memory.html">17</a>).</li>
+        <li><strong><code>langchain_classic</code></strong> — <code>RetrievalQA</code> import in 1.x venv.</li>
+      </ul>
+    </div>
+
+    <section class="section">
+      <h2>Links</h2>
+      <p>
+        <a href="../index.html">Hub</a> ·
+        <a href="react-internals.html">ReAct guide</a> ·
+        Capstone: <a href="../../../planning/langchain_capstone_projects.md">RAG Tutor (#1)</a>
+      </p>
+    </section>
+  </main>
+</div>
+</body>
+</html>

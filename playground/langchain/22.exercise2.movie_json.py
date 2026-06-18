@@ -10,7 +10,7 @@ Run set_env.ps1, then:
 from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.prompts import PromptTemplate
 
-from langchain_helper import make_llm
+from watson_llm import make_watsonx_llm
 
 json_parser = JsonOutputParser()
 
@@ -35,7 +35,7 @@ Task: Generate info about the movie "{movie_name}" in JSON format.
     partial_variables={"format_instructions": format_instructions},
 )
 
-movie_chain = prompt_template | make_llm() | json_parser
+movie_chain = prompt_template | make_watsonx_llm() | json_parser
 
 movie_name = "The Matrix"
 result = movie_chain.invoke({"movie_name": movie_name})

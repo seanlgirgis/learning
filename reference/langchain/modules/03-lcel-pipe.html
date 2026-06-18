@@ -23,60 +23,183 @@
       <li><a href="09-gen-params.html">09 GenParams</a></li>
       <li><a href="10-chat-prompt-template.html">10 ChatPromptTemplate</a></li>
       <li><a href="11-json-output-parser.html">11 JsonOutputParser</a></li>
+      <li><a href="12-document-loaders.html">12 Document + loaders</a></li>
+      <li><a href="13-text-splitters.html">13 Text splitters</a></li>
+      <li><a href="14-embeddings.html">14 Embeddings</a></li>
+      <li><a href="15-chroma-vectorstore.html">15 Chroma</a></li>
+      <li><a href="16-retrievers-rag.html">16 Retrievers + RAG</a></li>
+      <li><a href="17-memory.html">17 Memory</a></li>
+      <li><a href="18-classic-chains.html">18 Classic chains</a></li>
+      <li><a href="19-agents-tools.html">19 Agents</a></li>
     </ul>
   </aside>
   <main class="main">
     <nav class="breadcrumbs"><a href="../../index.html">Reference</a> › <a href="../index.html">LangChain</a> › <span>03 LCEL pipe</span></nav>
     <header class="hero">
-      <span class="badge">Module 03</span>
+      <span class="badge depth-deep">Module 03 · depth pass 1</span>
       <h1>LCEL pipe</h1>
-      <p>Wire Runnables with <code>|</code> — fixed steps, one <code>invoke</code> runs them all.</p>
+      <p>Wire Runnables with <code>|</code> — fixed steps, one <code>invoke</code> runs them all. This is the spine every other LangChain pattern hangs on.</p>
     </header>
 
     <section class="section">
-      <h2>When to use</h2>
-      <p>Default pattern for LangChain apps: format → generate → (optional) parse.</p>
+      <h2>Job (help-desk story)</h2>
+      <p>Ticket intake → specialist → formatted reply. The customer fills one form (<code>invoke</code> dict); the pipeline runs every desk in order without you hand-carrying strings between steps.</p>
     </section>
 
     <section class="section">
-      <h2>Objects</h2>
+      <h2>Problem without it</h2>
+      <ul>
+        <li>You call <code>prompt.format()</code>, then <code>llm.invoke()</code>, then parse — easy to skip a step or pass the wrong type.</li>
+        <li>Each step has a different calling convention; pipes unify everything behind <code>Runnable.invoke</code>.</li>
+        <li>When you add RAG or parsers later, you swap step 2 or 3 — the outer <code>chain.invoke</code> call stays the same.</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>Object lifecycle</h2>
+      <ol class="lifecycle-steps">
+        <li><strong>Build</strong> — At setup: <code>chain = prompt | llm | parser</code>. Type is <code>RunnableSequence</code>. Steps are frozen; model does not choose them at runtime.</li>
+        <li><strong>Configure</strong> — Each step is configured separately (<code>PromptTemplate</code> string, <code>WatsonxLLM</code> params). The pipe only wires references.</li>
+        <li><strong>Invoke</strong> — <code>chain.invoke({"key": value})</code>. Dict keys must match every <code>{hole}</code> in the prompt template.</li>
+        <li><strong>Output</strong> — Return type = last step’s output. With <code>StrOutputParser</code> → <code>str</code>. With <code>JsonOutputParser</code> → <code>dict</code>.</li>
+      </ol>
+    </section>
+
+    <section class="section">
+      <h2>Data flow</h2>
+      <div class="flow-diagram">
+<pre>invoke({"adjective": "funny", "content": "chickens"})
+        │
+        ▼
+┌───────────────────┐
+│  PromptTemplate   │  dict → PromptValue (filled template)
+└─────────┬─────────┘
+          ▼
+┌───────────────────┐
+│    WatsonxLLM     │  PromptValue/str → model call → raw generation
+└─────────┬─────────┘
+          ▼
+┌───────────────────┐
+│ StrOutputParser   │  raw → str (normalized for print / next step)
+└─────────┬─────────┘
+          ▼
+     "Why did the chicken..."   ← what you print</pre>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Objects in the pipe</h2>
       <table>
-        <tr><th>Object</th><th>Type</th><th>Role</th></tr>
-        <tr><td><code>prompt</code></td><td><code>PromptTemplate</code></td><td>Step 1 — format</td></tr>
-        <tr><td><code>llm</code></td><td><code>WatsonxLLM</code></td><td>Step 2 — generate</td></tr>
-        <tr><td><code>parser</code></td><td><code>StrOutputParser</code></td><td>Step 3 — normalize (optional with text LLM)</td></tr>
-        <tr><td><code>chain</code></td><td><code>RunnableSequence</code></td><td>Wired pipeline</td></tr>
+        <tr><th>Step</th><th>Object</th><th>Type</th><th>If wrong then…</th></tr>
+        <tr><td>1</td><td><code>prompt</code></td><td><code>PromptTemplate</code></td><td><code>KeyError</code> — invoke dict missing a template hole</td></tr>
+        <tr><td>2</td><td><code>llm</code></td><td><code>WatsonxLLM</code></td><td>Pipe breaks — <code>ModelInference</code> is not a Runnable; use <a href="02-watsonx-llm.html">02</a></td></tr>
+        <tr><td>3</td><td><code>parser</code></td><td><code>StrOutputParser</code></td><td>You get message objects or odd types when you switch to <code>ChatWatsonx</code></td></tr>
+        <tr><td>—</td><td><code>chain</code></td><td><code>RunnableSequence</code></td><td>Calling <code>llm.invoke</code> alone skips formatting and parsing</td></tr>
       </table>
     </section>
 
     <section class="section">
-      <h2>Syntax</h2>
+      <h2>Minimal example</h2>
       <pre>chain = prompt | llm | StrOutputParser()
-
-result = chain.invoke({"adjective": "funny", "content": "chickens"})</pre>
+chain.invoke({"content": "long passage here"})</pre>
     </section>
 
     <section class="section">
-      <h2>Methods</h2>
-      <table>
-        <tr><th>Call</th><th>Input</th><th>Output</th></tr>
-        <tr><td><code>chain.invoke(dict)</code></td><td>Dict — keys match template holes</td><td>Final step result (usually <code>str</code>)</td></tr>
+      <h2>Full lab (your playground)</h2>
+      <pre>from langchain_core.prompts import PromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+from watson_llm import make_watsonx_llm
+
+llm = make_watsonx_llm()
+template = "Tell me a {adjective} joke about {content}."
+prompt = PromptTemplate.from_template(template)
+chain = prompt | llm | StrOutputParser()
+
+print(type(chain))  # RunnableSequence
+print(chain.invoke({"adjective": "funny", "content": "chickens"}))</pre>
+      <p style="color:var(--muted);font-size:.88rem;">Script: <code>playground/langchain/08.lcel.1.py</code> · Recipe: <a href="../recipes/summarize.html">Summarize</a></p>
+    </section>
+
+    <section class="section">
+      <h2>Confused with</h2>
+      <table class="confusion-matrix">
+        <tr><th>Neighbor</th><th>LCEL pipe (this)</th><th>Neighbor does</th></tr>
+        <tr>
+          <td><a href="05-runnable-lambda.html">RunnableLambda</a></td>
+          <td><code>prompt | llm</code> — prompt is already a Runnable</td>
+          <td>Coursera wraps <code>prompt.format(**vars)</code> in a function — equivalent, more verbose</td>
+        </tr>
+        <tr>
+          <td><a href="06-model-inference.html">ModelInference</a></td>
+          <td><code>WatsonxLLM</code> in <code>|</code></td>
+          <td><code>model.generate()</code> → dict; no LCEL</td>
+        </tr>
+        <tr>
+          <td>Agent (Lab 35)</td>
+          <td>Fixed steps at build time</td>
+          <td>Model picks tools each turn — Thought / Action / Observation loop</td>
+        </tr>
+        <tr>
+          <td><code>SequentialChain</code> (Lab 34)</td>
+          <td><code>|</code> + one <code>invoke</code></td>
+          <td>Named chains, explicit input/output keys — classic API</td>
+        </tr>
       </table>
     </section>
 
     <section class="section">
-      <h2>Flow</h2>
-      <pre>dict in
-  → prompt fills template
-  → llm calls watsonx
-  → parser (if present) → str out</pre>
+      <h2>Imports (Coursera → your venv)</h2>
+      <div class="import-block">
+        <h3>Coursera notebook (0.x style)</h3>
+        <pre>from langchain.prompts import PromptTemplate
+from langchain.chains import LLMChain
+chain = LLMChain(llm=llm, prompt=prompt)
+chain.run(adjective="funny", content="chickens")</pre>
+      </div>
+      <div class="import-block">
+        <h3>Your playground (LangChain 1.x LCEL)</h3>
+        <pre>from langchain_core.prompts import PromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+from watson_llm import make_watsonx_llm
+
+chain = prompt | make_watsonx_llm() | StrOutputParser()
+chain.invoke({"adjective": "funny", "content": "chickens"})</pre>
+      </div>
     </section>
 
-    <div class="callout"><strong>Trap:</strong> Chain ≠ agent. Steps are fixed at build time — model does not pick tools.</div>
+    <div class="trap-box">
+      <h3>Traps (from your labs)</h3>
+      <ul>
+        <li><strong>Wrong LLM in pipe</strong> — <code>watson_helper.model</code> (<code>ModelInference</code>) cannot sit after <code>|</code>. Use <code>make_watsonx_llm()</code> from <a href="07-watson-helpers.html">07</a>.</li>
+        <li><strong>format() vs invoke()</strong> — <code>prompt.format(adjective="x")</code> is a manual test only. In a pipe you always call <code>chain.invoke({"adjective": "x", ...})</code>.</li>
+        <li><strong>Chain ≠ agent</strong> — If the model needs to choose tools or loop, you are past LCEL pipes (see Lab 35). Pipes do not think; they execute.</li>
+      </ul>
+    </div>
 
     <section class="section">
-      <h2>Next</h2>
-      <p><a href="04-output-parser.html">Module 04 — parser</a> · <a href="05-runnable-lambda.html">Module 05 — optional lambda</a></p>
+      <h2>Recall drills</h2>
+      <details class="recall-drill">
+        <summary>What type is <code>prompt | llm | parser</code>, and when are steps chosen?</summary>
+        <div class="answer"><code>RunnableSequence</code>. Steps are fixed when you build the chain — not chosen by the model at invoke time.</div>
+      </details>
+      <details class="recall-drill">
+        <summary>What do you pass to <code>chain.invoke(...)</code> for a <code>PromptTemplate</code> first step?</summary>
+        <div class="answer">A dict whose keys match every <code>{variable}</code> in the template string. Missing key → error before the LLM runs.</div>
+      </details>
+      <details class="recall-drill">
+        <summary>Why keep <code>StrOutputParser</code> even when <code>WatsonxLLM</code> already returns a string?</summary>
+        <div class="answer">So the last step always returns <code>str</code> when you swap to <code>ChatWatsonx</code> (message objects) or add a different model — pipe contract stays stable.</div>
+      </details>
+    </section>
+
+    <section class="section">
+      <h2>Links</h2>
+      <p>
+        Lab: <code>08.lcel.1.py</code> ·
+        Recipe: <a href="../recipes/summarize.html">Summarize</a> ·
+        Bubble: <a href="../../../courses/crs_001_develop_generative_ai_applications_get_started/bubbles/outputs/crs_001_lcel_workflow.html">LCEL workflow map</a> ·
+        Next: <a href="04-output-parser.html">04 parser</a> · <a href="05-runnable-lambda.html">05 lambda (optional)</a>
+      </p>
     </section>
   </main>
 </div>

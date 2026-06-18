@@ -358,39 +358,95 @@
 <body><main class="page">
 <nav class="breadcrumbs"><a href="../index.html">Course Home</a><span>›</span><a href="field_guide.html">Main Field Guide</a><span>›</span><span>LangChain Code Patterns</span></nav>
 <header class="hero"><p class="eyebrow">Coursera · Supporting Guide</p><h1>LangChain Code Patterns</h1><p>A compact implementation guide built from the local examples that actually ran.</p>
-<div class="hero-actions"><a class="button primary" href="../bubbles/outputs/crs_001_lcel_workflow.html">LCEL Code Map</a><a class="button secondary" href="field_guide.html">Main Field Guide</a><a class="button secondary" href="concept_and_code_quick_lookup.html">Quick Lookup</a></div></header>
-<div class="layout"><aside class="toc"><h2>Guide Contents</h2><a href="#content">1. Guide</a></aside>
-<div class="content"><section class="section" id="content">
-<h2>Code Patterns</h2>
-<p>Use these as reusable skeletons. Memorize the shape, not every long file.</p>
-<h3>PromptTemplate</h3>
-<pre><code>prompt = PromptTemplate.from_template(
-    "Explain {topic} to a {audience}."
+<div class="hero-actions"><a class="button primary" href="../../../reference/langchain/index.html">LangChain Reference (19 modules)</a><a class="button secondary" href="../bubbles/outputs/crs_001_lcel_workflow.html">LCEL Code Map</a><a class="button secondary" href="../bubbles/outputs/crs_001_watson_two_routes.html">Watson Two Routes</a><a class="button secondary" href="field_guide.html">Main Field Guide</a><a class="button secondary" href="concept_and_code_quick_lookup.html">Quick Lookup</a></div></header>
+<div class="layout"><aside class="toc"><h2>Guide Contents</h2><a href="#watson">Watson two routes</a><a href="#lcel">LCEL spine</a><a href="#chat">Chat + templates</a><a href="#structured">Structured output</a><a href="#rag">RAG pipeline</a><a href="#memory">Memory</a><a href="#chains">Chains vs agents</a><a href="#ref">Reference index</a></aside>
+<div class="content">
+
+<section class="section" id="watson">
+<h2>Watson two routes</h2>
+<p>Synced with <a href="../../../reference/langchain/modules/07-watson-helpers.html">Reference Module 07</a> · <a href="../bubbles/outputs/crs_001_watson_two_routes.html">bubble map</a>.</p>
+<table>
+<tr><th>Route</th><th>Import</th><th>Call</th></tr>
+<tr><td>A — IBM</td><td><code>from watson_helper import model</code></td><td><code>model.generate(...)</code></td></tr>
+<tr><td>B — LangChain</td><td><code>from watson_llm import make_watsonx_llm</code></td><td><code>.invoke(...)</code> or <code>prompt | llm | parser</code></td></tr>
+</table>
+<div class="callout amber"><strong>Trap:</strong> <code>prompt | model | parser</code> fails — <code>model</code> from Route A is not Runnable.</div>
+</section>
+
+<section class="section" id="lcel">
+<h2>LCEL spine</h2>
+<p><a href="../../../reference/langchain/modules/03-lcel-pipe.html">Module 03</a> · Labs <code>08.lcel.1.py</code>–<code>14</code> · <a href="../../../reference/langchain/recipes/summarize.html">Summarize recipe</a>.</p>
+<pre><code>from watson_llm import make_watsonx_llm
+from langchain_core.prompts import PromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+
+llm = make_watsonx_llm()
+prompt = PromptTemplate.from_template("Summarize {content} in one sentence.")
+chain = prompt | llm | StrOutputParser()
+chain.invoke({"content": passage})</code></pre>
+<div class="callout green"><strong>Memory rule:</strong> <code>prompt.invoke</code> → prepare · <code>llm.invoke</code> → generate · <code>chain.invoke</code> → run all steps.</div>
+</section>
+
+<section class="section" id="chat">
+<h2>Chat + templates</h2>
+<p><a href="../../../reference/langchain/modules/08-chat-messages.html">08 messages</a> · <a href="../../../reference/langchain/modules/10-chat-prompt-template.html">10 ChatPromptTemplate</a>.</p>
+<pre><code># Lab 17 — hand-built list
+llm.invoke([SystemMessage(...), HumanMessage(...)])
+
+# Lab 20 — pipe-friendly template
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "You are a helpful assistant."),
+    ("user", "Tell me a joke about {topic}"),
+])
+(prompt | llm).invoke({"topic": "cats"})</code></pre>
+</section>
+
+<section class="section" id="structured">
+<h2>Structured output</h2>
+<p><a href="../../../reference/langchain/modules/11-json-output-parser.html">Module 11</a> · Labs 21–22.</p>
+<pre><code>parser = JsonOutputParser(pydantic_object=Joke)
+prompt = PromptTemplate(
+    template="...\n{format_instructions}\n{query}",
+    partial_variables={"format_instructions": parser.get_format_instructions()},
 )
-formatted = prompt.invoke({
-    "topic": "RAG",
-    "audience": "beginner",
-})</code></pre>
-<h3>ChatPromptTemplate</h3>
-<pre><code>prompt = ChatPromptTemplate.from_messages([
-    ("system", "You are a patient tutor."),
-    ("human", "{question}"),
-])</code></pre>
-<h3>LCEL</h3>
-<pre><code>chain = prompt | model | StrOutputParser()
-result = chain.invoke({"question": "What is LCEL?"})</code></pre>
-<h3>RunnableParallel</h3>
-<pre><code>parallel = RunnableParallel(
-    uppercase=RunnableLambda(uppercase_text),
-    word_count=RunnableLambda(count_words),
-)</code></pre>
-<h3>Structured output</h3>
-<pre><code>structured_model = model.with_structured_output(TopicSummary)
-chain = prompt | structured_model
-result = chain.invoke({"topic": "prompt templates"})</code></pre>
-<h3>Conversation history</h3>
-<pre><code>MessagesPlaceholder(variable_name="history")</code></pre>
-<div class="callout green"><strong>Memory rule:</strong> prompt prepares, model generates, parser normalizes, chain runs everything.</div>
-</section></div></div>
-<footer><span>Develop Generative AI Applications: Get Started</span><span><a href="../bubbles/outputs/crs_001_lcel_workflow.html">LCEL Code Map</a> · <a href="field_guide.html">Main Field Guide</a></span></footer>
+chain = prompt | make_watsonx_llm() | parser  # → dict</code></pre>
+</section>
+
+<section class="section" id="rag">
+<h2>RAG pipeline</h2>
+<p><a href="../../../reference/langchain/guides/rag-pipeline.html">RAG guide</a> · Modules <a href="../../../reference/langchain/modules/12-document-loaders.html">12</a>–<a href="../../../reference/langchain/modules/16-retrievers-rag.html">16</a> · Labs 23–31.</p>
+<div class="diagram">load → split → embed → Chroma → retriever → RetrievalQA</div>
+<pre><code>chunks = splitter.split_documents(loader.load())
+store = Chroma.from_documents(chunks, make_watsonx_embeddings())
+qa = RetrievalQA.from_chain_type(llm=make_watsonx_llm(), retriever=store.as_retriever(), chain_type="stuff")
+qa.invoke("what is this paper discussing?")</code></pre>
+</section>
+
+<section class="section" id="memory">
+<h2>Memory</h2>
+<p><a href="../../../reference/langchain/modules/17-memory.html">Module 17</a> · Lab 33. Not RAG — conversation turns.</p>
+<pre><code>memory = ConversationBufferMemory()
+chain = ConversationChain(llm=make_watsonx_llm(), memory=memory)
+chain.predict(input="I have a little cat")</code></pre>
+</section>
+
+<section class="section" id="chains">
+<h2>Chains vs agents</h2>
+<p><a href="../../../reference/langchain/modules/18-classic-chains.html">18 chains</a> · <a href="../../../reference/langchain/modules/19-agents-tools.html">19 agents</a> · <a href="../../../reference/langchain/guides/react-internals.html">ReAct guide</a> · Labs 34–35.</p>
+<div class="callout"><strong>Chain</strong> = fixed steps you wire. <strong>Agent</strong> = LLM picks tools in a Thought → Action → Observation loop.</div>
+</section>
+
+<section class="section" id="ref">
+<h2>Reference index (playground Labs 08–35)</h2>
+<p>Full textbook: <a href="../../../reference/langchain/index.html">reference/langchain/index.html</a> — 19 modules, 16 recipes, 2 guides. Playground: <code>playground/langchain/</code>.</p>
+<table>
+<tr><th>Band</th><th>Modules</th><th>Labs</th></tr>
+<tr><td>LCEL + parsers</td><td>01–11</td><td>08–22</td></tr>
+<tr><td>RAG</td><td>12–16</td><td>23–32</td></tr>
+<tr><td>Memory · chains · agents</td><td>17–19</td><td>33–35</td></tr>
+</table>
+</section>
+
+</div></div>
+<footer><span>Develop Generative AI Applications: Get Started</span><span><a href="../../../reference/langchain/index.html">LangChain Reference</a> · <a href="../bubbles/outputs/crs_001_lcel_workflow.html">LCEL Code Map</a> · <a href="field_guide.html">Main Field Guide</a></span></footer>
 </main></body></html>

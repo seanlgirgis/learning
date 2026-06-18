@@ -293,6 +293,7 @@ Instructions:
         <a class="button primary" href="../index.html">Course Home</a>
         <a class="button" href="../bubbles/outputs/crs_001_gen_ai_landscape.html">Landscape Map</a>
         <a class="button" href="../bubbles/outputs/crs_001_lcel_workflow.html">LCEL Code Map</a>
+        <a class="button" href="../../../reference/langchain/index.html">LangChain Reference</a>
         <a class="button" href="field_guide.html">Main Field Guide</a>
         <a class="button" href="../lab/lab_run_book.md">Lab Run Book</a>
       </div>
@@ -380,6 +381,58 @@ few-shot: examples + new input</code></pre>
           <p>Validated application fields</p>
           <pre><code>model.with_structured_output(MySchema)</code></pre>
           <div class="trap">Know whether the result is dict or Pydantic.</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Watson, RAG, Agents</h2>
+      <div class="lookup-grid">
+        <article class="lookup-card">
+          <h3>Watson Route A</h3>
+          <p>IBM generate — low level</p>
+          <pre><code>from watson_helper import model
+model.generate("...")</code></pre>
+          <div class="trap">Not Runnable — cannot sit in LCEL pipe.</div>
+        </article>
+
+        <article class="lookup-card">
+          <h3>Watson Route B</h3>
+          <p>LangChain LLM — invoke and pipes</p>
+          <pre><code>from watson_llm import make_watsonx_llm
+llm = make_watsonx_llm()</code></pre>
+          <div class="trap">helper vs llm — similar names, different route.</div>
+        </article>
+
+        <article class="lookup-card">
+          <h3>RAG spine</h3>
+          <p>Load → split → embed → Chroma → QA</p>
+          <pre><code>RetrievalQA.from_chain_type(llm, retriever, chain_type="stuff")</code></pre>
+          <div class="trap">Not the same as conversation memory (Lab 33).</div>
+        </article>
+
+        <article class="lookup-card">
+          <h3>Embeddings</h3>
+          <p>Text → vectors for search</p>
+          <pre><code>from watson_llm import make_watsonx_embeddings
+emb.embed_documents(texts)</code></pre>
+          <div class="trap">Not llm.invoke — different model job.</div>
+        </article>
+
+        <article class="lookup-card">
+          <h3>Memory buffer</h3>
+          <p>Persist chat turns on chain</p>
+          <pre><code>ConversationBufferMemory()
+ConversationChain(llm=..., memory=memory)</code></pre>
+          <div class="trap">LLM is stateless without memory or manual history.</div>
+        </article>
+
+        <article class="lookup-card">
+          <h3>Agent vs chain</h3>
+          <p>Fixed pipe vs tool loop</p>
+          <pre><code>chain = prompt | llm | parser
+AgentExecutor(agent=..., tools=...)</code></pre>
+          <div class="trap">Use chain when steps are known; agent when tool choice varies.</div>
         </article>
       </div>
     </section>

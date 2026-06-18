@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>13 Text splitters | LangChain Reference</title>
+  <link rel="stylesheet" href="../reference.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <h2>Modules</h2>
+    <ul>
+      <li><a href="../index.html">← LangChain hub</a></li>
+      <li><a href="01-prompt-template.html">01 PromptTemplate</a></li>
+      <li><a href="02-watsonx-llm.html">02 Watsonx LLM</a></li>
+      <li><a href="03-lcel-pipe.html">03 LCEL pipe</a></li>
+      <li><a href="04-output-parser.html">04 Output parser</a></li>
+      <li><a href="05-runnable-lambda.html">05 RunnableLambda</a></li>
+      <li><a href="06-model-inference.html">06 ModelInference</a></li>
+      <li><a href="07-watson-helpers.html">07 Watson helpers</a></li>
+      <li><a href="08-chat-messages.html">08 Chat messages</a></li>
+      <li><a href="09-gen-params.html">09 GenParams</a></li>
+      <li><a href="10-chat-prompt-template.html">10 ChatPromptTemplate</a></li>
+      <li><a href="11-json-output-parser.html">11 JsonOutputParser</a></li>
+      <li><a href="12-document-loaders.html">12 Document + loaders</a></li>
+      <li><a href="13-text-splitters.html" class="active">13 Text splitters</a></li>
+      <li><a href="14-embeddings.html">14 Embeddings</a></li>
+      <li><a href="15-chroma-vectorstore.html">15 Chroma</a></li>
+      <li><a href="16-retrievers-rag.html">16 Retrievers + RAG</a></li>
+      <li><a href="17-memory.html">17 Memory</a></li>
+      <li><a href="18-classic-chains.html">18 Classic chains</a></li>
+      <li><a href="19-agents-tools.html">19 Agents</a></li>
+    </ul>
+  </aside>
+  <main class="main">
+    <nav class="breadcrumbs"><a href="../../index.html">Reference</a> › <a href="../index.html">LangChain</a> › <span>13 Text splitters</span></nav>
+    <header class="hero">
+      <span class="badge depth-deep">Module 13 · depth pass 1 · Labs 26–27</span>
+      <h1>Text splitters</h1>
+      <p>Scissors on <code>Document</code> lists — big pages → smaller chunks with overlap so retrieval does not cut sentences in half blindly.</p>
+    </header>
+
+    <section class="section">
+      <h2>Key take — two splitters</h2>
+      <table>
+        <tr><th>Splitter</th><th>How it cuts</th><th>Typical use</th><th>Lab</th></tr>
+        <tr>
+          <td><code>CharacterTextSplitter</code></td>
+          <td>Fixed size on a separator (e.g. <code>\n</code>)</td>
+          <td>Teaching / simple PDF chunks</td>
+          <td>26</td>
+        </tr>
+        <tr>
+          <td><code>RecursiveCharacterTextSplitter</code></td>
+          <td>Tries paragraph → line → word hierarchy</td>
+          <td>RAG pipelines (29–31)</td>
+          <td>27, 29+</td>
+        </tr>
+      </table>
+      <p style="color:var(--muted);font-size:.88rem;">Memory hook: <strong>chunk_size</strong> · <strong>chunk_overlap</strong> · <code>split_documents(list)</code> → more <code>Document</code>s.</p>
+    </section>
+
+    <section class="section">
+      <h2>Job (help-desk story)</h2>
+      <p>Paper shredder with adjustable strip width and overlap. Whole reports (<a href="12-document-loaders.html">loaders</a>) go in; uniform strips (chunks) come out — sized for embedding and retrieval.</p>
+    </section>
+
+    <section class="section">
+      <h2>Problem without it</h2>
+      <ul>
+        <li>Embedding a 50-page PDF as one vector — search is useless.</li>
+        <li>Chunks too large — exceed model context when stuffed into RAG prompt.</li>
+        <li>Zero overlap — answers lose context split across chunk boundaries.</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>Lifecycle</h2>
+      <ol class="lifecycle-steps">
+        <li><strong>Load</strong> — <code>documents = loader.load()</code> from <a href="12-document-loaders.html">12</a>.</li>
+        <li><strong>Configure splitter</strong> — <code>chunk_size</code>, <code>chunk_overlap</code>, optional <code>separator</code>.</li>
+        <li><strong>Split</strong> — <code>chunks = splitter.split_documents(documents)</code>.</li>
+        <li><strong>Inspect</strong> — Lab 27 compares chunk counts for two splitter configs on same PDF.</li>
+      </ol>
+    </section>
+
+    <section class="section">
+      <h2>Flow</h2>
+      <div class="flow-diagram">
+<pre>list[Document]  (6 PDF pages)
+        │
+        ▼
+CharacterTextSplitter(chunk_size=200, chunk_overlap=20)
+        │
+        ▼
+list[Document]  (47 chunks)  — same metadata carried over</pre>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Knobs + if wrong then…</h2>
+      <table>
+        <tr><th>Param</th><th>Effect</th><th>If wrong then…</th></tr>
+        <tr><td><code>chunk_size</code></td><td>Target max chars per chunk</td><td>Too big → poor retrieval; too small → fragmented meaning</td></tr>
+        <tr><td><code>chunk_overlap</code></td><td>Shared tail/head between neighbors</td><td>0 overlap → lost context at edges</td></tr>
+        <tr><td><code>separator</code></td><td>Preferred break (Character splitter)</td><td>Wrong separator → mid-word cuts</td></tr>
+      </table>
+      <pre>from langchain_text_splitters import CharacterTextSplitter, RecursiveCharacterTextSplitter</pre>
+    </section>
+
+    <section class="section">
+      <h2>Minimal example (Lab 26)</h2>
+      <pre>splitter = CharacterTextSplitter(chunk_size=200, chunk_overlap=20, separator="\n")
+chunks = splitter.split_documents(documents)
+print(len(chunks), chunks[10].page_content)</pre>
+    </section>
+
+    <section class="section">
+      <h2>Full lab (Lab 27 — compare splitters)</h2>
+      <pre>splitter_1 = CharacterTextSplitter(chunk_size=300, chunk_overlap=30)
+splitter_2 = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+chunks_1 = splitter_1.split_documents(pdf_document)
+chunks_2 = splitter_2.split_documents(pdf_document)
+# display_document_stats — different chunk counts, same source PDF</pre>
+      <p style="color:var(--muted);font-size:.88rem;">Scripts: <code>26.splitter.character.py</code> · <code>27.exercise3.load_split.py</code></p>
+    </section>
+
+    <section class="section">
+      <h2>Confused with</h2>
+      <table class="confusion-matrix">
+        <tr><th>Neighbor</th><th>Splitter</th><th>Neighbor does</th></tr>
+        <tr><td><a href="12-document-loaders.html">Loader</a></td><td>Chunks existing docs</td><td>Creates docs from files/URLs</td></tr>
+        <tr><td><a href="16-retrievers-rag.html">ParentDocumentRetriever</a></td><td>Flat chunks for search</td><td>Small child chunks search, large parent returned</td></tr>
+        <tr><td>Tokenizer limit</td><td>Character-based chunks</td><td>Model token cap — related but different unit</td></tr>
+      </table>
+    </section>
+
+    <div class="trap-box">
+      <h3>Traps</h3>
+      <ul>
+        <li><strong><code>split_text</code> vs <code>split_documents</code></strong> — labs use <code>split_documents</code> to keep metadata.</li>
+        <li><strong>Same PDF, different counts</strong> — Lab 27: splitter choice changes chunk count — not a bug.</li>
+        <li><strong>Skipping load step</strong> — splitter needs <code>list[Document]</code> from loader first.</li>
+      </ul>
+    </div>
+
+    <section class="section">
+      <h2>Recall drills</h2>
+      <details class="recall-drill">
+        <summary>What two numbers tune chunk shape?</summary>
+        <div class="answer"><code>chunk_size</code> and <code>chunk_overlap</code>.</div>
+      </details>
+      <details class="recall-drill">
+        <summary>Recursive vs Character — which for RAG labs 29–31?</summary>
+        <div class="answer"><code>RecursiveCharacterTextSplitter</code> (500/50 in your scripts).</div>
+      </details>
+      <details class="recall-drill">
+        <summary>Method name on a list of loaded documents?</summary>
+        <div class="answer"><code>splitter.split_documents(documents)</code>.</div>
+      </details>
+    </section>
+
+    <section class="section">
+      <h2>Links</h2>
+      <p><a href="12-document-loaders.html">12 Loaders</a> · Next: <a href="14-embeddings.html">14 Embeddings</a> · Labs 26–27</p>
+    </section>
+  </main>
+</div>
+</body>
+</html>

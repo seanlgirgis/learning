@@ -5,11 +5,11 @@ Run set_env.ps1, then:
     python .\\17.chat_messages.invoke_test.py
 """
 
-from langchain_helper import make_llm, GenParams
+from watson_llm import GenParams, make_watsonx_llm
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
 
 
-llama_llm = make_llm({GenParams.MAX_NEW_TOKENS: 80})
+llama_llm = make_watsonx_llm({GenParams.MAX_NEW_TOKENS: 80})
 print('-'*150)
 msg = llama_llm.invoke([
     SystemMessage(content="You are a helpful AI bot that assists a user in choosing the perfect book to read in one short sentence"),

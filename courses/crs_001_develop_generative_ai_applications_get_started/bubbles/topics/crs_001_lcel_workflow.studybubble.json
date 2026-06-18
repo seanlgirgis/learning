@@ -18,7 +18,8 @@
     { "label": "LangChain Code Patterns", "type": "page", "href": "../../study_pages/langchain_code_patterns.html" },
     { "label": "Lab Run Book", "type": "lab", "href": "../../lab/lab_run_book.md" },
     { "label": "RemNote coding deck 05_01", "type": "page", "href": "../../source_cards/05_01_prompt_and_chat_coding.md" },
-    { "label": "Back: Gen AI Landscape", "type": "map", "topic": "crs_001_gen_ai_landscape.studybubble.json" }
+    { "label": "Back: Gen AI Landscape", "type": "map", "topic": "crs_001_gen_ai_landscape.studybubble.json" },
+    { "label": "Watson Two Routes (A/B)", "type": "map", "topic": "crs_001_watson_two_routes.studybubble.json" }
   ],
   "nodes": [
     {
@@ -185,7 +186,9 @@
       "note": {
         "summary": "Labs 05b (OpenAI), 05c/05d (watsonx), 05f (switching) share the same chain skeleton.\nOnly the model runnable and env vars change."
       },
-      "childTopics": [],
+      "childTopics": [
+        { "label": "Watson Two Routes (A/B)", "topic": "crs_001_watson_two_routes.studybubble.json" }
+      ],
       "externalLinks": [
         { "label": "Lab 05f", "href": "../../lab/python/05f_provider_switching_lcel_pipeline.py" },
         { "label": "RemNote 05_04", "href": "../../source_cards/05_04_history_and_provider_coding.md" }

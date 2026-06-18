@@ -33,38 +33,48 @@
   <main class="main">
     <nav class="breadcrumbs"><a href="../../index.html">Reference</a> › <a href="../index.html">LangChain</a> › <a href="index.html">Recipes</a> › <span>Classify</span></nav>
     <header class="hero">
-      <span class="badge">Recipe</span>
+      <span class="badge depth-deep">Recipe · depth pass 1</span>
       <h1>Classify into fixed list</h1>
-      <p>Pick one label from categories you supply in the prompt.</p>
+      <p>Text + closed category list in → single label out. Two template holes: <code>{text}</code> and <code>{categories}</code>.</p>
     </header>
 
     <section class="section">
-      <h2>Problem</h2>
-      <p>Assign text to one category from a closed list (e.g. Music, Technology). Not open-ended tagging.</p>
+      <h2>1 — Problem</h2>
+      <p>Support ticket or article snippet arrives; you must bucket it into one label from a list you control (e.g. Music, Technology). Open-ended tagging drifts — you need a closed set spelled out in the prompt.</p>
+      <p><strong>Not this recipe:</strong> multi-label extraction with JSON parsers (Module 11), sentiment with free-form bullet sections (<a href="review-lambda.html">review-lambda</a>), or embedding-based classifiers.</p>
     </section>
 
     <section class="section">
-      <h2>Ingredients</h2>
-      <p>
-        <a class="pill" href="../modules/01-prompt-template.html">01</a>
-        <a class="pill" href="../modules/02-watsonx-llm.html">02</a>
-        <a class="pill" href="../modules/03-lcel-pipe.html">03</a>
-        <a class="pill" href="../modules/04-output-parser.html">04</a>
-      </p>
+      <h2>2 — Prerequisites</h2>
+      <table>
+        <tr><th>Need</th><th>Module</th><th>Check</th></tr>
+        <tr><td>Env vars loaded</td><td><a href="../modules/02-watsonx-llm.html">02</a></td><td><code>set_env.ps1</code> ran in this shell</td></tr>
+        <tr><td><code>WatsonxLLM</code> object</td><td><a href="../modules/07-watson-helpers.html">07</a></td><td><code>make_watsonx_llm()</code> not inline <code>WatsonxLLM(...)</code></td></tr>
+        <tr><td>Template with <code>{text}</code> + <code>{categories}</code></td><td><a href="../modules/01-prompt-template.html">01</a></td><td>Hole names match invoke keys</td></tr>
+        <tr><td>Pipe wiring</td><td><a href="../modules/03-lcel-pipe.html">03</a></td><td><code>prompt | llm | StrOutputParser()</code></td></tr>
+      </table>
     </section>
 
     <section class="section">
-      <h2>Setup</h2>
+      <h2>3 — Wiring diagram</h2>
+      <div class="flow-diagram">
+<pre>{"text": passage, "categories": "A, B, C."}
+       → PromptTemplate("Classify the {text} into one of the {categories}. …")
+       → WatsonxLLM
+       → StrOutputParser()
+       → str label printed</pre>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>4 — Script</h2>
       <pre>from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from watson_llm import make_watsonx_llm
 
-llm = make_watsonx_llm()</pre>
-    </section>
+llm = make_watsonx_llm()
 
-    <section class="section">
-      <h2>Recipe code</h2>
-      <pre>text = """
+text = """
 The concert last night was an exhilarating experience with outstanding
 performances by all artists.
 """
@@ -80,22 +90,66 @@ prompt = PromptTemplate.from_template(template)
 classification_chain = prompt | llm | StrOutputParser()
 
 print(classification_chain.invoke({"text": text, "categories": categories}))</pre>
+      <p style="color:var(--muted);font-size:.88rem;">Playground: <code>11.lcel.classification.py</code></p>
     </section>
 
     <section class="section">
-      <h2>invoke keys</h2>
+      <h2>5 — Critical lines</h2>
       <table>
-        <tr><th>Key</th><th>Value</th></tr>
-        <tr><td><code>text</code></td><td>Passage to classify</td></tr>
-        <tr><td><code>categories</code></td><td>Comma-separated closed list</td></tr>
+        <tr><th>Line</th><th>Why it matters</th><th>If you change it wrong…</th></tr>
+        <tr><td><code>categories = "…, …."</code></td><td>Closed list injected into prompt</td><td>Model invents labels not in your set</td></tr>
+        <tr><td><code>into one of the {categories}</code></td><td>Forces single-label pick</td><td>Multi-label ramble or explanation instead of label</td></tr>
+        <tr><td><code>Category:</code> suffix</td><td>Anchors output to one word/phrase</td><td>Long justification before the label</td></tr>
+        <tr><td><code>{"text": …, "categories": …}</code></td><td>Both holes filled at invoke</td><td><code>KeyError</code> before LLM runs</td></tr>
       </table>
     </section>
 
-    <div class="callout"><strong>Tip:</strong> Spell out categories in the template string. Lower <code>TEMPERATURE</code> if labels drift off-list.</div>
+    <section class="section">
+      <h2>6 — Variants</h2>
+      <ul>
+        <li><strong>Stricter labels</strong> — Lower <code>TEMPERATURE</code> via <code>make_watsonx_llm({GenParams.TEMPERATURE: 0.1})</code> → <a href="temperature-compare.html">temperature-compare</a>.</li>
+        <li><strong>Structured JSON out</strong> — Swap <code>StrOutputParser</code> for a JSON parser → <a href="movie-json.html">movie-json</a> (Module 11).</li>
+        <li><strong>Q&amp;A shape</strong> — Replace classify instruction with question + context holes → <a href="qa-context.html">qa-context</a> (Lab 10).</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>7 — Debug</h2>
+      <table>
+        <tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr>
+        <tr><td>Label not in your list</td><td>Categories vague or temp too high</td><td>Spell exact labels; add <code>Pick exactly one label from the list.</code></td></tr>
+        <tr><td><code>KeyError</code> on invoke</td><td>Wrong dict key</td><td>Use <code>text</code> and <code>categories</code> — not <code>content</code></td></tr>
+        <tr><td>Paragraph instead of label</td><td>Weak output anchor</td><td>Keep <code>Category:</code> line; lower <code>MAX_NEW_TOKENS</code></td></tr>
+        <tr><td>Wrong bucket for edge cases</td><td>Ambiguous categories overlap</td><td>Rewrite list so labels are mutually exclusive</td></tr>
+      </table>
+    </section>
+
+    <div class="trap-box">
+      <h3>Traps</h3>
+      <ul>
+        <li><strong>Categories buried in code only</strong> — If <code>{categories}</code> is empty or generic, the model free-forms labels.</li>
+        <li><strong>Expecting multi-label</strong> — Template says <em>one of</em>; for many tags you need different prompt + parser.</li>
+        <li><strong>Using <code>{content}</code> hole name</strong> — Lab uses <code>text</code>; mismatched key → <code>KeyError</code>.</li>
+      </ul>
+    </div>
+
+    <section class="section">
+      <h2>Rebuild from memory</h2>
+      <div class="rebuild-steps">
+        <p>Close this page. Write the script from these steps only:</p>
+        <ol>
+          <li>Import <code>PromptTemplate</code>, <code>StrOutputParser</code>, <code>make_watsonx_llm</code>.</li>
+          <li>Build <code>llm = make_watsonx_llm()</code> after env is set.</li>
+          <li>Define <code>text</code> and <code>categories</code> strings.</li>
+          <li>Template: <code>Classify the {text} into one of the {categories}.</code> + <code>Category:</code>.</li>
+          <li>Wire <code>prompt | llm | StrOutputParser()</code>; invoke with both keys; print.</li>
+        </ol>
+      </div>
+    </section>
 
     <section class="section">
       <h2>Modules</h2>
-      <p><a href="../modules/01-prompt-template.html">01</a> · <a href="../modules/03-lcel-pipe.html">03</a></p>
+      <p><a href="../modules/01-prompt-template.html">01</a> · <a href="../modules/02-watsonx-llm.html">02</a> · <a href="../modules/03-lcel-pipe.html">03</a> · <a href="../modules/04-output-parser.html">04</a></p>
     </section>
   </main>
 </div>

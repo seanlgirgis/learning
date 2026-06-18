@@ -31,45 +31,130 @@
     </ul>
   </aside>
   <main class="main">
-    <nav class="breadcrumbs"><a href="../index.html">LangChain</a> › <a href="index.html">Recipes</a> › <span>Chat template</span></nav>
+    <nav class="breadcrumbs"><a href="../../index.html">Reference</a> › <a href="../index.html">LangChain</a> › <a href="index.html">Recipes</a> › <span>Chat template</span></nav>
     <header class="hero">
-      <span class="badge">Lab 20</span>
+      <span class="badge depth-deep">Recipe · depth pass 1</span>
       <h1>ChatPromptTemplate + MessagesPlaceholder</h1>
-      <p>Format with <code>prompt.invoke</code>, then <code>prompt | llm</code>.</p>
+      <p>Lab 20 — system/user tuples with <code>{topic}</code>, plus a <code>msgs</code> slot for prior turns. Format with <code>prompt.invoke</code>, then <code>prompt | llm</code>.</p>
     </header>
 
     <section class="section">
-      <h2>ChatPromptTemplate</h2>
-      <pre>from langchain_core.prompts import ChatPromptTemplate
-from langchain_helper import make_llm, GenParams
+      <h2>1 — Problem</h2>
+      <p>String templates flatten everything into one blob. Chat apps need separate system and user roles, and sometimes a dynamic list of prior messages. <code>ChatPromptTemplate</code> builds the message list; <code>MessagesPlaceholder</code> injects history at invoke time.</p>
+      <p><strong>Not this recipe:</strong> manual message lists only (<a href="chat-messages.html">Lab 17</a>), single-string <code>PromptTemplate</code> (<a href="string-template-demo.html">Lab 19</a>), or output parsers (Lab 21).</p>
+    </section>
 
-llama_llm = make_llm({GenParams.MAX_NEW_TOKENS: 120})
+    <section class="section">
+      <h2>2 — Prerequisites</h2>
+      <table>
+        <tr><th>Need</th><th>Module</th><th>Check</th></tr>
+        <tr><td><code>ChatPromptTemplate</code></td><td><a href="../modules/10-chat-prompt-template.html">10</a></td><td><code>from_messages([("system", …), ("user", …)])</code></td></tr>
+        <tr><td><code>MessagesPlaceholder</code></td><td><a href="../modules/10-chat-prompt-template.html">10</a></td><td>Slot name matches invoke key <code>msgs</code></td></tr>
+        <tr><td><code>HumanMessage</code></td><td><a href="../modules/08-chat-messages.html">08</a></td><td>List value inside <code>{"msgs": […]}</code></td></tr>
+        <tr><td><code>make_watsonx_llm()</code></td><td><a href="../modules/07-watson-helpers.html">07</a></td><td><code>{GenParams.MAX_NEW_TOKENS: 120}</code></td></tr>
+      </table>
+    </section>
 
+    <section class="section">
+      <h2>3 — Wiring diagram</h2>
+      <div class="flow-diagram">
+<pre>{"topic": "cats"}  OR  {"msgs": [HumanMessage(…)]}
+       → ChatPromptTemplate.from_messages([…])
+       → make_watsonx_llm({MAX_NEW_TOKENS: 120})
+       → prompt.invoke(input)   # preview
+       → (prompt | llm).invoke(input)   # model reply</pre>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>4 — Script</h2>
+      <pre>from langchain_core.messages import HumanMessage
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from watson_llm import GenParams, make_watsonx_llm
+
+llama_llm = make_watsonx_llm({GenParams.MAX_NEW_TOKENS: 120})
+
+# --- ChatPromptTemplate (system + user with {topic}) ---
 joke_prompt = ChatPromptTemplate.from_messages([
-    ("system", "Helpful assistant. One response only."),
+    ("system", "You are a helpful assistant. Do not expand .. Just one response only."),
     ("user", "Tell me a joke about {topic}"),
 ])
 joke_input = {"topic": "cats"}
 
 print(joke_prompt.invoke(joke_input))
-print((joke_prompt | llama_llm).invoke(joke_input))</pre>
-    </section>
+print((joke_prompt | llama_llm).invoke(joke_input))
 
-    <section class="section">
-      <h2>MessagesPlaceholder</h2>
-      <pre>from langchain_core.messages import HumanMessage
-from langchain_core.prompts import MessagesPlaceholder
-
+# --- MessagesPlaceholder (slot a list of messages in) ---
 history_prompt = ChatPromptTemplate.from_messages([
-    ("system", "You are a helpful assistant."),
+    ("system", "You are a helpful assistant. You answer only for the request given .. Do not improvise or add anything extra. Just answer the question based on the user request."),
     MessagesPlaceholder("msgs"),
 ])
 history_input = {"msgs": [HumanMessage(content="What is the day after Tuesday?")]}
 
+print(history_prompt.invoke(history_input))
 print((history_prompt | llama_llm).invoke(history_input))</pre>
+      <p style="color:var(--muted);font-size:.88rem;">Playground: <code>20.chat_prompt_templates.py</code></p>
     </section>
 
-    <p><a href="../modules/10-chat-prompt-template.html">Module 10</a></p>
+    <section class="section">
+      <h2>5 — Critical lines</h2>
+      <table>
+        <tr><th>Line</th><th>Why it matters</th><th>If you change it wrong…</th></tr>
+        <tr><td><code>("system", …)</code> / <code>("user", …)</code></td><td>Role tuples become message objects</td><td>Wrong tuple order → confused model behavior</td></tr>
+        <tr><td><code>{topic}</code> in user tuple</td><td>String hole in chat template</td><td>Key mismatch → <code>KeyError</code></td></tr>
+        <tr><td><code>MessagesPlaceholder("msgs")</code></td><td>Named slot for message list</td><td>Name ≠ invoke key → empty history</td></tr>
+        <tr><td><code>prompt.invoke</code> before pipe</td><td>Inspect formatted messages</td><td>Skipping → harder to debug wrong roles</td></tr>
+      </table>
+    </section>
+
+    <section class="section">
+      <h2>6 — Variants</h2>
+      <ul>
+        <li><strong>Format only</strong> — <code>joke_prompt.invoke(joke_input)</code> without LLM (playground section 1).</li>
+        <li><strong>Pipe to model</strong> — <code>joke_chain = joke_prompt | llama_llm</code> (playground section 1b).</li>
+        <li><strong>Manual messages</strong> — Build list by hand → <a href="chat-messages.html">chat messages</a> (Lab 17).</li>
+        <li><strong>String template</strong> — Single blob prompt → <a href="string-template-demo.html">Lab 19</a>.</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>7 — Debug</h2>
+      <table>
+        <tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr>
+        <tr><td><code>KeyError: msgs</code></td><td>Missing placeholder key</td><td>Pass <code>{"msgs": [HumanMessage(…)]}</code></td></tr>
+        <tr><td><code>KeyError: topic</code></td><td>Wrong invoke dict</td><td>Match <code>{topic}</code> in user message</td></tr>
+        <tr><td>Model improvises extra content</td><td>System prompt too loose</td><td>Tighten system string (playground wording)</td></tr>
+        <tr><td>Empty history slot</td><td>Passed <code>[]</code> or wrong key</td><td>Check <code>MessagesPlaceholder</code> name</td></tr>
+      </table>
+    </section>
+
+    <div class="trap-box">
+      <h3>Traps</h3>
+      <ul>
+        <li><strong>Confusing <code>prompt.invoke</code> with model output</strong> — First call shows formatted messages; pipe call hits the LLM.</li>
+        <li><strong><code>MessagesPlaceholder</code> without a list</strong> — Value must be <code>[HumanMessage(…), …]</code>, not a bare string.</li>
+        <li><strong>Using string <code>PromptTemplate</code> for roles</strong> — System and user blur together; use <code>ChatPromptTemplate</code>.</li>
+      </ul>
+    </div>
+
+    <section class="section">
+      <h2>Rebuild from memory</h2>
+      <div class="rebuild-steps">
+        <p>Close this page. Write the script from these steps only:</p>
+        <ol>
+          <li>Import <code>ChatPromptTemplate</code>, <code>MessagesPlaceholder</code>, <code>HumanMessage</code>, <code>make_watsonx_llm</code>.</li>
+          <li>Build <code>joke_prompt</code> with system + user <code>{topic}</code> tuples.</li>
+          <li><code>print(joke_prompt.invoke({"topic": "cats"}))</code> then pipe to LLM.</li>
+          <li>Build <code>history_prompt</code> with <code>MessagesPlaceholder("msgs")</code>.</li>
+          <li>Invoke with <code>{"msgs": [HumanMessage(content="…")]}</code> — format, then pipe.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Modules</h2>
+      <p><a href="../modules/10-chat-prompt-template.html">10</a> · <a href="../modules/08-chat-messages.html">08</a> · <a href="../modules/09-gen-params.html">09</a> · <a href="../modules/07-watson-helpers.html">07</a></p>
+    </section>
   </main>
 </div>
 </body>

@@ -22,22 +22,22 @@ LOCAL_NOTE = (
 )
 
 LOCAL_LLM_CELL = """# LOCAL SETUP — llm_model() from WATSONX_* env
-from coursera_llm_model import llm_model, make_llm
+from watson_llm import llm_model, make_watsonx_llm
 
-print("Loaded coursera_llm_model.py")
+print("Loaded watson_llm.py")
 print("Model:", __import__("os").environ["WATSONX_MODEL_ID"])
 """
 
 SKIP_SKILLS_NETWORK = """### Skills Network cell skipped
 
-Use **`from coursera_llm_model import make_llm`** instead of
+Use **`from watson_llm import make_watsonx_llm`** instead of
 `project_id = "skills-network"`. Start Jupyter via **`start_jupyter.ps1`**.
 """
 
 LOCAL_MODEL_CELL = """# LOCAL SETUP — ModelInference from WATSONX_* env
-from coursera_watsonx_model import credentials, model, model_id, parameters, project_id
+from watson_helper import credentials, model, model_id, parameters, project_id
 
-print("Loaded coursera_watsonx_model.py")
+print("Loaded watson_helper.py")
 print("Model:", model_id)
 print("URL:", credentials["url"])
 """
@@ -84,20 +84,20 @@ def _patch_code_cell(source: str) -> str | None:
             if re.match(r'project_id\s*=', stripped):
                 continue
             if re.match(r"llm\s*=\s*##\s*TODO", stripped, flags=re.IGNORECASE):
-                out.append("llm = make_llm(parameters)")
+                out.append("llm = make_watsonx_llm(parameters)")
                 continue
             out.append(line)
         cleaned = "\n".join(out)
-        if "from coursera_llm_model import" not in cleaned:
-            cleaned = "from coursera_llm_model import make_llm\n\n" + cleaned
+        if "from watson_llm import make_watsonx_llm" not in cleaned:
+            cleaned = "from watson_llm import make_watsonx_llm\n\n" + cleaned
         return cleaned + "\n"
 
     if "WatsonxLLM(" in source and "chain" not in source.lower():
         return (
             "# LOCAL — llm from WATSONX_* env\n"
-            "from coursera_llm_model import make_llm\n\n"
+            "from watson_llm import make_watsonx_llm\n\n"
             f"{params_block}\n\n"
-            "llm = make_llm(parameters)\n"
+            "llm = make_watsonx_llm(parameters)\n"
             "llm\n"
         )
 

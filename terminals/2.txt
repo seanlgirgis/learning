@@ -1,0 +1,42 @@
+---
+pid: 22148
+cwd: "D:\Workarea\learning"
+command: "pwsh -ExecutionPolicy Bypass -File \"D:\\Workarea\\learning\\playground\\notebooks\\start_jupyter.ps1\""
+started_at: 2026-06-17T20:16:22.369Z
+running_for_ms: 85869997 
+---
+
+RAG Application Builder Foundation environment loaded.
+Virtual environment: D:\py_venv\rag_application_builder_foundation
+Python: Python 3.13.11
+OpenAI model: gpt-5.4-mini
+OpenAI API key: configured
+Watsonx region: https://eu-gb.ml.cloud.ibm.com
+Watsonx model: mistralai/mistral-small-3-1-24b-instruct-2503
+
+Starting Jupyter Lab on http://127.0.0.1:8892
+Open: sean_in_context_lab.ipynb or sean_langchain_lab.ipynb
+
+[I 2026-06-17 15:16:24.392 ServerApp] jupyter_lsp | extension was successfully linked.
+[I 2026-06-17 15:16:24.396 ServerApp] jupyter_server_terminals | extension was successfully linked.
+[I 2026-06-17 15:16:24.399 ServerApp] jupyterlab | extension was successfully linked.
+[I 2026-06-17 15:16:24.571 ServerApp] notebook_shim | extension was successfully linked.
+[I 2026-06-17 15:16:24.614 ServerApp] notebook_shim | extension was successfully loaded.
+[I 2026-06-17 15:16:24.615 ServerApp] jupyter_lsp | extension was successfully loaded.
+[I 2026-06-17 15:16:24.616 ServerApp] jupyter_server_terminals | extension was successfully loaded.
+[I 2026-06-17 15:16:24.617 LabApp] JupyterLab extension loaded from D:\py_venv\rag_application_builder_foundation\Lib\site-packages\jupyterlab
+[I 2026-06-17 15:16:24.617 LabApp] JupyterLab application directory is D:\py_venv\rag_application_builder_foundation\share\jupyter\lab
+[I 2026-06-17 15:16:24.617 LabApp] Extension Manager is 'pypi'.
+[I 2026-06-17 15:16:24.643 ServerApp] jupyterlab | extension was successfully loaded.
+[I 2026-06-17 15:16:24.644 ServerApp] The port 8892 is already in use, trying another port.
+[I 2026-06-17 15:16:24.644 ServerApp] Serving notebooks from local directory: D:\Workarea\learning\playground\notebooks
+[I 2026-06-17 15:16:24.644 ServerApp] Jupyter Server 2.19.0 is running at:
+[I 2026-06-17 15:16:24.644 ServerApp] http://127.0.0.1:8893/lab?token=6b3de536cc140870260f93563e844f03c43a862abe02304b
+[I 2026-06-17 15:16:24.644 ServerApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+[C 2026-06-17 15:16:24.650 ServerApp] 
+    
+    To access the server, open this file in a browser:
+        file:///C:/Users/shareuser/AppData/Roaming/jupyter/runtime/jpserver-24868-open.html
+    Or copy and paste one of these URLs:
+        http://127.0.0.1:8893/lab?token=6b3de536cc140870260f93563e844f03c43a862abe02304b
+[I 2026-06-17 15:16:24.976 ServerApp] Skipped non-installed server(s): basedpyright, bash-language-server, dockerfile-language-server-nodejs, javascript-typescript-langserver, jedi-language-server, julia-language-server, pyrefly, pyright, python-language-server, python-lsp-server, r-languageserver, sql-language-server, texlab, typescript-language-server, unified-language-server, vscode-css-languageserver-bin, vscode-html-languageserver-bin, vscode-json-languageserver-bin, yaml-language-server

@@ -23,106 +23,203 @@
       <li><a href="09-gen-params.html">09 GenParams</a></li>
       <li><a href="10-chat-prompt-template.html">10 ChatPromptTemplate</a></li>
       <li><a href="11-json-output-parser.html">11 JsonOutputParser</a></li>
+      <li><a href="12-document-loaders.html">12 Document + loaders</a></li>
+      <li><a href="13-text-splitters.html">13 Text splitters</a></li>
+      <li><a href="14-embeddings.html">14 Embeddings</a></li>
+      <li><a href="15-chroma-vectorstore.html">15 Chroma</a></li>
+      <li><a href="16-retrievers-rag.html">16 Retrievers + RAG</a></li>
+      <li><a href="17-memory.html">17 Memory</a></li>
+      <li><a href="18-classic-chains.html">18 Classic chains</a></li>
+      <li><a href="19-agents-tools.html">19 Agents</a></li>
     </ul>
   </aside>
   <main class="main">
     <nav class="breadcrumbs"><a href="../../index.html">Reference</a> › <a href="../index.html">LangChain</a> › <span>07 Watson helpers</span></nav>
     <header class="hero">
-      <span class="badge">Module 07 · Infra</span>
+      <span class="badge depth-deep">Module 07 · depth pass 1 · infra</span>
       <h1>Watson helper files</h1>
-      <p>Small modules that read <code>WATSONX_*</code> once — you import and plug in, no Skills Network credentials in every cell.</p>
+      <p>One env load (<code>set_env.ps1</code>) → pick the right plug-in file. Stops you pasting IBM credentials into every lab and notebook cell.</p>
     </header>
 
     <section class="section">
-      <h2>Two plugs, same env</h2>
-      <pre>set_env.ps1  →  WATSONX_MODEL_ID, URL, PROJECT_ID, APIKEY
-        ├─ watson_helper / coursera_watsonx_model  →  model (ModelInference)
-        └─ watson_llm / coursera_llm_model         →  make_*_llm() (WatsonxLLM)</pre>
+      <h2>Two routes (key take)</h2>
+      <p>Everything in this module hangs on one choice:</p>
+      <table>
+        <tr><th>Route</th><th>Import</th><th>How you call it</th><th>What it is</th></tr>
+        <tr>
+          <td><strong>A</strong></td>
+          <td><code>from watson_helper import model</code></td>
+          <td><code>model.generate(...)</code></td>
+          <td>Lower-level IBM <code>ModelInference</code> — raw dict back</td>
+        </tr>
+        <tr>
+          <td><strong>B</strong></td>
+          <td><code>from watson_llm import make_watsonx_llm</code></td>
+          <td><code>.invoke(...)</code> or <code>prompt | llm | parser</code></td>
+          <td>LangChain Runnable — pipes and chains</td>
+        </tr>
+      </table>
+      <p style="color:var(--muted);font-size:.88rem;">Memory hook: <strong>helper → generate</strong> · <strong>llm → invoke / pipe</strong>. Notebooks and <code>.py</code> labs use the same two files (<code>start_jupyter.ps1</code> adds <code>playground/langchain</code> to PYTHONPATH). Spatial map: <a href="../../../courses/crs_001_develop_generative_ai_applications_get_started/bubbles/outputs/crs_001_watson_two_routes.html">Watson Two Routes bubble</a>.</p>
     </section>
 
     <section class="section">
-      <h2>File map</h2>
+      <h2>Job (help-desk story)</h2>
+      <p>Building security desk. <code>set_env.ps1</code> issues the badge (<code>WATSONX_*</code>). Two doors only: IBM SDK vs LangChain — same badge, different client.</p>
+    </section>
+
+    <section class="section">
+      <h2>Problem without helpers</h2>
+      <ul>
+        <li>Every script repeats credentials — drift and copy-paste errors.</li>
+        <li>Easy to mix <code>ModelInference</code> and <code>WatsonxLLM</code> in one pipe.</li>
+        <li>Multiple alias files trained the wrong mental model — project now uses <strong>two files only</strong>.</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>Lifecycle (pick a route)</h2>
+      <ol class="lifecycle-steps">
+        <li><strong>Env</strong> — <code>set_env.ps1</code> (Jupyter: <code>start_jupyter.ps1</code> does this + PYTHONPATH).</li>
+        <li><strong>Choose route</strong> — need <code>generate()</code> / IBM dict? → Route A. Need invoke or pipes? → Route B.</li>
+        <li><strong>Import</strong> — <code>model</code> (A) or <code>make_watsonx_llm()</code> / <code>make_watsonx_embeddings()</code> (B).</li>
+        <li><strong>Use</strong> — A: slice <code>generated_text</code> from dict. B: <code>invoke</code> or <code>prompt | llm | parser</code>.</li>
+      </ol>
+    </section>
+
+    <section class="section">
+      <h2>Flow (same env, two doors)</h2>
+      <div class="flow-diagram">
+<pre>set_env.ps1  →  WATSONX_*
+        │
+        ├─ Route A: watson_helper.py
+        │     from watson_helper import model
+        │     model.generate(str) → dict
+        │
+        └─ Route B: watson_llm.py
+              from watson_llm import make_watsonx_llm
+              llm = make_watsonx_llm()
+              llm.invoke(...)  or  prompt | llm | parser
+              make_watsonx_embeddings()  →  RAG (still Route B)
+
+Notebooks + .py labs: same files (PYTHONPATH = playground/langchain)</pre>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>File map (two files)</h2>
       <table>
-        <tr><th>File</th><th>Folder</th><th>Builds</th><th>Use when</th></tr>
+        <tr><th>File</th><th>Route</th><th>Exports</th><th>Use when</th></tr>
         <tr>
           <td><code>watson_helper.py</code></td>
-          <td><code>playground/langchain/</code></td>
-          <td><code>model</code> (ModelInference)</td>
-          <td>Lab scripts · <code>model.generate()</code></td>
-        </tr>
-        <tr>
-          <td><code>langchain_helper.py</code></td>
-          <td><code>playground/langchain/</code></td>
-          <td><code>make_llm()</code></td>
-          <td>Lab scripts · notebook twin (<code>llama_llm</code>)</td>
+          <td>A — IBM</td>
+          <td><code>model</code>, <code>credentials</code></td>
+          <td>Lab 15 · <code>model.generate()</code></td>
         </tr>
         <tr>
           <td><code>watson_llm.py</code></td>
-          <td><code>playground/langchain/</code></td>
-          <td><code>make_watsonx_llm()</code></td>
-          <td>Lab scripts · full LangChain API</td>
-        </tr>
-        <tr>
-          <td><code>coursera_watsonx_model.py</code></td>
-          <td><code>playground/notebooks/</code></td>
-          <td><code>model</code> + <code>credentials</code></td>
-          <td>Jupyter · LOCAL SETUP cell</td>
-        </tr>
-        <tr>
-          <td><code>coursera_llm_model.py</code></td>
-          <td><code>playground/notebooks/</code></td>
-          <td><code>make_llm()</code></td>
-          <td>Jupyter · <code>llama_llm = make_llm()</code></td>
-        </tr>
-        <tr>
-          <td><code>coursera_embeddings.py</code></td>
-          <td><code>playground/notebooks/</code></td>
-          <td><code>make_embeddings()</code></td>
-          <td>Jupyter · RAG / vector store cells</td>
+          <td>B — LangChain</td>
+          <td><code>make_watsonx_llm</code>, <code>make_watsonx_chat</code>, <code>llm_model</code>, <code>make_watsonx_embeddings</code>, <code>GenParams</code></td>
+          <td>Labs 08–35 · notebooks · invoke &amp; pipes &amp; embeddings</td>
         </tr>
       </table>
     </section>
 
     <section class="section">
-      <h2>What each helper exports</h2>
-      <div class="card">
-        <h3>IBM path — <code>watson_helper</code></h3>
-        <pre>from watson_helper import model, model_id, credentials, parameters, project_id</pre>
-        <p><code>model</code> is ready. Call <code>model.generate(...)</code>. See <a href="06-model-inference.html">Module 06</a>.</p>
-      </div>
-      <div class="card">
-        <h3>LangChain path — <code>langchain_helper</code> (notebook twin)</h3>
-        <pre>from langchain_helper import make_llm, GenParams
+      <h2>Minimal examples</h2>
+      <pre># Route A — IBM generate (Lab 15)
+from watson_helper import model
+print(model.generate("Hello")["results"][0]["generated_text"])
 
-llama_llm = make_llm()
-llama_llm = make_llm({GenParams.TEMPERATURE: 0.8})</pre>
-        <p>Same API as <code>coursera_llm_model</code> in Jupyter. Under the hood calls <code>watson_llm.make_watsonx_llm()</code>.</p>
-        <p><code>llm</code> is <code>WatsonxLLM</code>. Use in <code>prompt | llm | parser</code>. See <a href="02-watsonx-llm.html">Module 02</a>.</p>
-      </div>
+# Route B — LangChain invoke (Lab 16)
+from watson_llm import make_watsonx_llm
+llama_llm = make_watsonx_llm()
+print(llama_llm.invoke("Who is man's best friend?"))
+
+# Route B — LCEL pipe (Lab 08+)
+from watson_llm import make_watsonx_llm
+llm = make_watsonx_llm()
+chain = prompt | llm | StrOutputParser()</pre>
     </section>
 
     <section class="section">
-      <h2>Notebook name trap</h2>
-      <p>The LangChain lab uses <code>llama_llm</code> — Coursera’s variable name for a Llama model. Locally it is still <strong>your</strong> <code>WATSONX_MODEL_ID</code> (e.g. Mistral). The name is kept so later cells run unchanged.</p>
+      <h2>Full labs</h2>
+      <table>
+        <tr><th>Lab</th><th>Route</th><th>Proves</th></tr>
+        <tr><td><code>15.watson_helper.generate_test.py</code></td><td>A · <code>watson_helper</code></td><td><code>model.generate</code> + env</td></tr>
+        <tr><td><code>16.watson_llm.invoke_test.py</code></td><td>B · <code>watson_llm</code></td><td><code>make_watsonx_llm().invoke</code></td></tr>
+        <tr><td><code>08.lcel.1.py</code></td><td>B · <code>watson_llm</code></td><td>LCEL pipe (same env; may inline WatsonxLLM in file)</td></tr>
+      </table>
     </section>
 
     <section class="section">
-      <h2>Recipes</h2>
+      <h2>Confused with</h2>
+      <table class="confusion-matrix">
+        <tr><th>Name</th><th>What it is</th><th>Not</th></tr>
+        <tr>
+          <td><code>watson_helper</code></td>
+          <td>Route A — IBM <code>ModelInference</code></td>
+          <td>Not <code>watson_llm</code> — similar names, different route</td>
+        </tr>
+        <tr>
+          <td><code>watson_llm</code></td>
+          <td>Route B — LangChain builders</td>
+          <td>Not low-level <code>generate()</code></td>
+        </tr>
+        <tr>
+          <td><code>llama_llm</code></td>
+          <td>Variable name in notebooks</td>
+          <td>Not your model family — use <code>WATSONX_MODEL_ID</code></td>
+        </tr>
+      </table>
+    </section>
+
+    <section class="section">
+      <h2>Imports (notebooks + labs — same)</h2>
+      <pre># Route A
+from watson_helper import model, model_id, credentials
+
+# Route B
+from watson_llm import GenParams, make_watsonx_llm, llm_model
+from watson_llm import make_watsonx_embeddings  # RAG labs
+
+llama_llm = make_watsonx_llm()  # variable name optional</pre>
+    </section>
+
+    <div class="trap-box">
+      <h3>Traps</h3>
+      <ul>
+        <li><strong><code>prompt | model | parser</code></strong> — <code>model</code> from Route A is not Runnable. Use Route B: <code>make_watsonx_llm()</code>.</li>
+        <li><strong><code>watson_helper</code> vs <code>watson_llm</code></strong> — sound alike; Route A vs Route B.</li>
+        <li><strong>Import before env</strong> — run <code>set_env.ps1</code> first.</li>
+        <li><strong>Jupyter without <code>start_jupyter.ps1</code></strong> — PYTHONPATH must include <code>playground/langchain</code>.</li>
+      </ul>
+    </div>
+
+    <section class="section">
+      <h2>Recall drills</h2>
+      <details class="recall-drill">
+        <summary>Lab 15 vs Lab 16 — which route?</summary>
+        <div class="answer">Lab 15 → Route A · <code>watson_helper</code> · <code>generate</code>. Lab 16 → Route B · <code>watson_llm</code> · <code>invoke</code>.</div>
+      </details>
+      <details class="recall-drill">
+        <summary>Where do embeddings come from?</summary>
+        <div class="answer"><code>from watson_llm import make_watsonx_embeddings</code> — still Route B (LangChain).</div>
+      </details>
+      <details class="recall-drill">
+        <summary>Four env vars every helper expects?</summary>
+        <div class="answer"><code>WATSONX_MODEL_ID</code>, <code>WATSONX_URL</code>, <code>WATSONX_PROJECT_ID</code>, <code>WATSONX_APIKEY</code> — from <code>set_env.ps1</code>.</div>
+      </details>
+    </section>
+
+    <section class="section">
+      <h2>Links</h2>
       <p>
-        <a href="../recipes/ibm-model-generate.html">IBM generate</a> ·
+        <a href="06-model-inference.html">06 ModelInference</a> ·
+        <a href="02-watsonx-llm.html">02 WatsonxLLM</a> ·
+        Recipes: <a href="../recipes/ibm-model-generate.html">IBM generate</a>,
         <a href="../recipes/langchain-llm-plug.html">LLM plug-in</a> ·
-        <a href="../recipes/chat-messages.html">Chat messages</a> ·
-        <a href="../recipes/temperature-compare.html">Temperature</a> ·
-        <a href="../recipes/string-template-demo.html">String template</a> ·
-        <a href="../recipes/chat-prompt-template.html">Chat template</a> ·
-        <a href="../recipes/json-joke-parser.html">JSON Joke</a> ·
-        <a href="../recipes/comma-list-parser.html">Comma list</a>
+        Next: <a href="08-chat-messages.html">08 Chat messages</a>
       </p>
-    </section>
-
-    <section class="section">
-      <h2>Next</h2>
-      <p><a href="08-chat-messages.html">Module 08 — chat message lists</a></p>
     </section>
   </main>
 </div>

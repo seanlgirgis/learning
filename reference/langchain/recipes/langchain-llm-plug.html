@@ -31,82 +31,107 @@
     </ul>
   </aside>
   <main class="main">
-    <nav class="breadcrumbs"><a href="../index.html">LangChain</a> › <a href="index.html">Recipes</a> › <span>LLM plug-in</span></nav>
+    <nav class="breadcrumbs"><a href="../../index.html">Reference</a> › <a href="../index.html">LangChain</a> › <a href="index.html">Recipes</a> › <span>LLM plug-in</span></nav>
     <header class="hero">
-      <span class="badge">Recipe · Module 02 + 07</span>
+      <span class="badge depth-deep">Recipe · depth pass 1</span>
       <h1>Plug in WatsonxLLM for LangChain</h1>
-      <p>Helper builds <code>WatsonxLLM</code> from env — use in pipes, chains, and <code>invoke</code>.</p>
+      <p>Lab 16 — <code>make_watsonx_llm()</code> builds a Runnable from env. One-shot <code>invoke</code> or full LCEL pipe.</p>
     </header>
 
     <section class="section">
-      <h2>Problem</h2>
-      <p>You need an <code>llm</code> object for <code>prompt | llm | parser</code> without repeating credentials in every script or notebook cell.</p>
+      <h2>1 — Problem</h2>
+      <p>Lab 15 proved IBM SDK works. Now you need an <code>llm</code> object LangChain recognizes — for <code>invoke("…")</code>, <code>prompt | llm</code>, and every recipe from Lab 19 onward — without repeating credentials in each script.</p>
+      <p><strong>Not this recipe:</strong> raw <code>model.generate</code> (<a href="ibm-model-generate.html">Lab 15</a>), message lists (<a href="chat-messages.html">Lab 17</a>), or template wiring (<a href="summarize.html">summarize</a>).</p>
     </section>
 
     <section class="section">
-      <h2>Ingredients</h2>
-      <p>
-        <a class="pill" href="../modules/02-watsonx-llm.html">02 WatsonxLLM</a>
-        <a class="pill" href="../modules/07-watson-helpers.html">07 watson_llm</a>
-        <a class="pill" href="../modules/03-lcel-pipe.html">03 pipe</a>
-      </p>
+      <h2>2 — Prerequisites</h2>
+      <table>
+        <tr><th>Need</th><th>Module</th><th>Check</th></tr>
+        <tr><td>Env vars loaded</td><td><a href="../modules/02-watsonx-llm.html">02</a></td><td><code>set_env.ps1</code> ran; Lab 15 passed</td></tr>
+        <tr><td><code>make_watsonx_llm()</code></td><td><a href="../modules/07-watson-helpers.html">07</a></td><td>Returns <code>langchain_ibm.WatsonxLLM</code></td></tr>
+        <tr><td>Runnable contract</td><td><a href="../modules/02-watsonx-llm.html">02</a></td><td><code>.invoke()</code> accepts str or message list</td></tr>
+        <tr><td>Pipe slot (optional)</td><td><a href="../modules/03-lcel-pipe.html">03</a></td><td><code>prompt | llm | parser</code> compiles</td></tr>
+      </table>
     </section>
 
     <section class="section">
-      <h2>Playground lab (Lab 16)</h2>
-      <pre>from langchain_helper import make_llm
+      <h2>3 — Wiring diagram</h2>
+      <div class="flow-diagram">
+<pre>WATSONX_* env
+       → make_watsonx_llm()
+       → WatsonxLLM
+       → llm.invoke("Who is man's best friend?")
+       → str printed</pre>
+      </div>
+    </section>
 
-llama_llm = make_llm()
+    <section class="section">
+      <h2>4 — Script</h2>
+      <pre>import os
+from watson_llm import make_watsonx_llm
+
+print("Model:", os.environ["WATSONX_MODEL_ID"])
+
+llama_llm = make_watsonx_llm()  # WatsonxLLM — name kept like the notebook
 print(llama_llm.invoke("Who is man's best friend?"))</pre>
-    </section>
-
-    <section class="section">
-      <h2>Playground — params override</h2>
-      <pre>from langchain_helper import make_llm, GenParams
-
-llm = make_llm()
-
-# One-shot string (no pipe)
-print(llm.invoke("Who is man's best friend?"))
-
-# Override temperature (Exercise 1 style)
-llm_creative = make_llm({GenParams.TEMPERATURE: 0.8})
-llm_precise = make_llm({GenParams.TEMPERATURE: 0.1})</pre>
-    </section>
-
-    <section class="section">
-      <h2>Jupyter notebook</h2>
-      <pre>from coursera_llm_model import make_llm
-
-llama_llm = make_llm()  # WATSONX_* env; name kept for later cells
-
-print(llama_llm.invoke("Who is man's best friend?"))</pre>
+      <p style="color:var(--muted);font-size:.88rem;">Playground: <code>16.watson_llm.invoke_test.py</code></p>
       <p style="color:var(--muted);font-size:.88rem;"><code>llama_llm</code> is still your <code>WATSONX_MODEL_ID</code> — not Coursera’s Llama unless you set that model in env.</p>
     </section>
 
     <section class="section">
-      <h2>Plug into a pipe</h2>
-      <pre>from langchain_core.prompts import PromptTemplate
-from langchain_core.output_parsers import StrOutputParser
-from langchain_helper import make_llm
-
-llm = make_llm()
-prompt = PromptTemplate.from_template("Tell me a {adjective} joke about {content}.")
-chain = prompt | llm | StrOutputParser()
-
-print(chain.invoke({"adjective": "funny", "content": "chickens"}))</pre>
-    </section>
-
-    <section class="section">
-      <h2>Object type check</h2>
+      <h2>5 — Critical lines</h2>
       <table>
-        <tr><th>Variable</th><th>Type</th><th>Works in <code>|</code> pipe?</th></tr>
-        <tr><td><code>llm</code> / <code>llama_llm</code></td><td><code>langchain_ibm.WatsonxLLM</code></td><td>✅ Yes</td></tr>
-        <tr><td><code>model</code> (watson_helper)</td><td><code>ModelInference</code></td><td>❌ No — use <a href="ibm-model-generate.html">IBM generate</a> instead</td></tr>
+        <tr><th>Line</th><th>Why it matters</th><th>If you change it wrong…</th></tr>
+        <tr><td><code>make_watsonx_llm()</code></td><td>Factory from env + defaults</td><td><code>make_llm()</code> does not exist — NameError</td></tr>
+        <tr><td><code>llama_llm.invoke("…")</code></td><td>Simplest Runnable test</td><td>Passing bare string to <code>model.generate</code> is Lab 15, not this</td></tr>
+        <tr><td><code>WatsonxLLM</code> type</td><td>Works with <code>|</code></td><td><code>ModelInference</code> breaks the pipe</td></tr>
+        <tr><td>Import from <code>watson_llm</code></td><td>Playground helper module</td><td>Wrong path → import error outside playground folder</td></tr>
       </table>
     </section>
 
-    <div class="callout"><strong>Trap:</strong> <code>WatsonxLLM(model=model_inference)</code> does not work in <code>langchain_ibm</code> 1.x. Use <code>make_watsonx_llm()</code> / <code>make_llm()</code> — they pass <code>model_id</code> and env directly.</div>
+    <section class="section">
+      <h2>6 — Variants</h2>
+      <ul>
+        <li><strong>Plug into a pipe</strong> — <code>prompt | make_watsonx_llm() | StrOutputParser()</code> → <a href="summarize.html">summarize recipe</a>.</li>
+        <li><strong>Param override</strong> — <code>make_watsonx_llm({GenParams.TEMPERATURE: 0.8})</code> → <a href="temperature-compare.html">temperature compare</a> (Lab 18).</li>
+        <li><strong>Message list input</strong> — <code>llm.invoke([SystemMessage(…), HumanMessage(…)])</code> → <a href="chat-messages.html">chat messages</a> (Lab 17).</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>7 — Debug</h2>
+      <table>
+        <tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr>
+        <tr><td><code>NameError: make_llm</code></td><td>Old helper name</td><td>Use <code>make_watsonx_llm</code></td></tr>
+        <tr><td><code>KeyError: WATSONX_*</code></td><td>Env not loaded</td><td>Run <code>set_env.ps1</code></td></tr>
+        <tr><td>Type error in pipe</td><td>Used <code>watson_helper.model</code></td><td>Swap to <code>make_watsonx_llm()</code></td></tr>
+        <tr><td><code>WatsonxLLM(model=…)</code> fails</td><td>langchain_ibm 1.x API</td><td>Pass <code>model_id</code> via factory, not wrapped inference</td></tr>
+      </table>
+    </section>
+
+    <div class="trap-box">
+      <h3>Traps</h3>
+      <ul>
+        <li><strong><code>make_llm()</code></strong> — Renamed to <code>make_watsonx_llm()</code> in playground; old name raises <code>NameError</code>.</li>
+        <li><strong><code>WatsonxLLM(model=model_inference)</code></strong> — Does not work in <code>langchain_ibm</code> 1.x. Factory passes <code>model_id</code> and env directly.</li>
+        <li><strong>Confusing <code>llama_llm</code> with Llama</strong> — Variable name is notebook legacy; model comes from <code>WATSONX_MODEL_ID</code>.</li>
+      </ul>
+    </div>
+
+    <section class="section">
+      <h2>Rebuild from memory</h2>
+      <div class="rebuild-steps">
+        <p>Close this page. Write the script from these steps only:</p>
+        <ol>
+          <li>Import <code>make_watsonx_llm</code> from <code>watson_llm</code>.</li>
+          <li>Build <code>llama_llm = make_watsonx_llm()</code> after env is set.</li>
+          <li>Call <code>llama_llm.invoke("Who is man's best friend?")</code>.</li>
+          <li>Print the result.</li>
+          <li>Confirm type is <code>WatsonxLLM</code>, not <code>ModelInference</code>.</li>
+        </ol>
+      </div>
+    </section>
 
     <section class="section">
       <h2>Modules</h2>

@@ -23,47 +23,181 @@
       <li><a href="09-gen-params.html">09 GenParams</a></li>
       <li><a href="10-chat-prompt-template.html">10 ChatPromptTemplate</a></li>
       <li><a href="11-json-output-parser.html">11 JsonOutputParser</a></li>
+      <li><a href="12-document-loaders.html">12 Document + loaders</a></li>
+      <li><a href="13-text-splitters.html">13 Text splitters</a></li>
+      <li><a href="14-embeddings.html">14 Embeddings</a></li>
+      <li><a href="15-chroma-vectorstore.html">15 Chroma</a></li>
+      <li><a href="16-retrievers-rag.html">16 Retrievers + RAG</a></li>
+      <li><a href="17-memory.html">17 Memory</a></li>
+      <li><a href="18-classic-chains.html">18 Classic chains</a></li>
+      <li><a href="19-agents-tools.html">19 Agents</a></li>
     </ul>
   </aside>
   <main class="main">
     <nav class="breadcrumbs"><a href="../../index.html">Reference</a> › <a href="../index.html">LangChain</a> › <span>04 StrOutputParser</span></nav>
     <header class="hero">
-      <span class="badge">Module 04</span>
+      <span class="badge depth-deep">Module 04 · depth pass 1</span>
       <h1>StrOutputParser</h1>
-      <p>Step 3 — always give you plain text from the model step.</p>
+      <p>Step 3 in the classic pipe — turns whatever the model returned into a plain <code>str</code> you can print, log, or pass on.</p>
     </header>
 
     <section class="section">
-      <h2>When to use</h2>
-      <p>End of pipe when you need a <code>str</code>. Required when using <code>ChatWatsonx</code> (message objects). Optional with <code>WatsonxLLM</code> (often already a string).</p>
+      <h2>Job (help-desk story)</h2>
+      <p>Formatting desk at the end of the line. The specialist (LLM) hands back a raw reply; this step strips wrappers and always delivers one clean string to the customer.</p>
     </section>
 
     <section class="section">
-      <h2>Object</h2>
+      <h2>Problem without it</h2>
+      <ul>
+        <li><code>ChatWatsonx</code> and chat-style chains often return <code>AIMessage</code> objects — <code>print(chain.invoke(...))</code> shows object repr, not answer text.</li>
+        <li>Downstream code expects <code>str</code>; without a parser you add manual <code>.content</code> access in every script.</li>
+        <li>Swapping model types (text LLM → chat LLM) breaks callers unless the last step normalizes output.</li>
+        <li>Structured outputs (JSON, lists) need different parsers — this one is only for plain text.</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>Object lifecycle</h2>
+      <ol class="lifecycle-steps">
+        <li><strong>Build</strong> — <code>parser = StrOutputParser()</code> — no config, stateless.</li>
+        <li><strong>Configure</strong> — None. Wire as last step: <code>prompt | llm | parser</code>.</li>
+        <li><strong>Invoke</strong> — You never call <code>parser.invoke</code> alone in labs; the chain passes LLM output into it automatically.</li>
+        <li><strong>Output</strong> — Always <code>str</code>. That becomes the return value of <code>chain.invoke(dict)</code>.</li>
+      </ol>
+    </section>
+
+    <section class="section">
+      <h2>Data flow</h2>
+      <div class="flow-diagram">
+<pre>chain.invoke({"content": passage, "question": q})
+        │
+        ▼
+   PromptTemplate  →  filled prompt
+        │
+        ▼
+   WatsonxLLM      →  str (text API) or AIMessage (chat API)
+        │
+        ▼
+ StrOutputParser   →  str  ← chain return type
+        │
+        ▼
+   print(result)   # human-readable sentence</pre>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Properties</h2>
       <table>
-        <tr><th>Object</th><th>Import</th></tr>
-        <tr><td><code>StrOutputParser()</code></td><td><code>from langchain_core.output_parsers import StrOutputParser</code></td></tr>
+        <tr><th>Name</th><th>Value</th><th>If wrong then…</th></tr>
+        <tr><td>Constructor</td><td><code>StrOutputParser()</code> — no args</td><td>N/A</td></tr>
+        <tr><td>Position in pipe</td><td>Last step for plain text</td><td>Parser before LLM → nonsense input to model</td></tr>
+        <tr><td>Input it accepts</td><td>LLM output (<code>str</code>, <code>AIMessage</code>, etc.)</td><td>Manual <code>parser.invoke(wrong_type)</code> in tests only</td></tr>
+        <tr><td>Return</td><td><code>str</code></td><td>Without it on chat models → <code>AIMessage</code> leaks to caller</td></tr>
+        <tr><td>Import</td><td><code>langchain_core.output_parsers</code></td><td>Old <code>langchain.output_parsers</code> paths — use core in 1.x</td></tr>
       </table>
     </section>
 
     <section class="section">
-      <h2>Usage</h2>
+      <h2>Minimal example</h2>
       <pre>from langchain_core.output_parsers import StrOutputParser
 
-parser = StrOutputParser()
-chain = prompt | llm | parser</pre>
+chain = prompt | llm | StrOutputParser()
+text = chain.invoke({"content": passage})  # str</pre>
     </section>
 
     <section class="section">
-      <h2>Job (one line)</h2>
-      <p>Normalize whatever the model returned → <code>str</code> you can print or pass on.</p>
+      <h2>Full lab (your playground)</h2>
+      <pre>from langchain_core.prompts import PromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+from watson_llm import make_watsonx_llm
+
+llm = make_watsonx_llm()
+template = "Answer the {question} based on the {content}."
+prompt = PromptTemplate.from_template(template)
+
+qa_chain = prompt | llm | StrOutputParser()
+print(qa_chain.invoke({
+    "question": "Which planets are rocky?",
+    "content": "Mercury, Venus, Earth, Mars are rocky...",
+}))</pre>
+      <p style="color:var(--muted);font-size:.88rem;">Script: <code>playground/langchain/10.lcelanswer.py</code> · Recipe: <a href="../recipes/qa-context.html">Q&amp;A</a></p>
     </section>
 
-    <div class="callout"><strong>With WatsonxLLM today:</strong> output may look the same with or without parser — keep it in the pipe for consistency when you switch to chat models.</div>
+    <section class="section">
+      <h2>Confused with</h2>
+      <table class="confusion-matrix">
+        <tr><th>Neighbor</th><th>StrOutputParser (this)</th><th>Neighbor does</th></tr>
+        <tr>
+          <td><a href="11-json-output-parser.html">JsonOutputParser</a></td>
+          <td>Plain text → <code>str</code></td>
+          <td>JSON → <code>dict</code> with named fields (Lab 21)</td>
+        </tr>
+        <tr>
+          <td><code>CommaSeparatedListOutputParser</code></td>
+          <td>One string blob</td>
+          <td>Comma-separated line → Python <code>list</code> (Lab 21 Part B)</td>
+        </tr>
+        <tr>
+          <td>No parser (Lab 20 style)</td>
+          <td><code>prompt | llm | StrOutputParser()</code></td>
+          <td><code>prompt | llm</code> only — OK until output is <code>AIMessage</code></td>
+        </tr>
+        <tr>
+          <td>Manual <code>msg.content</code></td>
+          <td>Parser in pipe — caller always gets <code>str</code></td>
+          <td>Fine in one-off scripts (Lab 17); does not scale across chains</td>
+        </tr>
+      </table>
+    </section>
 
     <section class="section">
-      <h2>Also</h2>
-      <p>Plain <code>str</code> out (this module) vs structured <code>dict</code> / <code>list</code> — see <a href="11-json-output-parser.html">Module 11 — JsonOutputParser</a>.</p>
+      <h2>Imports (Coursera → your venv)</h2>
+      <div class="import-block">
+        <h3>Coursera notebook</h3>
+        <pre>from langchain.schema.output_parser import StrOutputParser
+# or langchain_core in newer notebook cells</pre>
+      </div>
+      <div class="import-block">
+        <h3>Your playground (1.x)</h3>
+        <pre>from langchain_core.output_parsers import StrOutputParser
+
+chain = prompt | make_watsonx_llm() | StrOutputParser()</pre>
+      </div>
+    </section>
+
+    <div class="trap-box">
+      <h3>Traps (from your labs)</h3>
+      <ul>
+        <li><strong>Dropping parser on chat pipes</strong> — Lab 20 uses <code>joke_prompt | llama_llm</code> without parser. Works while output looks like text; add <code>StrOutputParser()</code> before production or you get <code>AIMessage</code> surprises.</li>
+        <li><strong>Using StrOutputParser for JSON</strong> — Lab 21 needs <code>JsonOutputParser</code> or <code>CommaSeparatedListOutputParser</code>. <code>StrOutputParser</code> leaves JSON as a string you must <code>json.loads</code> yourself.</li>
+        <li><strong>Parser in the wrong position</strong> — <code>StrOutputParser() | llm</code> is invalid. Parser is always <strong>after</strong> the LLM.</li>
+      </ul>
+    </div>
+
+    <section class="section">
+      <h2>Recall drills</h2>
+      <details class="recall-drill">
+        <summary>Where does <code>StrOutputParser</code> sit in <code>prompt | llm | ???</code>?</summary>
+        <div class="answer">Last step — after the LLM. It receives model output and returns <code>str</code>.</div>
+      </details>
+      <details class="recall-drill">
+        <summary>When is it optional with <code>WatsonxLLM</code> but required with <code>ChatWatsonx</code>?</summary>
+        <div class="answer">Text LLM often already returns something printable; chat LLM returns message objects — parser extracts plain text consistently.</div>
+      </details>
+      <details class="recall-drill">
+        <summary>What parser do you use for Lab 21 Part A (Joke setup + punchline)?</summary>
+        <div class="answer"><code>JsonOutputParser</code> with a Pydantic class — not <code>StrOutputParser</code>. See <a href="11-json-output-parser.html">Module 11</a>.</div>
+      </details>
+    </section>
+
+    <section class="section">
+      <h2>Links</h2>
+      <p>
+        Labs: <code>08.lcel.1.py</code>, <code>10.lcelanswer.py</code> ·
+        Recipes: <a href="../recipes/summarize.html">Summarize</a>, <a href="../recipes/qa-context.html">Q&amp;A</a> ·
+        Prior: <a href="03-lcel-pipe.html">03 pipe</a> ·
+        Structured: <a href="11-json-output-parser.html">11 JSON parser</a>
+      </p>
     </section>
   </main>
 </div>

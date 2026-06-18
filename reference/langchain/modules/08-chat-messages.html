@@ -23,57 +23,238 @@
       <li><a href="09-gen-params.html">09 GenParams</a></li>
       <li><a href="10-chat-prompt-template.html">10 ChatPromptTemplate</a></li>
       <li><a href="11-json-output-parser.html">11 JsonOutputParser</a></li>
+      <li><a href="12-document-loaders.html">12 Document + loaders</a></li>
+      <li><a href="13-text-splitters.html">13 Text splitters</a></li>
+      <li><a href="14-embeddings.html">14 Embeddings</a></li>
+      <li><a href="15-chroma-vectorstore.html">15 Chroma</a></li>
+      <li><a href="16-retrievers-rag.html">16 Retrievers + RAG</a></li>
+      <li><a href="17-memory.html">17 Memory</a></li>
+      <li><a href="18-classic-chains.html">18 Classic chains</a></li>
+      <li><a href="19-agents-tools.html">19 Agents</a></li>
     </ul>
   </aside>
   <main class="main">
     <nav class="breadcrumbs"><a href="../../index.html">Reference</a> › <a href="../index.html">LangChain</a> › <span>08 Chat messages</span></nav>
     <header class="hero">
-      <span class="badge">Module 08 · Lab 17</span>
+      <span class="badge depth-deep">Module 08 · depth pass 1 · Lab 17</span>
       <h1>Chat message types</h1>
-      <p>Labeled messages in a list — not one plain string. Use with <code>WatsonxLLM.invoke([...])</code>.</p>
+      <p>Same <code>make_watsonx_llm()</code> from <a href="07-watson-helpers.html">07</a> — but instead of one plain string, pass a <strong>list of role-tagged messages</strong> to <code>invoke</code>.</p>
     </header>
 
     <section class="section">
-      <h2>When to use</h2>
-      <p>Notebook “Chat message” section: give the model <strong>roles</strong> (system rules, user question, fake prior AI reply). Not memory — you pass the full list each call.</p>
+      <h2>Two invoke shapes (key take)</h2>
+      <p>Still Route B (<code>watson_llm</code>). Only the <strong>input</strong> changes:</p>
+      <table>
+        <tr><th>Shape</th><th>Invoke</th><th>Lab</th><th>When</th></tr>
+        <tr>
+          <td><strong>String</strong></td>
+          <td><code>llm.invoke("Hello")</code></td>
+          <td>16</td>
+          <td>Quick one-off question — no roles</td>
+        </tr>
+        <tr>
+          <td><strong>Message list</strong></td>
+          <td><code>llm.invoke([SystemMessage(...), HumanMessage(...)])</code></td>
+          <td>17</td>
+          <td>System rules, user text, fake prior turns</td>
+        </tr>
+      </table>
+      <p style="color:var(--muted);font-size:.88rem;">Memory hook: <strong>string → Lab 16</strong> · <strong>list of messages → Lab 17</strong>. Output is still <code>str</code> from <code>WatsonxLLM</code>.</p>
     </section>
 
     <section class="section">
-      <h2>Objects</h2>
+      <h2>Job (help-desk story)</h2>
+      <p>Email thread with labeled headers: <strong>From: System</strong> (rules), <strong>From: User</strong> (question), optional <strong>From: Assistant</strong> (a prior reply you paste in). You hand the whole thread to the model each time — not a single blob of text.</p>
+    </section>
+
+    <section class="section">
+      <h2>Problem without message types</h2>
+      <ul>
+        <li>One string mixes “you are a book bot” and “what should I read?” — model may ignore instructions or role-play badly.</li>
+        <li>Fake multi-turn chat (user → AI → user) is awkward as one string with manual labels.</li>
+        <li>Later, <code>ChatPromptTemplate</code> (Module 10) and chat models expect message objects — Lab 17 teaches the raw shape first.</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>Lifecycle (build the list, invoke once)</h2>
+      <ol class="lifecycle-steps">
+        <li><strong>LLM</strong> — <code>llama_llm = make_watsonx_llm()</code> (same as Lab 16).</li>
+        <li><strong>Import</strong> — <code>SystemMessage</code>, <code>HumanMessage</code>, <code>AIMessage</code> from <code>langchain_core.messages</code>.</li>
+        <li><strong>Build list</strong> — Order matters: usually System first, then Human / AI / Human…</li>
+        <li><strong>Invoke</strong> — <code>llama_llm.invoke([...])</code> → <code>str</code>. Not memory — you pass the full list every call.</li>
+      </ol>
+    </section>
+
+    <section class="section">
+      <h2>Flow</h2>
+      <div class="flow-diagram">
+<pre>make_watsonx_llm()   ← Route B (07)
+        │
+        ▼
+┌─────────────────────────────────────────┐
+│  [ SystemMessage("You are a book bot")  │
+│    HumanMessage("Mystery novels?")     ]│  ← list, not one string
+└─────────────────┬───────────────────────┘
+                  ▼
+           llm.invoke([...])
+                  ▼
+            "Try Agatha Christie."   ← str</pre>
+      </div>
+      <p style="color:var(--muted);font-size:.88rem;">Optional fake history: insert <code>AIMessage</code> between two <code>HumanMessage</code> lines so the model sees a prior assistant reply you supplied.</p>
+    </section>
+
+    <section class="section">
+      <h2>Three message types</h2>
       <table>
-        <tr><th>Type</th><th>Role</th></tr>
-        <tr><td><code>SystemMessage</code></td><td>Instructions / persona</td></tr>
-        <tr><td><code>HumanMessage</code></td><td>User text</td></tr>
-        <tr><td><code>AIMessage</code></td><td>Prior assistant line you supply (for fake history)</td></tr>
+        <tr><th>Type</th><th>Role</th><th>If wrong then…</th></tr>
+        <tr>
+          <td><code>SystemMessage</code></td>
+          <td>Instructions / persona — usually first</td>
+          <td>Model drifts, rambles, or ignores tone you wanted</td>
+        </tr>
+        <tr>
+          <td><code>HumanMessage</code></td>
+          <td>User question or follow-up</td>
+          <td>Model may answer as if it wrote the “user” line (role confusion)</td>
+        </tr>
+        <tr>
+          <td><code>AIMessage</code></td>
+          <td>Prior assistant line <strong>you</strong> supply (fake history)</td>
+          <td>Not model output from last call — you build it manually for context</td>
+        </tr>
       </table>
       <pre>from langchain_core.messages import HumanMessage, SystemMessage, AIMessage</pre>
     </section>
 
     <section class="section">
-      <h2>Call pattern</h2>
-      <pre>llama_llm = make_llm()
+      <h2>Minimal example</h2>
+      <pre>from watson_llm import make_watsonx_llm
+from langchain_core.messages import SystemMessage, HumanMessage
 
-msg = llama_llm.invoke([
-    SystemMessage(content="You are a book recommender. One short sentence."),
-    HumanMessage(content="I enjoy mystery novels, what should I read?"),
-])
-print(msg)  # str</pre>
+llm = make_watsonx_llm()
+print(llm.invoke([
+    SystemMessage(content="One short sentence only."),
+    HumanMessage(content="Recommend a mystery book."),
+]))</pre>
     </section>
 
     <section class="section">
-      <h2>vs PromptTemplate (Module 01)</h2>
-      <table>
-        <tr><th></th><th>PromptTemplate</th><th>Message list</th></tr>
-        <tr><td>Shape</td><td>One formatted string</td><td>List of role objects</td></tr>
-        <tr><td>Invoke</td><td><code>chain.invoke({"topic": "cats"})</code></td><td><code>llm.invoke([SystemMessage(...), ...])</code></td></tr>
+      <h2>Full lab (Lab 17 — three patterns)</h2>
+      <pre>from watson_llm import GenParams, make_watsonx_llm
+from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
+
+llama_llm = make_watsonx_llm({GenParams.MAX_NEW_TOKENS: 80})
+
+# 1 — system + human
+llama_llm.invoke([
+    SystemMessage(content="Book recommender. One short sentence."),
+    HumanMessage(content="I enjoy mystery novels, what should I read?"),
+])
+
+# 2 — fake multi-turn (AIMessage = prior reply you paste in)
+llama_llm.invoke([
+    SystemMessage(content="Fitness bot. One short sentence."),
+    HumanMessage(content="I like HIIT, what should I do?"),
+    AIMessage(content="Try a CrossFit class."),
+    HumanMessage(content="How often should I attend?"),
+])
+
+# 3 — human only (no system)
+llama_llm.invoke([HumanMessage(content="What month follows June?")])</pre>
+      <p style="color:var(--muted);font-size:.88rem;">Script: <code>playground/langchain/17.chat_messages.invoke_test.py</code> · Recipe: <a href="../recipes/chat-messages.html">Chat messages</a></p>
+    </section>
+
+    <section class="section">
+      <h2>Confused with</h2>
+      <table class="confusion-matrix">
+        <tr><th>Neighbor</th><th>Chat messages (this)</th><th>Neighbor does</th></tr>
+        <tr>
+          <td><a href="01-prompt-template.html">PromptTemplate</a></td>
+          <td>List of <code>SystemMessage</code> / <code>HumanMessage</code> objects</td>
+          <td>One formatted string with <code>{holes}</code> — used in LCEL pipes</td>
+        </tr>
+        <tr>
+          <td><a href="10-chat-prompt-template.html">ChatPromptTemplate</a> (10)</td>
+          <td>Manual list per <code>invoke</code></td>
+          <td>Template + placeholders → still messages, but pipe-friendly (Lab 20)</td>
+        </tr>
+        <tr>
+          <td><code>llm.invoke("string")</code> (Lab 16)</td>
+          <td>Roles explicit in objects</td>
+          <td>Single blob — fine for quick tests, weak for system rules</td>
+        </tr>
+        <tr>
+          <td>Memory (Lab 33)</td>
+          <td>You pass full list each time</td>
+          <td>Framework stores / recalls prior turns for you</td>
+        </tr>
+        <tr>
+          <td><code>AIMessage</code> here</td>
+          <td>Fake prior assistant line in the list</td>
+          <td>Not the return value of the last <code>invoke</code> unless you append it yourself</td>
+        </tr>
       </table>
     </section>
 
-    <div class="callout"><strong>Trap:</strong> <code>WatsonxLLM</code> text API may ramble or role-play. Tight system text + lower <code>MAX_NEW_TOKENS</code> helps. <code>ChatPromptTemplate</code> (Module 10) wraps the same idea for pipes.</div>
+    <section class="section">
+      <h2>Imports (Coursera → your venv)</h2>
+      <div class="import-block">
+        <h3>Coursera notebook</h3>
+        <pre>from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
+# llama_llm from watson_llm (same as your labs)
+
+msg = llama_llm.invoke([
+    SystemMessage(content="You are a helpful AI bot..."),
+    HumanMessage(content="I enjoy mystery novels..."),
+])</pre>
+      </div>
+      <div class="import-block">
+        <h3>Your playground (Lab 17)</h3>
+        <pre>from watson_llm import GenParams, make_watsonx_llm
+from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
+
+llama_llm = make_watsonx_llm({GenParams.MAX_NEW_TOKENS: 80})
+llama_llm.invoke([SystemMessage(...), HumanMessage(...)])</pre>
+      </div>
+    </section>
+
+    <div class="trap-box">
+      <h3>Traps (from Lab 17)</h3>
+      <ul>
+        <li><strong>Not memory</strong> — each <code>invoke</code> is fresh. Prior turns only exist if <strong>you</strong> put them in the list (e.g. <code>AIMessage</code>).</li>
+        <li><strong>String vs list</strong> — <code>invoke("hello")</code> works (Lab 16); <code>invoke([HumanMessage(...)])</code> is the message-list shape (Lab 17). Don’t mix up which lab teaches which.</li>
+        <li><strong>Rambling / role-play</strong> — <code>WatsonxLLM</code> text API may ignore “one sentence.” Tight <code>SystemMessage</code> + lower <code>MAX_NEW_TOKENS</code> (Lab 17 uses 80).</li>
+        <li><strong>Wrong route</strong> — messages go to <code>make_watsonx_llm()</code>, not <code>watson_helper.model.generate()</code>.</li>
+      </ul>
+    </div>
 
     <section class="section">
-      <h2>Recipe</h2>
-      <p><a href="../recipes/chat-messages.html">Lab 17 — chat messages</a></p>
+      <h2>Recall drills</h2>
+      <details class="recall-drill">
+        <summary>Lab 16 vs Lab 17 — what do you pass to <code>invoke</code>?</summary>
+        <div class="answer">Lab 16: a <strong>string</strong>. Lab 17: a <strong>list</strong> of <code>SystemMessage</code> / <code>HumanMessage</code> / <code>AIMessage</code>.</div>
+      </details>
+      <details class="recall-drill">
+        <summary>What is <code>AIMessage</code> for in Lab 17 example 2?</summary>
+        <div class="answer">A <strong>fake prior assistant reply</strong> you insert so the model sees user → assistant → follow-up user — not automatic memory.</div>
+      </details>
+      <details class="recall-drill">
+        <summary>Three message types and one-line job of each?</summary>
+        <div class="answer"><code>SystemMessage</code> = rules/persona · <code>HumanMessage</code> = user text · <code>AIMessage</code> = prior assistant line you supply.</div>
+      </details>
+    </section>
+
+    <section class="section">
+      <h2>Links</h2>
+      <p>
+        <a href="07-watson-helpers.html">07 Watson helpers</a> ·
+        <a href="02-watsonx-llm.html">02 WatsonxLLM</a> ·
+        Lab: <code>17.chat_messages.invoke_test.py</code> ·
+        Recipe: <a href="../recipes/chat-messages.html">Chat messages</a> ·
+        Next: <a href="09-gen-params.html">09 GenParams</a> ·
+        Then: <a href="10-chat-prompt-template.html">10 ChatPromptTemplate</a>
+      </p>
     </section>
   </main>
 </div>

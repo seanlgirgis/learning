@@ -23,10 +23,20 @@
       <li><a href="modules/09-gen-params.html">09 GenParams</a></li>
       <li><a href="modules/10-chat-prompt-template.html">10 ChatPromptTemplate</a></li>
       <li><a href="modules/11-json-output-parser.html">11 JsonOutputParser</a></li>
+      <li><a href="modules/12-document-loaders.html">12 Document + loaders</a></li>
+      <li><a href="modules/13-text-splitters.html">13 Text splitters</a></li>
+      <li><a href="modules/14-embeddings.html">14 Embeddings</a></li>
+      <li><a href="modules/15-chroma-vectorstore.html">15 Chroma</a></li>
+      <li><a href="modules/16-retrievers-rag.html">16 Retrievers + RAG</a></li>
+      <li><a href="modules/17-memory.html">17 Memory</a></li>
+      <li><a href="modules/18-classic-chains.html">18 Classic chains</a></li>
+      <li><a href="modules/19-agents-tools.html">19 Agents</a></li>
     </ul>
     <h2>Also</h2>
     <ul>
       <li><a href="recipes/index.html">Recipes</a></li>
+      <li><a href="guides/rag-pipeline.html">Guide: RAG</a></li>
+      <li><a href="guides/react-internals.html">Guide: ReAct</a></li>
       <li><a href="../../courses/crs_001_develop_generative_ai_applications_get_started/bubbles/outputs/crs_001_lcel_workflow.html">LCEL bubble map</a></li>
       <li><a href="../index.html">Reference hub</a></li>
     </ul>
@@ -40,10 +50,42 @@
     </nav>
 
     <header class="hero">
-      <span class="badge">Your subset only</span>
+      <span class="badge depth-deep">Reference book · 19 modules</span>
       <h1>LangChain Reference</h1>
-      <p>11 modules + 15 recipes — LCEL drills (01–05), watson infra (06–07), notebook track (08–11, Lab 22). Playground scripts in <code>playground/langchain/</code>.</p>
+      <p><strong>19 modules</strong> map to <code>playground/langchain/</code> Labs 08–35 + spine. <strong>16 recipes</strong> for copy-paste pipes. Capstone practice: <a href="../../planning/langchain_capstone_projects.md">capstone plan</a>.</p>
     </header>
+
+    <section class="section">
+      <h2>Depth audit (11-point checklist)</h2>
+      <p style="color:var(--muted);font-size:.9rem;margin:0 0 10px;">Score = items present: job story, problem, lifecycle, flow diagram, property traps, minimal+full example, confusion matrix, import bridge, 3+ traps, recall drills, lab links. <strong>No new modules until existing average ≥ 8.</strong></p>
+      <table class="depth-audit">
+        <tr><th>Page</th><th>Score</th><th>Status</th><th>Next action</th></tr>
+        <tr><td><a href="modules/01-prompt-template.html">01 PromptTemplate</a></td><td class="score-high">11/11</td><td>Deep pass 1</td><td>Review with Sean; then flashcard lockstep</td></tr>
+        <tr><td><a href="modules/02-watsonx-llm.html">02 WatsonxLLM</a></td><td class="score-high">11/11</td><td>Deep pass 1</td><td>Same</td></tr>
+        <tr><td><a href="modules/03-lcel-pipe.html">03 LCEL pipe</a></td><td class="score-high">11/11</td><td>Gold standard</td><td>Template for 04–11</td></tr>
+        <tr><td><a href="modules/04-output-parser.html">04 StrOutputParser</a></td><td class="score-high">11/11</td><td>Deep pass 1</td><td>Sean review; then 05</td></tr>
+        <tr><td><a href="modules/05-runnable-lambda.html">05 RunnableLambda</a></td><td class="score-high">11/11</td><td>Deep pass 1</td><td>Sean review; then 06</td></tr>
+        <tr><td><a href="modules/06-model-inference.html">06 ModelInference</a></td><td class="score-high">11/11</td><td>Deep pass 1</td><td>Sean review; then 07</td></tr>
+        <tr><td><a href="modules/07-watson-helpers.html">07 Watson helpers</a></td><td class="score-high">11/11</td><td>Deep pass 1</td><td>Sean review; then 08</td></tr>
+        <tr><td><a href="modules/08-chat-messages.html">08 Chat messages</a></td><td class="score-high">11/11</td><td>Deep pass 1</td><td>Sean review</td></tr>
+        <tr><td><a href="modules/09-gen-params.html">09 GenParams</a></td><td class="score-high">11/11</td><td>Deep pass 1</td><td>Sean review</td></tr>
+        <tr><td><a href="modules/10-chat-prompt-template.html">10 ChatPromptTemplate</a></td><td class="score-high">11/11</td><td>Deep pass 1</td><td>Sean review</td></tr>
+        <tr><td><a href="modules/11-json-output-parser.html">11 JsonOutputParser</a></td><td class="score-high">11/11</td><td>Deep pass 1</td><td>Sean review</td></tr>
+        <tr><td><a href="modules/12-document-loaders.html">12 Document + loaders</a></td><td class="score-high">11/11</td><td>A′ delta</td><td>Labs 23–25</td></tr>
+        <tr><td><a href="modules/13-text-splitters.html">13 Text splitters</a></td><td class="score-high">11/11</td><td>A′ delta</td><td>Labs 26–27</td></tr>
+        <tr><td><a href="modules/14-embeddings.html">14 Embeddings</a></td><td class="score-high">11/11</td><td>A′ delta</td><td>Lab 28</td></tr>
+        <tr><td><a href="modules/15-chroma-vectorstore.html">15 Chroma</a></td><td class="score-high">11/11</td><td>A′ delta</td><td>Lab 29</td></tr>
+        <tr><td><a href="modules/16-retrievers-rag.html">16 Retrievers + RAG</a></td><td class="score-high">11/11</td><td>A′ delta</td><td>Labs 30–32</td></tr>
+        <tr><td><a href="modules/17-memory.html">17 Memory</a></td><td class="score-high">11/11</td><td>A′ delta</td><td>Lab 33</td></tr>
+        <tr><td><a href="modules/18-classic-chains.html">18 Classic chains</a></td><td class="score-high">11/11</td><td>A′ delta</td><td>Lab 34</td></tr>
+        <tr><td><a href="modules/19-agents-tools.html">19 Agents</a></td><td class="score-high">11/11</td><td>A′ delta</td><td>Lab 35</td></tr>
+        <tr><td><a href="recipes/summarize.html">Recipe: Summarize</a></td><td class="score-high">11/11</td><td>Recipe gold standard</td><td>Revamp other 15 recipes</td></tr>
+        <tr><td>Other 15 recipes</td><td class="score-high">11/11</td><td>Depth pass 1</td><td>Sean review</td></tr>
+        <tr><td><a href="guides/rag-pipeline.html">Guide: RAG</a></td><td class="score-high">—</td><td>Shipped</td><td>—</td></tr>
+        <tr><td><a href="guides/react-internals.html">Guide: ReAct</a></td><td class="score-high">—</td><td>Shipped</td><td>—</td></tr>
+      </table>
+      <p style="color:var(--muted);font-size:.88rem;margin:10px 0 0;"><strong>Book complete:</strong> 19 modules · 16 recipes · 2 guides. Next: capstone practice · Phase B field-guide sync (ongoing).</p>
+    </section>
 
     <section class="section">
       <h2>Module web</h2>
@@ -61,6 +103,14 @@
         <a class="web-node" href="modules/09-gen-params.html">09 Params</a>
         <a class="web-node" href="modules/10-chat-prompt-template.html">10 ChatTpl</a>
         <a class="web-node" href="modules/11-json-output-parser.html">11 JSON</a>
+        <a class="web-node" href="modules/12-document-loaders.html">12 Doc</a>
+        <a class="web-node" href="modules/13-text-splitters.html">13 Split</a>
+        <a class="web-node" href="modules/14-embeddings.html">14 Emb</a>
+        <a class="web-node" href="modules/15-chroma-vectorstore.html">15 Chroma</a>
+        <a class="web-node" href="modules/16-retrievers-rag.html">16 RAG</a>
+        <a class="web-node" href="modules/17-memory.html">17 Mem</a>
+        <a class="web-node" href="modules/18-classic-chains.html">18 Chain</a>
+        <a class="web-node" href="modules/19-agents-tools.html">19 Agent</a>
       </div>
     </section>
 
@@ -129,7 +179,7 @@
         <a class="module-card" href="modules/09-gen-params.html">
           <div class="num">MODULE 09</div>
           <h3>GenParams</h3>
-          <p>temperature · max tokens · new <code>make_llm()</code></p>
+          <p>temperature · max tokens · new <code>make_watsonx_llm()</code></p>
         </a>
         <a class="module-card" href="modules/10-chat-prompt-template.html">
           <div class="num">MODULE 10</div>
@@ -141,16 +191,88 @@
           <h3>JsonOutputParser</h3>
           <p>Pydantic → format instructions → <code>dict</code></p>
         </a>
+        <a class="module-card" href="modules/12-document-loaders.html">
+          <div class="num">MODULE 12</div>
+          <h3>Document + loaders</h3>
+          <p>Labs 23–25 · PDF · web</p>
+        </a>
+        <a class="module-card" href="modules/13-text-splitters.html">
+          <div class="num">MODULE 13</div>
+          <h3>Text splitters</h3>
+          <p>Labs 26–27 · chunk overlap</p>
+        </a>
+        <a class="module-card" href="modules/14-embeddings.html">
+          <div class="num">MODULE 14</div>
+          <h3>Embeddings</h3>
+          <p>Lab 28 · make_watsonx_embeddings</p>
+        </a>
+        <a class="module-card" href="modules/15-chroma-vectorstore.html">
+          <div class="num">MODULE 15</div>
+          <h3>Chroma</h3>
+          <p>Lab 29 · similarity_search</p>
+        </a>
+        <a class="module-card" href="modules/16-retrievers-rag.html">
+          <div class="num">MODULE 16</div>
+          <h3>Retrievers + RAG</h3>
+          <p>Labs 30–32 · RetrievalQA</p>
+        </a>
+        <a class="module-card" href="modules/17-memory.html">
+          <div class="num">MODULE 17</div>
+          <h3>Memory</h3>
+          <p>Lab 33 · buffer · ConversationChain</p>
+        </a>
+        <a class="module-card" href="modules/18-classic-chains.html">
+          <div class="num">MODULE 18</div>
+          <h3>Classic chains</h3>
+          <p>Lab 34 · SequentialChain + LCEL</p>
+        </a>
+        <a class="module-card" href="modules/19-agents-tools.html">
+          <div class="num">MODULE 19</div>
+          <h3>Agents + tools</h3>
+          <p>Lab 35 · ReAct loop</p>
+        </a>
       </div>
     </section>
 
     <section class="section">
-      <h2>Playground lab track</h2>
-      <p style="color:var(--muted);font-size:.9rem;margin:0 0 10px;">Coursera LangChain notebook → local scripts. Run <code>set_env.ps1</code> first.</p>
+      <h2>Full playground map (Labs 08–35)</h2>
+      <p style="color:var(--muted);font-size:.9rem;margin:0 0 10px;">Early LCEL drills 08–14 → modules 01–05 + recipes. Coursera numbered labs 15–35 below.</p>
+      <table>
+        <tr><th>Lab</th><th>Script</th><th>Module</th><th>Notes</th></tr>
+        <tr><td>08–14</td><td><code>08.lcel.1.py</code> … <code>14.lcel.chain.custom_formatting.py</code></td><td><a href="modules/01-prompt-template.html">01</a>–<a href="modules/05-runnable-lambda.html">05</a></td><td>Recipes: summarize, Q&amp;A, classify, SQL, chat-loop, review-lambda</td></tr>
+        <tr><td>14b</td><td><code>14b.runnable_lambda.practical.py</code></td><td><a href="modules/05-runnable-lambda.html">05</a></td><td>4-stage pipe with cap</td></tr>
+        <tr><td>15</td><td><code>15.watson_helper.generate_test.py</code></td><td><a href="modules/06-model-inference.html">06</a>, <a href="modules/07-watson-helpers.html">07</a></td><td>Route A</td></tr>
+        <tr><td>16</td><td><code>16.watson_llm.invoke_test.py</code></td><td><a href="modules/07-watson-helpers.html">07</a>, <a href="modules/02-watsonx-llm.html">02</a></td><td>Route B string invoke</td></tr>
+        <tr><td>17</td><td><code>17.chat_messages.invoke_test.py</code></td><td><a href="modules/08-chat-messages.html">08</a></td><td>Message list invoke</td></tr>
+        <tr><td>18</td><td><code>18.temperature.compare.py</code></td><td><a href="modules/09-gen-params.html">09</a></td><td>Two LLMs, two temps</td></tr>
+        <tr><td>19</td><td><code>19.params.py</code></td><td><a href="modules/01-prompt-template.html">01</a>, <a href="modules/03-lcel-pipe.html">03</a></td><td>GenParams in pipe</td></tr>
+        <tr><td>20</td><td><code>20.chat_prompt_templates.py</code></td><td><a href="modules/10-chat-prompt-template.html">10</a></td><td>ChatPromptTemplate + placeholder</td></tr>
+        <tr><td>21</td><td><code>21.output_parsers.py</code></td><td><a href="modules/11-json-output-parser.html">11</a></td><td>JSON + comma list</td></tr>
+        <tr><td>22</td><td><code>22.exercise2.movie_json.py</code></td><td><a href="modules/11-json-output-parser.html">11</a></td><td>Hand-written JSON rules</td></tr>
+        <tr><td>23</td><td><code>23.document.object.py</code></td><td><a href="modules/12-document-loaders.html">12</a></td><td>Hand-built Document</td></tr>
+        <tr><td>24</td><td><code>24.loader.pdf.py</code></td><td><a href="modules/12-document-loaders.html">12</a></td><td>PyPDFLoader</td></tr>
+        <tr><td>25</td><td><code>25.loader.web.py</code></td><td><a href="modules/12-document-loaders.html">12</a></td><td>WebBaseLoader</td></tr>
+        <tr><td>26</td><td><code>26.splitter.character.py</code></td><td><a href="modules/13-text-splitters.html">13</a></td><td>CharacterTextSplitter</td></tr>
+        <tr><td>27</td><td><code>27.exercise3.load_split.py</code></td><td><a href="modules/13-text-splitters.html">13</a></td><td>Compare two splitters</td></tr>
+        <tr><td>28</td><td><code>28.embeddings.demo.py</code></td><td><a href="modules/14-embeddings.html">14</a></td><td>embed_documents</td></tr>
+        <tr><td>29</td><td><code>29.chroma.store_search.py</code></td><td><a href="modules/15-chroma-vectorstore.html">15</a></td><td>from_documents + search</td></tr>
+        <tr><td>30</td><td><code>30.exercise.retriever.py</code></td><td><a href="modules/16-retrievers-rag.html">16</a></td><td>as_retriever</td></tr>
+        <tr><td>31</td><td><code>31.rag.retrieval_qa.py</code></td><td><a href="modules/16-retrievers-rag.html">16</a></td><td>RetrievalQA</td></tr>
+        <tr><td>32</td><td><code>32.parent_document_retriever.py</code></td><td><a href="modules/16-retrievers-rag.html">16</a></td><td>Parent + child chunks</td></tr>
+        <tr><td>33</td><td><code>33.memory.py</code></td><td><a href="modules/17-memory.html">17</a></td><td>Buffer memory</td></tr>
+        <tr><td>34</td><td><code>34.chains.py</code></td><td><a href="modules/18-classic-chains.html">18</a></td><td>SequentialChain + LCEL</td></tr>
+        <tr><td>35</td><td><code>35.agents.py</code></td><td><a href="modules/19-agents-tools.html">19</a></td><td>ReAct agent</td></tr>
+      </table>
+      <p style="color:var(--muted);font-size:.88rem;">Drills <code>00</code>–<code>07</code>, <code>02_watson_llm.py</code>, <code>try_*</code> — env and prompt experiments; no separate module (use 01–07).</p>
+    </section>
+
+    <section class="section">
+      <h2>Coursera notebook labs (15–22)</h2>
+      <p style="color:var(--muted);font-size:.9rem;margin:0 0 10px;">Run <code>set_env.ps1</code> first.</p>
       <table>
         <tr><th>Lab</th><th>Script</th><th>Module</th><th>Recipe</th></tr>
         <tr><td>15</td><td><code>15.watson_helper.generate_test.py</code></td><td><a href="modules/06-model-inference.html">06</a></td><td><a href="recipes/ibm-model-generate.html">IBM generate</a></td></tr>
-        <tr><td>16</td><td><code>16.langchain_helper.invoke_test.py</code></td><td><a href="modules/07-watson-helpers.html">07</a></td><td><a href="recipes/langchain-llm-plug.html">LLM plug-in</a></td></tr>
+        <tr><td>16</td><td><code>16.watson_llm.invoke_test.py</code></td><td><a href="modules/07-watson-helpers.html">07</a></td><td><a href="recipes/langchain-llm-plug.html">LLM plug-in</a></td></tr>
         <tr><td>17</td><td><code>17.chat_messages.invoke_test.py</code></td><td><a href="modules/08-chat-messages.html">08</a></td><td><a href="recipes/chat-messages.html">Chat messages</a></td></tr>
         <tr><td>18</td><td><code>18.temperature.compare.py</code></td><td><a href="modules/09-gen-params.html">09</a></td><td><a href="recipes/temperature-compare.html">Temperature</a></td></tr>
         <tr><td>19</td><td><code>19.params.py</code></td><td><a href="modules/01-prompt-template.html">01</a>, <a href="modules/03-lcel-pipe.html">03</a></td><td><a href="recipes/string-template-demo.html">String template</a></td></tr>
@@ -163,7 +285,7 @@
     <section class="section">
       <h2>Spatial map</h2>
       <p style="color:var(--muted);font-size:.9rem;margin:0 0 10px;">Click-through memory — same ideas, bubble layout.</p>
-      <p><a href="../../courses/crs_001_develop_generative_ai_applications_get_started/bubbles/outputs/crs_001_lcel_workflow.html">Open LCEL workflow bubble map</a></p>
+      <p><a href="../../courses/crs_001_develop_generative_ai_applications_get_started/bubbles/outputs/crs_001_lcel_workflow.html">LCEL workflow bubble</a> · <a href="../../courses/crs_001_develop_generative_ai_applications_get_started/bubbles/outputs/crs_001_watson_two_routes.html">Watson two routes (A/B)</a></p>
     </section>
 
     <section class="section">

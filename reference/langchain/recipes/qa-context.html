@@ -33,39 +33,48 @@
   <main class="main">
     <nav class="breadcrumbs"><a href="../../index.html">Reference</a> › <a href="../index.html">LangChain</a> › <a href="index.html">Recipes</a> › <span>Q&amp;A</span></nav>
     <header class="hero">
-      <span class="badge">Recipe</span>
+      <span class="badge depth-deep">Recipe · depth pass 1</span>
       <h1>Q&amp;A from context</h1>
-      <p>Answer a question using a provided text block — grounded, not free-form trivia.</p>
+      <p>Question + passage in → grounded answer out. Same LCEL pipe as <a href="summarize.html">Summarize</a>, but two template holes: <code>{question}</code> and <code>{content}</code>.</p>
     </header>
 
     <section class="section">
-      <h2>Problem</h2>
-      <p>User asks a question; model must answer from <code>content</code>. If the passage does not support an answer, say so explicitly.</p>
+      <h2>1 — Problem</h2>
+      <p>User asks a question about a document you already have. The model must answer from the supplied passage — not from general knowledge. If the text does not support an answer, the prompt tells the model to say <code>Unsure about answer</code>.</p>
+      <p><strong>Not this recipe:</strong> retrieval over a vector store (Labs 28–31), multi-turn chat memory (Module 10), or open-ended trivia with no context block.</p>
     </section>
 
     <section class="section">
-      <h2>Ingredients</h2>
-      <p>
-        <a class="pill" href="../modules/01-prompt-template.html">01</a>
-        <a class="pill" href="../modules/02-watsonx-llm.html">02</a>
-        <a class="pill" href="../modules/03-lcel-pipe.html">03</a>
-        <a class="pill" href="../modules/04-output-parser.html">04</a>
-        — two template variables.
-      </p>
+      <h2>2 — Prerequisites</h2>
+      <table>
+        <tr><th>Need</th><th>Module</th><th>Check</th></tr>
+        <tr><td>Env vars loaded</td><td><a href="../modules/02-watsonx-llm.html">02</a></td><td><code>set_env.ps1</code> ran in this shell</td></tr>
+        <tr><td><code>WatsonxLLM</code> object</td><td><a href="../modules/07-watson-helpers.html">07</a></td><td><code>make_watsonx_llm()</code> not inline <code>WatsonxLLM(...)</code></td></tr>
+        <tr><td>Template with two holes</td><td><a href="../modules/01-prompt-template.html">01</a></td><td><code>{question}</code> and <code>{content}</code> match invoke keys</td></tr>
+        <tr><td>Pipe wiring</td><td><a href="../modules/03-lcel-pipe.html">03</a></td><td><code>prompt | llm | StrOutputParser()</code></td></tr>
+      </table>
     </section>
 
     <section class="section">
-      <h2>Setup</h2>
+      <h2>3 — Wiring diagram</h2>
+      <div class="flow-diagram">
+<pre>{"question": q, "content": passage}
+       → PromptTemplate("Answer the {question} based on the {content}. …")
+       → WatsonxLLM
+       → StrOutputParser()
+       → str printed</pre>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>4 — Script</h2>
       <pre>from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from watson_llm import make_watsonx_llm
 
-llm = make_watsonx_llm()</pre>
-    </section>
+llm = make_watsonx_llm()
 
-    <section class="section">
-      <h2>Recipe code</h2>
-      <pre>content = """
+content = """
 The solar system consists of the Sun, eight planets, their moons, dwarf
 planets, and smaller objects. The inner planets—Mercury, Venus, Earth,
 and Mars—are rocky and solid. The outer planets are larger and gaseous.
@@ -83,22 +92,66 @@ prompt = PromptTemplate.from_template(template)
 qa_chain = prompt | llm | StrOutputParser()
 
 print(qa_chain.invoke({"question": question, "content": content}))</pre>
+      <p style="color:var(--muted);font-size:.88rem;">Playground: <code>10.lcelanswer.py</code> (lab also shows <code>RunnableLambda(format_prompt)</code> — see <a href="review-lambda.html">review-lambda</a>).</p>
     </section>
 
     <section class="section">
-      <h2>invoke keys</h2>
+      <h2>5 — Critical lines</h2>
       <table>
-        <tr><th>Key</th><th>Value</th></tr>
-        <tr><td><code>question</code></td><td>What the user asks</td></tr>
-        <tr><td><code>content</code></td><td>Passage the answer must use</td></tr>
+        <tr><th>Line</th><th>Why it matters</th><th>If you change it wrong…</th></tr>
+        <tr><td><code>{"question": …, "content": …}</code></td><td>Both keys required for two-hole template</td><td><code>KeyError</code> or partial prompt before LLM runs</td></tr>
+        <tr><td><code>based on the {content}</code></td><td>Grounds the answer in the passage</td><td>Model drifts to general knowledge; hallucinated facts</td></tr>
+        <tr><td><code>Unsure about answer</code> fallback</td><td>Explicit out-of-context contract</td><td>Model invents answers when passage is silent</td></tr>
+        <tr><td><code>prompt | llm | StrOutputParser()</code></td><td>Canonical LCEL shape</td><td>Skipping parser is OK with WatsonxLLM today; breaks on chat models later</td></tr>
       </table>
     </section>
 
-    <div class="callout"><strong>Trap:</strong> <code>invoke</code> must include <em>both</em> keys. Missing one → template error or wrong fill.</div>
+    <section class="section">
+      <h2>6 — Variants</h2>
+      <ul>
+        <li><strong>One hole only</strong> — Drop <code>{question}</code>, keep <code>{content}</code> → <a href="summarize.html">summarize recipe</a> (Lab 09).</li>
+        <li><strong>Lambda formatter</strong> — <code>RunnableLambda(format_prompt) | llm</code> → <a href="review-lambda.html">review-lambda</a> (Lab 14 pattern; Lab 10 uses the same trick).</li>
+        <li><strong>Stricter grounding</strong> — Add <code>Answer only from the passage. Do not use outside knowledge.</code> to the template.</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>7 — Debug</h2>
+      <table>
+        <tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr>
+        <tr><td><code>KeyError</code> on invoke</td><td>Missing <code>question</code> or <code>content</code> key</td><td>Pass both keys every time</td></tr>
+        <tr><td>Answer ignores passage</td><td>Weak grounding instruction</td><td>Strengthen <code>based on the {content}</code> wording; lower temperature</td></tr>
+        <tr><td>Always <code>Unsure about answer</code></td><td>Passage too short or question off-topic</td><td>Check content actually contains the answer</td></tr>
+        <tr><td>Answer cites facts not in text</td><td>Model using parametric knowledge</td><td>Repeat grounding rule; trim passage noise</td></tr>
+      </table>
+    </section>
+
+    <div class="trap-box">
+      <h3>Traps</h3>
+      <ul>
+        <li><strong>Only one invoke key</strong> — Two holes means two dict keys. <code>invoke({"question": q})</code> alone fails.</li>
+        <li><strong>Swapping hole names</strong> — <code>{content}</code> in template must be <code>"content"</code> in dict, not <code>"context"</code> or <code>"passage"</code>.</li>
+        <li><strong>Treating this as RAG</strong> — You supply the passage manually. Retrieval + inject is a different lab chain.</li>
+      </ul>
+    </div>
+
+    <section class="section">
+      <h2>Rebuild from memory</h2>
+      <div class="rebuild-steps">
+        <p>Close this page. Write the script from these steps only:</p>
+        <ol>
+          <li>Import <code>PromptTemplate</code>, <code>StrOutputParser</code>, <code>make_watsonx_llm</code>.</li>
+          <li>Build <code>llm = make_watsonx_llm()</code> after env is set.</li>
+          <li>Template with <code>{question}</code> and <code>{content}</code>; include unsure fallback line.</li>
+          <li>Wire <code>prompt | llm | StrOutputParser()</code>.</li>
+          <li><code>chain.invoke({"question": q, "content": passage})</code> and print.</li>
+        </ol>
+      </div>
+    </section>
 
     <section class="section">
       <h2>Modules</h2>
-      <p><a href="../modules/01-prompt-template.html">01</a> · <a href="../modules/03-lcel-pipe.html">03</a></p>
+      <p><a href="../modules/01-prompt-template.html">01</a> · <a href="../modules/02-watsonx-llm.html">02</a> · <a href="../modules/03-lcel-pipe.html">03</a> · <a href="../modules/04-output-parser.html">04</a></p>
     </section>
   </main>
 </div>

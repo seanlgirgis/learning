@@ -2,10 +2,11 @@
 
 Usage from any file in playground/langchain/:
 
-    from watson_llm import GenParams, llm_model, make_watsonx_llm
+    from watson_llm import GenParams, llm_model, make_watsonx_embeddings, make_watsonx_llm
 
     response = llm_model("What is the capital of France?")
     llm = make_watsonx_llm()  # plug into LCEL: prompt | llm | parser
+    emb = make_watsonx_embeddings()  # RAG / Chroma labs
 
 Run scripts from this folder (or add it to PYTHONPATH):
 
@@ -23,8 +24,9 @@ import warnings
 # (2) WatsonxLLM uses legacy text/generation API; ChatWatsonx uses the newer chat API.
 warnings.filterwarnings("ignore", category=UserWarning, module="ibm_watsonx_ai")
 
+from ibm_watsonx_ai.metanames import EmbedTextParamsMetaNames
 from ibm_watsonx_ai.metanames import GenTextParamsMetaNames as GenParams
-from langchain_ibm import ChatWatsonx, WatsonxLLM
+from langchain_ibm import ChatWatsonx, WatsonxEmbeddings, WatsonxLLM
 
 REQUIRED_ENV = (
     "WATSONX_MODEL_ID",
@@ -106,3 +108,26 @@ def llm_model(prompt_txt: str, params: dict | None = None) -> str:
 def missing_watsonx_env() -> list[str]:
     """Return names of required WATSONX_* variables that are not set."""
     return [name for name in REQUIRED_ENV if not os.getenv(name)]
+
+
+DEFAULT_EMBED_MODEL = os.environ.get(
+    "WATSONX_EMBEDDING_MODEL_ID",
+    "ibm/slate-125m-english-rtrvr-v2",
+)
+
+DEFAULT_EMBED_PARAMS: dict = {
+    EmbedTextParamsMetaNames.TRUNCATE_INPUT_TOKENS: 3,
+    EmbedTextParamsMetaNames.RETURN_OPTIONS: {"input_text": True},
+}
+
+
+def make_watsonx_embeddings(params: dict | None = None) -> WatsonxEmbeddings:
+    """Build WatsonxEmbeddings from WATSONX_URL, PROJECT_ID, APIKEY."""
+    creds = _watsonx_credentials()
+    return WatsonxEmbeddings(
+        model_id=DEFAULT_EMBED_MODEL,
+        url=creds["url"],
+        project_id=creds["project_id"],
+        apikey=creds["apikey"],
+        params=params or DEFAULT_EMBED_PARAMS,
+    )

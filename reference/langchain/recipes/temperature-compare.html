@@ -31,22 +31,49 @@
     </ul>
   </aside>
   <main class="main">
-    <nav class="breadcrumbs"><a href="../index.html">LangChain</a> › <a href="index.html">Recipes</a> › <span>Temperature</span></nav>
+    <nav class="breadcrumbs"><a href="../../index.html">Reference</a> › <a href="../index.html">LangChain</a> › <a href="index.html">Recipes</a> › <span>Temperature</span></nav>
     <header class="hero">
-      <span class="badge">Lab 18 · Exercise 1 local</span>
+      <span class="badge depth-deep">Recipe · depth pass 1</span>
       <h1>Compare temperature 0.8 vs 0.1</h1>
-      <p>Two <code>make_llm()</code> instances — same model, different params.</p>
+      <p>Lab 18 — two <code>make_watsonx_llm()</code> instances, same model, different <code>GenParams</code>. Params are fixed at build time.</p>
     </header>
 
     <section class="section">
-      <h2>Code</h2>
+      <h2>1 — Problem</h2>
+      <p>You need to see how sampling temperature changes output style — creative vs precise — on the <em>same</em> watsonx model. Tweaking one LLM object between calls does not work; params bind when you construct the Runnable.</p>
+      <p><strong>Not this recipe:</strong> prompt templates (<a href="string-template-demo.html">Lab 19</a>), chat roles (<a href="chat-messages.html">Lab 17</a>), or Coursera’s Granite-vs-Llama notebook exercise.</p>
+    </section>
+
+    <section class="section">
+      <h2>2 — Prerequisites</h2>
+      <table>
+        <tr><th>Need</th><th>Module</th><th>Check</th></tr>
+        <tr><td><code>make_watsonx_llm()</code></td><td><a href="../modules/07-watson-helpers.html">07</a></td><td>Lab 16 invoke works</td></tr>
+        <tr><td><code>GenParams.TEMPERATURE</code></td><td><a href="../modules/09-gen-params.html">09</a></td><td>0.8 vs 0.1 passed in dict</td></tr>
+        <tr><td>Same <code>WATSONX_MODEL_ID</code></td><td><a href="../modules/02-watsonx-llm.html">02</a></td><td>Both LLMs read same env model</td></tr>
+        <tr><td><code>MAX_NEW_TOKENS</code> cap</td><td><a href="../modules/09-gen-params.html">09</a></td><td>Keeps compare output readable</td></tr>
+      </table>
+    </section>
+
+    <section class="section">
+      <h2>3 — Wiring diagram</h2>
+      <div class="flow-diagram">
+<pre>prompt str
+       ├→ make_watsonx_llm({TEMPERATURE: 0.8, MAX_NEW_TOKENS: 80}) → creative
+       └→ make_watsonx_llm({TEMPERATURE: 0.1, MAX_NEW_TOKENS: 80}) → precise
+       → same prompt → two different str outputs</pre>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>4 — Script</h2>
       <pre>import os
-from langchain_helper import make_llm, GenParams
+from watson_llm import GenParams, make_watsonx_llm
 
 print("Model:", os.environ["WATSONX_MODEL_ID"])
 
-llm_creative = make_llm({GenParams.TEMPERATURE: 0.8})
-llm_precise = make_llm({GenParams.TEMPERATURE: 0.1})
+llm_creative = make_watsonx_llm({GenParams.TEMPERATURE: 0.8, GenParams.MAX_NEW_TOKENS: 80})
+llm_precise = make_watsonx_llm({GenParams.TEMPERATURE: 0.1, GenParams.MAX_NEW_TOKENS: 80})
 
 prompts = [
     "Write a short poem about artificial intelligence",
@@ -55,15 +82,74 @@ prompts = [
 ]
 
 for prompt in prompts:
+    print("=" * 60)
     print("PROMPT:", prompt)
-    print("creative:", llm_creative.invoke(prompt))
-    print("precise:", llm_precise.invoke(prompt))
+    print("--- creative (0.8) ---")
+    print(llm_creative.invoke(prompt))
+    print("--- precise (0.1) ---")
+    print(llm_precise.invoke(prompt))
     print()</pre>
+      <p style="color:var(--muted);font-size:.88rem;">Playground: <code>18.temperature.compare.py</code></p>
     </section>
 
-    <div class="callout"><strong>Local vs Coursera:</strong> Compare temps on <code>WATSONX_MODEL_ID</code>, not Granite vs Llama. If outputs match, check <code>TOP_K</code> defaults in <code>watson_llm.py</code>.</div>
+    <section class="section">
+      <h2>5 — Critical lines</h2>
+      <table>
+        <tr><th>Line</th><th>Why it matters</th><th>If you change it wrong…</th></tr>
+        <tr><td>Two <code>make_watsonx_llm()</code> calls</td><td>Each instance owns its params</td><td>Reusing one LLM → same temperature every call</td></tr>
+        <tr><td><code>GenParams.TEMPERATURE</code></td><td>IBM metaname key</td><td>Raw string keys may be ignored</td></tr>
+        <tr><td><code>MAX_NEW_TOKENS: 80</code></td><td>Bounds output length</td><td>Long outputs hide temp differences</td></tr>
+        <tr><td>Same prompt loop</td><td>Apples-to-apples compare</td><td>Different prompts → inconclusive diff</td></tr>
+      </table>
+    </section>
 
-    <p><a href="../modules/09-gen-params.html">Module 09</a></p>
+    <section class="section">
+      <h2>6 — Variants</h2>
+      <ul>
+        <li><strong>In a pipe</strong> — Pass overrides when building the LLM used in <code>prompt | llm</code> → <a href="string-template-demo.html">string template</a> (Lab 19).</li>
+        <li><strong>Stricter summarize</strong> — <code>make_watsonx_llm({GenParams.TEMPERATURE: 0.1})</code> on <a href="summarize.html">summarize chain</a>.</li>
+        <li><strong>Other params</strong> — Explore <code>TOP_P</code>, <code>TOP_K</code> in <a href="../modules/09-gen-params.html">Module 09</a>.</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>7 — Debug</h2>
+      <table>
+        <tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr>
+        <tr><td>Outputs nearly identical</td><td><code>TOP_K: 1</code> default in <code>watson_llm.py</code></td><td>Lower temp still helps; check other params</td></tr>
+        <tr><td>No difference after “changing” temp</td><td>Mutated same LLM object</td><td>Build two separate <code>make_watsonx_llm()</code> instances</td></tr>
+        <tr><td>Comparing wrong models</td><td>Coursera Granite vs Llama habit</td><td>Compare temps on <code>WATSONX_MODEL_ID</code> only</td></tr>
+        <tr><td>Truncated mid-sentence</td><td><code>MAX_NEW_TOKENS</code> too low</td><td>Raise cap for that prompt only</td></tr>
+      </table>
+    </section>
+
+    <div class="trap-box">
+      <h3>Traps</h3>
+      <ul>
+        <li><strong>Tweaking params between calls on one LLM</strong> — <code>make_watsonx_llm()</code> freezes params at construction. Make a new instance per setting.</li>
+        <li><strong>Expecting Coursera’s two-model exercise</strong> — Local lab compares two temperatures on one env model, not Granite vs Llama.</li>
+        <li><strong>Using <code>make_llm()</code></strong> — Use <code>make_watsonx_llm()</code>; the old name does not exist.</li>
+      </ul>
+    </div>
+
+    <section class="section">
+      <h2>Rebuild from memory</h2>
+      <div class="rebuild-steps">
+        <p>Close this page. Write the script from these steps only:</p>
+        <ol>
+          <li>Import <code>GenParams</code>, <code>make_watsonx_llm</code>, and print <code>WATSONX_MODEL_ID</code>.</li>
+          <li>Build <code>llm_creative</code> with <code>TEMPERATURE: 0.8</code> and <code>MAX_NEW_TOKENS: 80</code>.</li>
+          <li>Build <code>llm_precise</code> with <code>TEMPERATURE: 0.1</code> and same token cap.</li>
+          <li>Loop three test prompts.</li>
+          <li>For each prompt, <code>invoke</code> both LLMs and print labels.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Modules</h2>
+      <p><a href="../modules/09-gen-params.html">09</a> · <a href="../modules/07-watson-helpers.html">07</a> · <a href="../modules/02-watsonx-llm.html">02</a></p>
+    </section>
   </main>
 </div>
 </body>

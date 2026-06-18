@@ -4,6 +4,7 @@
 
 | File | Source |
 |------|--------|
+| `sean_capstone01_ingest_lab.ipynb` | **Capstone 01 ingest** — bite-by-bite RAG prep (you type cells) |
 | `sean_in_context_lab.ipynb` | In-Context Learning and Prompt Templates |
 | `sean_langchain_lab.ipynb` | Build Smarter AI Apps / LangChain |
 
@@ -24,21 +25,22 @@ python -m ipykernel install --user --name rag_foundation --display-name "RAG Fou
 D:\Workarea\learning\playground\notebooks\start_jupyter.ps1
 ```
 
+`start_jupyter.ps1` runs `set_env.ps1` and adds `../langchain` to **PYTHONPATH** so notebooks import the same two helpers as `.py` labs.
+
 Custom port:
 
 ```powershell
 .\start_jupyter.ps1 -Port 8895
 ```
 
-## Local env helpers (imported by patched notebooks)
+## Two helpers only (`../langchain/`)
 
-| Module | Used by |
-|--------|---------|
-| `coursera_llm_model.py` | In-Context lab — `make_llm()` and `llm_model()` |
-| `coursera_watsonx_model.py` | LangChain lab — `model` (ModelInference), `credentials` |
-| `coursera_embeddings.py` | LangChain lab — `make_embeddings()` for RAG cells |
+| Module | Route | Use |
+|--------|-------|-----|
+| **`watson_helper.py`** | A — IBM SDK | `model.generate()` → dict |
+| **`watson_llm.py`** | B — LangChain | `make_watsonx_llm()`, `invoke`, pipes, `make_watsonx_embeddings()` |
 
-Both read **`WATSONX_MODEL_ID`**, **`WATSONX_URL`**, **`WATSONX_PROJECT_ID`**, **`WATSONX_APIKEY`** from `set_env.ps1`.
+Both read **`WATSONX_*`** from `set_env.ps1`.
 
 ## Refresh notebooks from Downloads
 

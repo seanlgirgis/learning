@@ -6,13 +6,13 @@ Run set_env.ps1, then:
 """
 
 from ibm_watsonx_ai.metanames import EmbedTextParamsMetaNames
-from coursera_embeddings import make_embeddings
+from watson_llm import make_watsonx_embeddings
 
 embed_params = {
     EmbedTextParamsMetaNames.TRUNCATE_INPUT_TOKENS: 3,
     EmbedTextParamsMetaNames.RETURN_OPTIONS: {"input_text": True},
 }
-watsonx_embedding = make_embeddings(embed_params)
+watsonx_embedding = make_watsonx_embeddings(embed_params)
 
 texts = [
     "LangChain helps build LLM applications.",

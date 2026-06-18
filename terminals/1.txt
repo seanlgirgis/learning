@@ -1,0 +1,85 @@
+---
+pid: 35932
+cwd: "D:\Workarea\learning"
+command: "D:\\Workarea\\learning\\playground\\notebooks\\start_jupyter.ps1"
+started_at: 2026-06-17T20:16:07.574Z
+running_for_ms: 85885000 
+---
+
+RAG Application Builder Foundation environment loaded.
+Virtual environment: D:\py_venv\rag_application_builder_foundation
+Python: Python 3.13.11
+OpenAI model: gpt-5.4-mini
+OpenAI API key: configured
+Watsonx region: https://eu-gb.ml.cloud.ibm.com
+Watsonx model: mistralai/mistral-small-3-1-24b-instruct-2503
+
+Starting Jupyter Lab on http://127.0.0.1:8892
+Open: sean_in_context_lab.ipynb or sean_langchain_lab.ipynb
+
+[I 2026-06-17 15:16:09.443 ServerApp] jupyter_lsp | extension was successfully linked.
+[I 2026-06-17 15:16:09.446 ServerApp] jupyter_server_terminals | extension was successfully linked.
+[I 2026-06-17 15:16:09.449 ServerApp] jupyterlab | extension was successfully linked.
+[I 2026-06-17 15:16:09.626 ServerApp] notebook_shim | extension was successfully linked.
+[I 2026-06-17 15:16:09.671 ServerApp] notebook_shim | extension was successfully loaded.
+[I 2026-06-17 15:16:09.672 ServerApp] jupyter_lsp | extension was successfully loaded.
+[I 2026-06-17 15:16:09.673 ServerApp] jupyter_server_terminals | extension was successfully loaded.
+[I 2026-06-17 15:16:09.674 LabApp] JupyterLab extension loaded from D:\py_venv\rag_application_builder_foundation\Lib\site-packages\jupyterlab
+[I 2026-06-17 15:16:09.674 LabApp] JupyterLab application directory is D:\py_venv\rag_application_builder_foundation\share\jupyter\lab
+[I 2026-06-17 15:16:09.675 LabApp] Extension Manager is 'pypi'.
+[I 2026-06-17 15:16:09.700 ServerApp] jupyterlab | extension was successfully loaded.
+[I 2026-06-17 15:16:09.701 ServerApp] Serving notebooks from local directory: D:\Workarea\learning\playground\notebooks
+[I 2026-06-17 15:16:09.701 ServerApp] Jupyter Server 2.19.0 is running at:
+[I 2026-06-17 15:16:09.701 ServerApp] http://127.0.0.1:8892/lab?token=7ea2af307af8fb2795781898a5bb696dd57a37ba068bf36b
+[I 2026-06-17 15:16:09.701 ServerApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+[C 2026-06-17 15:16:09.710 ServerApp] 
+    
+    To access the server, open this file in a browser:
+        file:///C:/Users/shareuser/AppData/Roaming/jupyter/runtime/jpserver-24720-open.html
+    Or copy and paste one of these URLs:
+        http://127.0.0.1:8892/lab?token=7ea2af307af8fb2795781898a5bb696dd57a37ba068bf36b
+[I 2026-06-17 15:16:10.072 ServerApp] Skipped non-installed server(s): basedpyright, bash-language-server, dockerfile-language-server-nodejs, javascript-typescript-langserver, jedi-language-server, julia-language-server, pyrefly, pyright, python-language-server, python-lsp-server, r-languageserver, sql-language-server, texlab, typescript-language-server, unified-language-server, vscode-css-languageserver-bin, vscode-html-languageserver-bin, vscode-json-languageserver-bin, yaml-language-server
+[W 2026-06-17 15:16:20.136 ServerApp] 404 GET /api/kernels/45c654f4-1e7d-4a70-b753-a724063d197f?1781727380134 (127.0.0.1): Kernel does not exist: 45c654f4-1e7d-4a70-b753-a724063d197f
+[W 2026-06-17 15:16:20.137 ServerApp] wrote error: 'Kernel does not exist: 45c654f4-1e7d-4a70-b753-a724063d197f'
+[W 2026-06-17 15:16:20.137 ServerApp] 404 GET /api/kernels/45c654f4-1e7d-4a70-b753-a724063d197f?1781727380134 (582ff1b2c90140b7a9193245ff54f5aa@127.0.0.1) 0.80ms referer=http://127.0.0.1:8892/lab/tree/sean_langchain_lab.ipynb
+[W 2026-06-17 15:16:20.898 ServerApp] 404 GET /api/kernels/45c654f4-1e7d-4a70-b753-a724063d197f/channels?session_id=39d5b8d0-83fb-4190-9470-d9ba518bbf51 (127.0.0.1): Kernel does not exist: 45c654f4-1e7d-4a70-b753-a724063d197f
+[W 2026-06-17 15:16:20.907 ServerApp] 404 GET /api/kernels/45c654f4-1e7d-4a70-b753-a724063d197f/channels?session_id=39d5b8d0-83fb-4190-9470-d9ba518bbf51 (582ff1b2c90140b7a9193245ff54f5aa@127.0.0.1) 9.88ms referer=None
+[W 2026-06-17 15:16:20.909 ServerApp] 404 GET /api/kernels/45c654f4-1e7d-4a70-b753-a724063d197f?1781727380908 (127.0.0.1): Kernel does not exist: 45c654f4-1e7d-4a70-b753-a724063d197f
+[W 2026-06-17 15:16:20.909 ServerApp] wrote error: 'Kernel does not exist: 45c654f4-1e7d-4a70-b753-a724063d197f'
+[W 2026-06-17 15:16:20.909 ServerApp] 404 GET /api/kernels/45c654f4-1e7d-4a70-b753-a724063d197f?1781727380908 (582ff1b2c90140b7a9193245ff54f5aa@127.0.0.1) 0.57ms referer=http://127.0.0.1:8892/lab/tree/sean_langchain_lab.ipynb
+[W 2026-06-17 15:16:22.000 ServerApp] 404 GET /api/kernels/45c654f4-1e7d-4a70-b753-a724063d197f/channels?session_id=39d5b8d0-83fb-4190-9470-d9ba518bbf51 (127.0.0.1): Kernel does not exist: 45c654f4-1e7d-4a70-b753-a724063d197f
+[W 2026-06-17 15:16:22.001 ServerApp] 404 GET /api/kernels/45c654f4-1e7d-4a70-b753-a724063d197f/channels?session_id=39d5b8d0-83fb-4190-9470-d9ba518bbf51 (582ff1b2c90140b7a9193245ff54f5aa@127.0.0.1) 0.90ms referer=None
+[W 2026-06-17 15:16:22.002 ServerApp] 404 GET /api/kernels/45c654f4-1e7d-4a70-b753-a724063d197f?1781727382001 (127.0.0.1): Kernel does not exist: 45c654f4-1e7d-4a70-b753-a724063d197f
+[W 2026-06-17 15:16:22.003 ServerApp] wrote error: 'Kernel does not exist: 45c654f4-1e7d-4a70-b753-a724063d197f'
+[W 2026-06-17 15:16:22.003 ServerApp] 404 GET /api/kernels/45c654f4-1e7d-4a70-b753-a724063d197f?1781727382001 (582ff1b2c90140b7a9193245ff54f5aa@127.0.0.1) 0.47ms referer=http://127.0.0.1:8892/lab/tree/sean_langchain_lab.ipynb
+[W 2026-06-17 15:16:22.966 ServerApp] 404 GET /api/kernels/45c654f4-1e7d-4a70-b753-a724063d197f/channels?session_id=39d5b8d0-83fb-4190-9470-d9ba518bbf51 (127.0.0.1): Kernel does not exist: 45c654f4-1e7d-4a70-b753-a724063d197f
+[W 2026-06-17 15:16:22.967 ServerApp] 404 GET /api/kernels/45c654f4-1e7d-4a70-b753-a724063d197f/channels?session_id=39d5b8d0-83fb-4190-9470-d9ba518bbf51 (582ff1b2c90140b7a9193245ff54f5aa@127.0.0.1) 0.81ms referer=None
+[W 2026-06-17 15:16:22.969 ServerApp] 404 GET /api/kernels/45c654f4-1e7d-4a70-b753-a724063d197f?1781727382967 (127.0.0.1): Kernel does not exist: 45c654f4-1e7d-4a70-b753-a724063d197f
+[W 2026-06-17 15:16:22.969 ServerApp] wrote error: 'Kernel does not exist: 45c654f4-1e7d-4a70-b753-a724063d197f'
+[W 2026-06-17 15:16:22.969 ServerApp] 404 GET /api/kernels/45c654f4-1e7d-4a70-b753-a724063d197f?1781727382967 (582ff1b2c90140b7a9193245ff54f5aa@127.0.0.1) 0.54ms referer=http://127.0.0.1:8892/lab/tree/sean_langchain_lab.ipynb
+[I 2026-06-17 15:18:28.943 ServerApp] Kernel started: 430564d0-1d9f-4b8f-b96d-86dd1ca01962
+[IPKernelApp] WARNING | Kernel is running over TCP without encryption. All communication (including code and outputs) is sent in plain text and is susceptible to eavesdropping. Use IPC transport or launch with kernel manager-provisioned CurveZMQ keys to enable transport encryption.
+[I 2026-06-17 15:18:29.510 ServerApp] Adapting from protocol version 5.3 (kernel 430564d0-1d9f-4b8f-b96d-86dd1ca01962) to 5.4 (client).
+[I 2026-06-17 15:18:29.511 ServerApp] Connecting to kernel 430564d0-1d9f-4b8f-b96d-86dd1ca01962.
+[W 2026-06-17 15:18:29.518 ServerApp] The websocket_ping_timeout (90000) cannot be longer than the websocket_ping_interval (30000).
+    Setting websocket_ping_timeout=30000
+[W 2026-06-17 15:18:44.777 ServerApp] Notebook sean_langchain_lab.ipynb is not trusted
+[I 2026-06-17 15:20:44.991 ServerApp] Saving file at /sean_langchain_lab.ipynb
+[W 2026-06-17 15:20:44.992 ServerApp] Notebook sean_langchain_lab.ipynb is not trusted
+[I 2026-06-17 15:22:45.052 ServerApp] Saving file at /sean_langchain_lab.ipynb
+[W 2026-06-17 15:22:45.053 ServerApp] Notebook sean_langchain_lab.ipynb is not trusted
+[I 2026-06-17 15:26:45.121 ServerApp] Saving file at /sean_langchain_lab.ipynb
+[I 2026-06-17 15:36:45.293 ServerApp] Saving file at /sean_langchain_lab.ipynb
+[I 2026-06-17 15:38:45.365 ServerApp] Saving file at /sean_langchain_lab.ipynb
+[I 2026-06-17 15:40:45.435 ServerApp] Saving file at /sean_langchain_lab.ipynb
+[I 2026-06-17 15:42:45.510 ServerApp] Saving file at /sean_langchain_lab.ipynb
+[I 2026-06-17 15:44:45.581 ServerApp] Saving file at /sean_langchain_lab.ipynb
+[I 2026-06-17 15:46:45.653 ServerApp] Saving file at /sean_langchain_lab.ipynb
+[I 2026-06-17 16:41:26.558 ServerApp] Saving file at /sean_langchain_lab.ipynb
+[I 2026-06-17 16:43:26.637 ServerApp] Saving file at /sean_langchain_lab.ipynb
+[I 2026-06-17 16:47:26.713 ServerApp] Saving file at /sean_langchain_lab.ipynb
+[I 2026-06-17 17:43:46.126 ServerApp] Saving file at /sean_langchain_lab.ipynb
+[I 2026-06-17 17:45:46.196 ServerApp] Saving file at /sean_langchain_lab.ipynb
+[I 2026-06-17 17:47:46.258 ServerApp] Saving file at /sean_langchain_lab.ipynb
+[I 2026-06-17 17:49:46.329 ServerApp] Saving file at /sean_langchain_lab.ipynb
+[I 2026-06-17 17:51:46.401 ServerApp] Saving file at /sean_langchain_lab.ipynb
