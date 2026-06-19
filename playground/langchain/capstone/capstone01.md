@@ -55,14 +55,16 @@ python .\capstone\capstone_01_ingest.py --force <source>  # re-embed even if unc
 
 ---
 
-## Shared constants (both scripts must match)
+## Shared library (both scripts import this)
+
+**`capstone_shared.py`** — single source of truth:
 
 ```text
-capstone/data/chroma_01/          ← persisted vector store
-capstone/data/ingest_manifest.json ← dedupe ledger (source + content hash)
+CHROMA_DIR, MANIFEST_PATH, EMBED_PARAMS, CHUNK_SIZE, CHUNK_OVERLAP
+make_embedding_model(), load_vector_store(), chroma_has_data()
 ```
 
-Same `CHUNK_SIZE` / `CHUNK_OVERLAP`, same `make_watsonx_embeddings` params in **both** files.
+Ingest-only logic stays in `capstone_01_ingest.py`. Chat imports shared paths + Chroma load helpers.
 
 **Dedupe rule:** SHA-256 of PDF bytes + normalized source id. Unchanged file → skip. Changed file → delete old chunks for that source, re-embed.
 

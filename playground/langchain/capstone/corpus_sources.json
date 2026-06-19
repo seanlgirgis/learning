@@ -1,49 +1,98 @@
 {
-  "description": "Recommended RAG study corpus for capstone 01. Ingest one at a time or run: python capstone_01_ingest.py --corpus",
+  "description": "Capstone 01 RAG study corpus. Run: python capstone_01_ingest.py --corpus (skips unchanged). PDF-only here; LangChain API depth lives in web_phase2 + reference/langchain.",
+  "tier_guide": {
+    "1": "Start here — LangChain anchor + RAG foundations + survey map",
+    "2": "Retrieval quality, embeddings, context limits",
+    "3": "Optional stretch — advanced RAG patterns (larger PDFs)"
+  },
   "sources": [
     {
       "id": "langchain-paper",
       "tier": 1,
       "title": "LangChain: A framework for building LLM-powered apps (course paper)",
       "url": "https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/96-FDF8f7coh0ooim7NyEQ/langchain-paper.pdf",
-      "topics": ["LangChain", "chains", "agents", "components", "course anchor"]
+      "topics": ["LangChain", "chains", "agents", "components", "course anchor"],
+      "why": "Only PDF in corpus that is directly about LangChain — high-level, not API docs"
     },
     {
       "id": "rag-lewis-2020",
       "tier": 1,
       "title": "Retrieval-Augmented Generation for Knowledge-Intensive NLP (Lewis et al.)",
       "url": "https://arxiv.org/pdf/2005.11401.pdf",
-      "topics": ["RAG definition", "retriever + generator", "open-domain QA", "foundational paper"]
+      "topics": ["RAG definition", "retriever + generator", "open-domain QA", "foundational paper"],
+      "why": "Original RAG paper — what retrieve-then-generate means"
+    },
+    {
+      "id": "rag-survey-2024",
+      "tier": 1,
+      "title": "Retrieval-Augmented Generation for Large Language Models: A Survey (Gao et al.)",
+      "url": "https://arxiv.org/pdf/2312.10997.pdf",
+      "topics": ["RAG taxonomy", "naive vs advanced RAG", "evaluation", "big picture map"],
+      "why": "One PDF that ties the whole RAG landscape together — good after Lewis"
     },
     {
       "id": "dpr-karpukhin-2020",
       "tier": 2,
       "title": "Dense Passage Retrieval for Open-Domain QA (Karpukhin et al.)",
       "url": "https://arxiv.org/pdf/2004.04906.pdf",
-      "topics": ["dense retrieval", "bi-encoder", "FAISS", "why embeddings matter"]
+      "topics": ["dense retrieval", "bi-encoder", "FAISS", "why embeddings matter"],
+      "why": "Why Chroma + embeddings beat keyword search"
     },
     {
       "id": "lost-in-the-middle-2023",
       "tier": 2,
       "title": "Lost in the Middle: How LLMs Use Long Context (Liu et al.)",
       "url": "https://arxiv.org/pdf/2307.03172.pdf",
-      "topics": ["chunk order", "context window", "retrieval quality", "stuff chain limits"]
+      "topics": ["chunk order", "context window", "retrieval quality", "stuff chain limits"],
+      "why": "Informs chunk size, k, and what you stuff into RetrievalQA"
     }
   ],
   "web_phase2": [
     {
+      "id": "langchain-agents",
+      "title": "LangChain — Agents (HTML)",
+      "url": "https://docs.langchain.com/oss/python/langchain/agents",
+      "topics": ["LangChain agents", "tools", "agent loop", "create_agent"],
+      "why": "Official LangChain agents definition — fills gap the course PDF does not cover"
+    },
+    {
       "id": "langchain-rag-concepts",
-      "title": "LangChain RAG concepts (HTML — use WebBaseLoader in a later bite)",
-      "url": "https://python.langchain.com/docs/concepts/rag/"
+      "title": "LangChain — RAG concepts (HTML)",
+      "url": "https://python.langchain.com/docs/concepts/rag/",
+      "why": "Official LangChain mental model for RAG — fills gap the course PDF does not"
+    },
+    {
+      "id": "langchain-document-loaders",
+      "title": "LangChain — Document loaders (HTML)",
+      "url": "https://python.langchain.com/docs/concepts/document_loaders/",
+      "why": "PyPDFLoader, WebBaseLoader — maps to labs 23–25"
+    },
+    {
+      "id": "langchain-text-splitters",
+      "title": "LangChain — Text splitters (HTML)",
+      "url": "https://python.langchain.com/docs/concepts/text_splitters/",
+      "why": "RecursiveCharacterTextSplitter — maps to labs 26–27 and your ingest"
+    },
+    {
+      "id": "langchain-retrieval",
+      "title": "LangChain — Retrieval (HTML)",
+      "url": "https://python.langchain.com/docs/concepts/retrieval/",
+      "why": "Retriever, vector store — maps to labs 29–31 and chat script"
     },
     {
       "id": "langchain-intro-v02",
-      "title": "LangChain intro page (labs 25/29)",
+      "title": "LangChain intro (labs 25/29)",
       "url": "https://python.langchain.com/v0.2/docs/introduction/"
     }
   ],
   "local_suggestions": [
-    "Export your own study notes or TRAINING_LOG highlights to PDF → ingest with a file path",
-    "Course deck PDFs you save under capstone/data/pdfs/ (kept out of git)"
-  ]
+    "Export reference/langchain guide highlights to PDF → capstone/data/pdfs/",
+    "Your TRAINING_LOG traps → PDF for personal RAG over mistakes",
+    "Course deck PDFs under capstone/data/pdfs/ (gitignored)"
+  ],
+  "honest_scope": {
+    "good_for": ["RAG theory", "retrieval pipeline", "capstone chat across papers", "interview RAG spine"],
+    "not_enough_for": ["Full LangChain API reference", "LCEL every pattern", "watsonx SDK details"],
+    "langchain_depth": "Use web_phase2 + playground/reference — corpus PDFs are RAG-weighted"
+  }
 }

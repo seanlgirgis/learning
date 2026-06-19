@@ -23,33 +23,8 @@ Two files/folders under `capstone/data/`. Different jobs.
 
 | Piece | Analogy |
 |-------|---------|
-| **Chroma dir** | Filing cabinet of **index cards** — each card has a vector “fingerprint” so similar questions pull the right cards |
-| **Manifest** | **Checkout log** at the desk — “LangChain paper filed on Tuesday, hash abc123, 57 cards” |
-
-Same PDF twice? Manifest says **skip**. New question? Chroma says **which chunks**.
-
----
-
-## Paths (both scripts must agree on Chroma path)
-
-```text
-capstone/data/chroma_01/           ← CHROMA_DIR
-capstone/data/ingest_manifest.json ← MANIFEST_PATH
-```
-
----
-
-## Flow
-
-```text
-INGEST (once per new/changed PDF)
-  PDF → chunks → embed → write vectors → chroma_01/
-                      → write source + hash → ingest_manifest.json
-
-CHAT (many times)
-  question → embed question → search chroma_01/ → top chunks → LLM answer
-  (manifest not used)
-```
+| **Chroma dir** | Filing cabinet of **index cards** |
+| **Manifest** | **Checkout log** at the desk |
 
 ---
 
@@ -58,6 +33,4 @@ CHAT (many times)
 - **Chroma dir:** stores **searchable vectors** for RAG retrieval.
 - **Manifest:** stores **ingest history** so unchanged PDFs are not re-embedded.
 
----
-
-*Recall drill: cover the table, say out loud what each stores and which script reads it.*
+← KB: `D:\Workarea\KB\01_concepts\rag-vector-store-and-ingest-manifest.md`
