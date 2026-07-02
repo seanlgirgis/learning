@@ -1,0 +1,115 @@
+{
+  "id": "m3_loader_sources",
+  "title": "Loader Reads From…",
+  "subtitle": "Nine common source shapes → same output: list[Document]",
+  "parentTopic": { "label": "Loader map", "topic": "m3_loader.studybubble.json" },
+  "groups": [
+    { "id": "inputs", "label": "Input Types", "color": "#4C78A8" },
+    { "id": "loader_hub_group", "label": "Loader Hub", "color": "#54A24B" }
+  ],
+  "mapResources": [
+    { "label": "Back: Loader patterns", "type": "map", "topic": "m3_loader.studybubble.json" },
+    { "label": "RAG Pipeline", "type": "map", "topic": "m3_rag_pipeline.studybubble.json" }
+  ],
+  "nodes": [
+    {
+      "id": "loader_hub",
+      "label": "Loader",
+      "size": "core",
+      "group": "Loader Hub",
+      "definition": "Picks the right reader for the source shape.",
+      "safeSentence": "All paths return list[Document]."
+    },
+    {
+      "id": "in_memory",
+      "label": "In-Memory",
+      "size": "support",
+      "group": "Input Types",
+      "definition": "Text already in Python — wrap as Document directly.",
+      "note": { "summary": "Document(text=\"...\", metadata={})" }
+    },
+    {
+      "id": "single_file",
+      "label": "Single File",
+      "size": "support",
+      "group": "Input Types",
+      "definition": "One explicit file path via input_files.",
+      "note": { "summary": "SimpleDirectoryReader(input_files=[path]).load_data()" }
+    },
+    {
+      "id": "directory",
+      "label": "Directory",
+      "size": "core",
+      "group": "Input Types",
+      "definition": "Flat folder of files — practice pack default.",
+      "note": { "summary": "SimpleDirectoryReader(str(DATA_DIR)).load_data()" }
+    },
+    {
+      "id": "recursive_dir",
+      "label": "Recursive Dir",
+      "size": "support",
+      "group": "Input Types",
+      "definition": "Directory walk including subfolders.",
+      "note": { "summary": "recursive=True" }
+    },
+    {
+      "id": "filtered_dir",
+      "label": "Filtered Dir",
+      "size": "support",
+      "group": "Input Types",
+      "definition": "Directory with extension and exclude filters.",
+      "note": { "summary": "required_exts=[\".md\", \".csv\"]\nexclude=[\"*.zip\"]" }
+    },
+    {
+      "id": "web_page",
+      "label": "Web Page",
+      "size": "detail",
+      "group": "Input Types",
+      "definition": "Fetch URL content at runtime.",
+      "note": { "summary": "SimpleWebPageReader().load_data([url])" }
+    },
+    {
+      "id": "api_json",
+      "label": "API",
+      "size": "support",
+      "group": "Input Types",
+      "definition": "HTTP JSON response as document text.",
+      "note": { "summary": "Document(text=json.dumps(data), metadata={\"source\": \"api\"})" }
+    },
+    {
+      "id": "cloud_blob",
+      "label": "Cloud Storage",
+      "size": "detail",
+      "group": "Input Types",
+      "definition": "S3/GCS/Azure blob via download or connector.",
+      "note": { "summary": "download blob → path → reader" }
+    },
+    {
+      "id": "database_rows",
+      "label": "Database",
+      "size": "detail",
+      "group": "Input Types",
+      "definition": "SQL query rows mapped to Documents.",
+      "note": { "summary": "[Document(text=r.body) for r in rows]" }
+    }
+  ],
+  "links": [
+    { "source": "in_memory", "target": "loader_hub", "label": "feeds" },
+    { "source": "single_file", "target": "loader_hub", "label": "feeds" },
+    { "source": "directory", "target": "loader_hub", "label": "feeds" },
+    { "source": "recursive_dir", "target": "loader_hub", "label": "feeds" },
+    { "source": "filtered_dir", "target": "loader_hub", "label": "feeds" },
+    { "source": "web_page", "target": "loader_hub", "label": "feeds" },
+    { "source": "api_json", "target": "loader_hub", "label": "feeds" },
+    { "source": "cloud_blob", "target": "loader_hub", "label": "feeds" },
+    { "source": "database_rows", "target": "loader_hub", "label": "feeds" }
+  ],
+  "paths": [
+    {
+      "id": "practice_lane",
+      "label": "This Pack",
+      "description": "What you actually run locally first.",
+      "nodeIds": ["directory", "filtered_dir", "loader_hub"]
+    }
+  ]
+}

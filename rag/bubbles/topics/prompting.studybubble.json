@@ -1,0 +1,83 @@
+{
+  "id": "prompting",
+  "title": "Gen AI · Prompting",
+  "subtitle": "Branch 2 — shape what the model sees",
+  "parentTopic": {
+    "label": "Gen AI Applications — Landscape",
+    "topic": "gen_ai_applications_landscape.studybubble.json"
+  },
+  "groups": [
+    { "id": "templates", "label": "Templates (CRS 001)", "color": "#4C78A8" },
+    { "id": "rag_prompt", "label": "RAG prompts (CRS 002)", "color": "#F58518" }
+  ],
+  "mapResources": [
+    { "label": "← Landscape", "type": "map", "topic": "gen_ai_applications_landscape.studybubble.json" },
+    { "label": "LCEL map (templates detail)", "type": "page", "href": "../../../courses/crs_001_develop_generative_ai_applications_get_started/bubbles/outputs/crs_001_lcel_workflow.html" }
+  ],
+  "nodes": [
+    {
+      "id": "prompt_template",
+      "label": "PromptTemplate",
+      "size": "core",
+      "group": "templates",
+      "definition": "Reusable string with {variables} — prompt.invoke() fills them.",
+      "externalLinks": [
+        { "label": "Lab 01", "href": "../../../courses/crs_001_develop_generative_ai_applications_get_started/lab/python/01_prompt_template_one_variable.py" }
+      ]
+    },
+    {
+      "id": "chat_template",
+      "label": "ChatPromptTemplate",
+      "size": "support",
+      "group": "templates",
+      "definition": "system / human / assistant roles.",
+      "externalLinks": [
+        { "label": "Lab 03", "href": "../../../courses/crs_001_develop_generative_ai_applications_get_started/lab/python/03_chat_prompt_template.py" }
+      ]
+    },
+    {
+      "id": "few_shot",
+      "label": "Few-shot",
+      "size": "support",
+      "group": "templates",
+      "definition": "Examples in the prompt steer format.",
+      "externalLinks": [
+        { "label": "Lab 04", "href": "../../../courses/crs_001_develop_generative_ai_applications_get_started/lab/python/04_few_shot_prompt_template.py" }
+      ]
+    },
+    {
+      "id": "rag_augmented",
+      "label": "Augmented prompt (RAG)",
+      "size": "core",
+      "group": "rag_prompt",
+      "definition": "Retrieved chunks stuffed into prompt with the user question — RetrievalQA does this inside the chain.",
+      "whyItMatters": "You do not always write this by hand; lab 03 customizes the template.",
+      "childTopics": [
+        { "label": "RAG Patterns", "topic": "rag_patterns.studybubble.json" }
+      ]
+    },
+    {
+      "id": "dont_know_prompt",
+      "label": "RECIPE · Don't know",
+      "size": "core",
+      "group": "rag_prompt",
+      "definition": "Instruction: if not in context, say you don't know.",
+      "externalLinks": [
+        { "label": "03_m1_prompt_dont_know.py", "href": "../../../courses/crs_002_build_rag_applications_get_started/lab/python/03_m1_prompt_dont_know.py" }
+      ]
+    }
+  ],
+  "links": [
+    { "source": "prompt_template", "target": "chat_template", "label": "then" },
+    { "source": "chat_template", "target": "few_shot", "label": "then" },
+    { "source": "rag_augmented", "target": "dont_know_prompt", "label": "add rule" }
+  ],
+  "paths": [
+    {
+      "id": "crs001_prompt_lane",
+      "label": "CRS 001 prompt lane",
+      "description": "Labs 01 → 03 → 04 before LCEL pipes.",
+      "nodeIds": ["prompt_template", "chat_template", "few_shot"]
+    }
+  ]
+}

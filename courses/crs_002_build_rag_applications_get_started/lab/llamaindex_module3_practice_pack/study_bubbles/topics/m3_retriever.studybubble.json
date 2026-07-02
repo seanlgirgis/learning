@@ -1,0 +1,20 @@
+{
+  "id": "m3_retriever",
+  "title": "Retriever (scaffold)",
+  "subtitle": "as_retriever — search only, no LLM",
+  "parentTopic": { "label": "RAG Pipeline", "topic": "m3_rag_pipeline.studybubble.json" },
+  "groups": [{ "id": "scaffold", "label": "Scaffold", "color": "#FBBF24" }],
+  "mapResources": [{ "label": "Back: Pipeline", "type": "map", "topic": "m3_rag_pipeline.studybubble.json" }],
+  "nodes": [
+    {
+      "id": "retriever_core",
+      "label": "Retriever",
+      "size": "core",
+      "group": "Scaffold",
+      "definition": "Top-k chunks for a question — embeddings only.",
+      "note": { "summary": "Detailed notes coming.\n\nhits = index.as_retriever(similarity_top_k=5).retrieve(query)" }
+    }
+  ],
+  "links": [],
+  "paths": []
+}

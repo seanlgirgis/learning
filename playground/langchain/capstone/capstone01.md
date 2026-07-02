@@ -4,6 +4,8 @@
 
 **Two scripts** — same idea as real apps: **prepare once (many docs over time)**, **chat many times**.
 
+**Flow charts (study guides):** [Ingest flow](capstone_01_ingest_flow.md) · [Chat flow](capstone_01_chat_flow.md)
+
 | Script | Job | When you run it |
 |--------|-----|-----------------|
 | **`capstone_01_ingest.py`** | **Consume** PDF (local or URL) → chunk → embed → **append to Chroma** | Per document (dedupe skips unchanged) |

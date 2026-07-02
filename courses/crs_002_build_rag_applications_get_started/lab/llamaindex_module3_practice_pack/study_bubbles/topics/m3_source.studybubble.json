@@ -1,0 +1,122 @@
+{
+  "id": "m3_source",
+  "title": "Source — Where Knowledge Lives",
+  "subtitle": "Files, folders, APIs, DB, web — before any Document exists",
+  "parentTopic": { "label": "RAG Pipeline", "topic": "m3_rag_pipeline.studybubble.json" },
+  "groups": [
+    { "id": "source_types", "label": "Source Types", "color": "#4C78A8" },
+    { "id": "concepts", "label": "Concepts", "color": "#F58518" },
+    { "id": "map_navigation", "label": "Map Navigation", "color": "#6B7280" }
+  ],
+  "mapResources": [
+    { "label": "Back: RAG Pipeline", "type": "map", "topic": "m3_rag_pipeline.studybubble.json" },
+    { "label": "Next: Loader map", "type": "map", "topic": "m3_loader.studybubble.json" },
+    { "label": "Practice data", "type": "lab", "href": "../data/company_knowledge/" }
+  ],
+  "nodes": [
+    {
+      "id": "source_hub",
+      "label": "Source",
+      "size": "core",
+      "group": "Concepts",
+      "definition": "Raw knowledge outside LlamaIndex until a loader runs.",
+      "whyItMatters": "First bubble in every RAG pipeline.",
+      "safeSentence": "Source is not a Document.",
+      "childTopics": [{ "label": "Loader map", "topic": "m3_loader.studybubble.json" }]
+    },
+    {
+      "id": "files",
+      "label": "Files",
+      "size": "support",
+      "group": "Source Types",
+      "definition": "Single files: md, txt, pdf, csv, json on disk.",
+      "safeSentence": "One file becomes one or more Documents after load.",
+      "note": { "summary": "../data/company_knowledge/01_company_overview.md\n../data/company_knowledge/08_product_matrix.csv" }
+    },
+    {
+      "id": "folders",
+      "label": "Folders",
+      "size": "support",
+      "group": "Source Types",
+      "definition": "Directory tree of documents — typical RAG corpus.",
+      "safeSentence": "company_knowledge/ is a folder source in this pack."
+    },
+    {
+      "id": "in_memory",
+      "label": "In-Memory Text",
+      "size": "support",
+      "group": "Source Types",
+      "definition": "Python string — no path required.",
+      "note": { "summary": "text = \"Policy: refunds within 30 days.\"\n# Often wrapped as Document(text=text) without a file loader." }
+    },
+    {
+      "id": "web",
+      "label": "Web Page",
+      "size": "detail",
+      "group": "Source Types",
+      "definition": "URL content fetched at runtime.",
+      "note": { "summary": "# pseudo\nSimpleWebPageReader().load_data([url])" }
+    },
+    {
+      "id": "api",
+      "label": "API JSON",
+      "size": "support",
+      "group": "Source Types",
+      "definition": "HTTP response — e.g. mock LinkedIn profile in icebreaker lab.",
+      "note": { "summary": "data = response.json()\n# source is the JSON; later Document(text=json.dumps(data))" }
+    },
+    {
+      "id": "database",
+      "label": "Database",
+      "size": "detail",
+      "group": "Source Types",
+      "definition": "SQL rows — one Document per row or joined text.",
+      "note": { "summary": "Document(text=row.body, metadata={\"id\": row.id})" }
+    },
+    {
+      "id": "cloud",
+      "label": "Cloud Storage",
+      "size": "detail",
+      "group": "Source Types",
+      "definition": "S3, GCS, Azure blobs via connector or download-then-read.",
+      "note": { "summary": "blob → local path → SimpleDirectoryReader" }
+    },
+    {
+      "id": "not_document",
+      "label": "≠ Document",
+      "size": "core",
+      "group": "Concepts",
+      "definition": "Source lives outside LlamaIndex; Document is the first framework object.",
+      "whyItMatters": "Loader is the bridge.",
+      "commonTrap": "Skipping the loader step mentally.",
+      "interviewAnswer": "I distinguish external source from in-memory Document objects."
+    },
+    {
+      "id": "pipeline_nav",
+      "label": "RAG Pipeline",
+      "size": "detail",
+      "group": "Map Navigation",
+      "definition": "Return to the full pipeline overview.",
+      "childTopics": [{ "label": "RAG Pipeline map", "topic": "m3_rag_pipeline.studybubble.json" }]
+    }
+  ],
+  "links": [
+    { "source": "files", "target": "source_hub", "label": "example" },
+    { "source": "folders", "target": "source_hub", "label": "example" },
+    { "source": "in_memory", "target": "source_hub", "label": "example" },
+    { "source": "web", "target": "source_hub", "label": "example" },
+    { "source": "api", "target": "source_hub", "label": "example" },
+    { "source": "database", "target": "source_hub", "label": "example" },
+    { "source": "cloud", "target": "source_hub", "label": "example" },
+    { "source": "source_hub", "target": "not_document", "label": "becomes" },
+    { "source": "not_document", "target": "pipeline_nav", "label": "then" }
+  ],
+  "paths": [
+    {
+      "id": "practice_lane",
+      "label": "Practice Pack Lane",
+      "description": "Sources you can touch in this repo.",
+      "nodeIds": ["folders", "files", "source_hub", "not_document"]
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "full_name": "Leon Katsnelson",
+  "headline": "Technology executive and AI advocate",
+  "location": "Toronto, Canada",
+  "summary": "Leon has worked in technology leadership, developer advocacy, cloud computing, databases, and artificial intelligence. He is known for explaining technical ideas clearly and helping professionals understand emerging technologies.",
+  "experiences": [
+    {
+      "company": "IBM",
+      "title": "Technology Executive",
+      "description": "Worked on cloud, data, AI, and developer-focused technology programs."
+    },
+    {
+      "company": "IBM Developer Ecosystem",
+      "title": "Developer Advocate",
+      "description": "Helped developers learn and adopt IBM technologies through education, demos, and technical content."
+    }
+  ],
+  "education": [
+    {
+      "school": "University-level technical education",
+      "field": "Computer Science and Information Technology"
+    }
+  ],
+  "skills": [
+    "Artificial Intelligence",
+    "Cloud Computing",
+    "Databases",
+    "Developer Advocacy",
+    "Technical Strategy",
+    "Public Speaking"
+  ],
+  "interests": [
+    "AI education",
+    "Technology leadership",
+    "Helping developers learn",
+    "Practical applications of generative AI"
+  ],
+  "fun_facts": [
+    "He has worked across both technical and business sides of technology.",
+    "He is associated with explaining complex topics in a practical way.",
+    "His background makes him a good example for an AI networking icebreaker demo."
+  ]
+}

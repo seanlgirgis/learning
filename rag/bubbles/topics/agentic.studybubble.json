@@ -1,0 +1,60 @@
+{
+  "id": "agentic",
+  "title": "Gen AI · Agentic",
+  "subtitle": "Branch 8 — later layer · tools + loops",
+  "parentTopic": { "label": "Gen AI Applications — Landscape", "topic": "gen_ai_applications_landscape.studybubble.json" },
+  "groups": [
+    { "id": "concept", "label": "Concept", "color": "#6B7280" },
+    { "id": "practice", "label": "When you get here", "color": "#54A24B" }
+  ],
+  "mapResources": [
+    { "label": "← Landscape", "type": "map", "topic": "gen_ai_applications_landscape.studybubble.json" },
+    { "label": "RAG as tool", "type": "map", "topic": "rag_patterns.studybubble.json" }
+  ],
+  "nodes": [
+    {
+      "id": "agentic_definition",
+      "label": "What agentic means",
+      "size": "core",
+      "group": "concept",
+      "definition": "LLM plans steps, calls tools, observes results, repeats — not one-shot Q&A.",
+      "whyItMatters": "Bigger in autonomy than RAG. Uses RAG, APIs, SQL as tools.",
+      "safeSentence": "Plan → act → observe → repeat."
+    },
+    {
+      "id": "needs_branches",
+      "label": "Uses branches 1–7",
+      "size": "core",
+      "group": "concept",
+      "definition": "Compose + expose + often RAG tool + memory for sessions.",
+      "safeSentence": "Agentic wraps what you already built.",
+      "childTopics": [
+        { "label": "Compose", "topic": "compose_langchain.studybubble.json" },
+        { "label": "RAG patterns", "topic": "rag_patterns.studybubble.json" }
+      ]
+    },
+    {
+      "id": "capstone_four",
+      "label": "Capstone 4 · Research agent",
+      "size": "support",
+      "group": "practice",
+      "definition": "ReAct + tools — your first full agent-shaped project in the track.",
+      "externalLinks": [
+        { "label": "capstone_04_research_agent.py", "href": "../../../playground/langchain/capstone/capstone_04_research_agent.py" },
+        { "label": "capstone04.md", "href": "../../../playground/langchain/capstone/capstone04.md" }
+      ]
+    }
+  ],
+  "links": [
+    { "source": "agentic_definition", "target": "needs_branches", "label": "built from" },
+    { "source": "needs_branches", "target": "capstone_four", "label": "practice" }
+  ],
+  "paths": [
+    {
+      "id": "agentic_lane",
+      "label": "When ready",
+      "description": "Concept → ingredients → capstone 4.",
+      "nodeIds": ["agentic_definition", "needs_branches", "capstone_four"]
+    }
+  ]
+}

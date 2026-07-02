@@ -17,15 +17,15 @@ IN_CONTEXT_DST = DST / "sean_in_context_lab.ipynb"
 LANGCHAIN_DST = DST / "sean_langchain_lab.ipynb"
 
 LOCAL_NOTE = (
-    "> **Local copy:** all `llm` / `model` objects use `WATSONX_*` from "
-    "`start_jupyter.ps1` — not `skills-network` or `ibm/granite-4-h-small`.\n"
+    "> **Local copy:** LLM via **`make_watsonx_llm`** → **OpenAI** (`OPENAI_*` from "
+    "`start_jupyter.ps1`). Not `skills-network` or `ibm/granite-4-h-small`.\n"
 )
 
-LOCAL_LLM_CELL = """# LOCAL SETUP — llm_model() from WATSONX_* env
+LOCAL_LLM_CELL = """# LOCAL SETUP — OpenAI via watson_llm shim
 from watson_llm import llm_model, make_watsonx_llm
 
 print("Loaded watson_llm.py")
-print("Model:", __import__("os").environ["WATSONX_MODEL_ID"])
+print("Model:", __import__("os").environ.get("OPENAI_MODEL", "gpt-4o-mini"))
 """
 
 SKIP_SKILLS_NETWORK = """### Skills Network cell skipped
@@ -34,7 +34,7 @@ Use **`from watson_llm import make_watsonx_llm`** instead of
 `project_id = "skills-network"`. Start Jupyter via **`start_jupyter.ps1`**.
 """
 
-LOCAL_MODEL_CELL = """# LOCAL SETUP — ModelInference from WATSONX_* env
+LOCAL_MODEL_CELL = """# LOCAL SETUP — OpenAI via watson_helper shim
 from watson_helper import credentials, model, model_id, parameters, project_id
 
 print("Loaded watson_helper.py")

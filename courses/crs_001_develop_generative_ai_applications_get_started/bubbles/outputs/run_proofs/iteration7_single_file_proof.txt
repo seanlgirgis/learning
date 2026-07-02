@@ -1,4 +1,4 @@
-timestamp: 2026-06-18T18:52:30.289867+00:00
+timestamp: 2026-06-21T00:40:24.494965+00:00
 source topic path: topics/crs_001_watson_two_routes.studybubble.json
 output HTML path: outputs/crs_001_watson_two_routes.html
 mode: single-file
@@ -8,7 +8,7 @@ node count: 10
 link count: 10
 path count: 3
 validation result: PASS
-generated HTML byte size: 81193
+generated HTML byte size: 81445
 manual smoke test steps:
 1. Open outputs/single_file/tiny_capacity_demo.html directly from File Explorer.
 2. Confirm title and subtitle render.

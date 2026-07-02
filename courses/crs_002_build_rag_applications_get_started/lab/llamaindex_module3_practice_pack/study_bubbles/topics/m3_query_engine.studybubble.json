@@ -1,0 +1,20 @@
+{
+  "id": "m3_query_engine",
+  "title": "Query Engine (scaffold)",
+  "subtitle": "as_query_engine — retrieve + LLM",
+  "parentTopic": { "label": "RAG Pipeline", "topic": "m3_rag_pipeline.studybubble.json" },
+  "groups": [{ "id": "scaffold", "label": "Scaffold", "color": "#FBBF24" }],
+  "mapResources": [{ "label": "Back: Pipeline", "type": "map", "topic": "m3_rag_pipeline.studybubble.json" }],
+  "nodes": [
+    {
+      "id": "query_core",
+      "label": "Query Engine",
+      "size": "core",
+      "group": "Scaffold",
+      "definition": "One .query() for full RAG answer.",
+      "note": { "summary": "Detailed notes coming.\n\nengine = index.as_query_engine(similarity_top_k=5)\nanswer = engine.query(question)" }
+    }
+  ],
+  "links": [],
+  "paths": []
+}

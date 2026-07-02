@@ -1,0 +1,20 @@
+{
+  "id": "m3_genai_model",
+  "title": "GenAI Model / LLM (scaffold)",
+  "subtitle": "LLM + prompt templates",
+  "parentTopic": { "label": "RAG Pipeline", "topic": "m3_rag_pipeline.studybubble.json" },
+  "groups": [{ "id": "scaffold", "label": "Scaffold", "color": "#FBBF24" }],
+  "mapResources": [{ "label": "Back: Pipeline", "type": "map", "topic": "m3_rag_pipeline.studybubble.json" }],
+  "nodes": [
+    {
+      "id": "llm_core",
+      "label": "GenAI Model / LLM",
+      "size": "core",
+      "group": "Scaffold",
+      "definition": "Reads {context_str} and generates the reply.",
+      "note": { "summary": "Detailed notes coming.\n\nSettings.llm = OpenAI(model=..., temperature=0.0)" }
+    }
+  ],
+  "links": [],
+  "paths": []
+}

@@ -17,7 +17,7 @@
     { "label": "Course Home", "type": "page", "href": "../../index.html" },
     { "label": "LangChain Code Patterns", "type": "page", "href": "../../study_pages/langchain_code_patterns.html" },
     { "label": "Lab Run Book", "type": "lab", "href": "../../lab/lab_run_book.md" },
-    { "label": "RemNote coding deck 05_01", "type": "page", "href": "../../source_cards/05_01_prompt_and_chat_coding.md" },
+    { "label": "RemNote deck 05", "type": "page", "href": "../../source_cards/05-prompt-chat-coding.md" },
     { "label": "Back: Gen AI Landscape", "type": "map", "topic": "crs_001_gen_ai_landscape.studybubble.json" },
     { "label": "Watson Two Routes (A/B)", "type": "map", "topic": "crs_001_watson_two_routes.studybubble.json" }
   ],
@@ -38,7 +38,7 @@
       "childTopics": [],
       "externalLinks": [
         { "label": "Lab 01", "href": "../../lab/python/01_prompt_template_one_variable.py" },
-        { "label": "RemNote 05_01", "href": "../../source_cards/05_01_prompt_and_chat_coding.md" }
+        { "label": "RemNote 05", "href": "../../source_cards/05-prompt-chat-coding.md" }
       ]
     },
     {
@@ -73,7 +73,7 @@
       "childTopics": [],
       "externalLinks": [
         { "label": "Lab 04", "href": "../../lab/python/04_few_shot_prompt_template.py" },
-        { "label": "RemNote 05_02", "href": "../../source_cards/05_02_few_shot_and_lcel_coding.md" }
+        { "label": "RemNote 06", "href": "../../source_cards/06-few-shot-lcel-coding.md" }
       ]
     },
     {
@@ -82,7 +82,7 @@
       "size": "core",
       "group": "Invoke Rules",
       "definition": "Runs the prompt component only — fills variables and builds a prompt value.",
-      "whyItMatters": "Top recall trap in source_cards 05_05.",
+      "whyItMatters": "Top recall trap in source_cards 09.",
       "safeSentence": "prompt.invoke() prepares input; it does not call the LLM.",
       "commonTrap": "Expecting a model answer from prompt.invoke().",
       "interviewAnswer": "prompt.invoke prepares templated input; model.invoke generates; chain.invoke runs the full pipeline.",
@@ -137,7 +137,7 @@
       "childTopics": [],
       "externalLinks": [
         { "label": "Lab 06", "href": "../../lab/python/06_runnable_parallel.py" },
-        { "label": "RemNote 05_03", "href": "../../source_cards/05_03_parallel_json_structured_coding.md" }
+        { "label": "RemNote 07", "href": "../../source_cards/07-parallel-json-structured.md" }
       ]
     },
     {
@@ -191,7 +191,7 @@
       ],
       "externalLinks": [
         { "label": "Lab 05f", "href": "../../lab/python/05f_provider_switching_lcel_pipeline.py" },
-        { "label": "RemNote 05_04", "href": "../../source_cards/05_04_history_and_provider_coding.md" }
+        { "label": "RemNote 08", "href": "../../source_cards/08-history-provider-coding.md" }
       ]
     },
     {

@@ -44,8 +44,8 @@ courses/crs_001_develop_generative_ai_applications_get_started/
 - [ ] Official readings inventory
 - [ ] Official quiz inventory
 - [ ] Official notebook inventory
-- [ ] Official Module 3 Flask lab evidence
-- [ ] Final platform-completion evidence
+- [x] Official Module 3 Flask lab evidence (`source_material/module3/LAB_DOCKET.md`)
+- [x] Final platform-completion evidence (certificate 2026-06-19)
 
 ## Study artifacts
 

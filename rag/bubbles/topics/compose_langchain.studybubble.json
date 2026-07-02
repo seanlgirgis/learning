@@ -1,0 +1,107 @@
+{
+  "id": "compose_langchain",
+  "title": "Gen AI · LangChain Compose",
+  "subtitle": "Branch 3 — LCEL pipes and pre-built chains",
+  "parentTopic": {
+    "label": "Gen AI Applications — Landscape",
+    "topic": "gen_ai_applications_landscape.studybubble.json"
+  },
+  "groups": [
+    { "id": "lcel", "label": "LCEL pipes", "color": "#54A24B" },
+    { "id": "chains", "label": "Pre-built chains", "color": "#4C78A8" },
+    { "id": "low", "label": "Low-level tag", "color": "#6B7280" }
+  ],
+  "mapResources": [
+    { "label": "← Landscape", "type": "map", "topic": "gen_ai_applications_landscape.studybubble.json" },
+    { "label": "Full LCEL code map (CRS 001)", "type": "page", "href": "../../../courses/crs_001_develop_generative_ai_applications_get_started/bubbles/outputs/crs_001_lcel_workflow.html" },
+    { "label": "CODE_CATALOG", "type": "lab", "href": "../../../courses/crs_001_develop_generative_ai_applications_get_started/lab/CODE_CATALOG.md" }
+  ],
+  "nodes": [
+    {
+      "id": "lcel_pipe",
+      "label": "prompt | llm | parser",
+      "size": "core",
+      "group": "lcel",
+      "definition": "CRS 001 labs 05+ — Runnable sequence, chain.invoke({...}).",
+      "whyItMatters": "When no pre-built chain fits, you compose.",
+      "childTopics": [],
+      "externalLinks": [
+        { "label": "05_lcel_local_pipeline.py", "href": "../../../courses/crs_001_develop_generative_ai_applications_get_started/lab/python/05_lcel_local_pipeline.py" }
+      ]
+    },
+    {
+      "id": "provider_swap",
+      "label": "Provider swap (same pipe)",
+      "size": "support",
+      "group": "lcel",
+      "definition": "Same LCEL pipe — swap provider adapter (OpenAI, watsonx, others) without rewriting the chain.",
+      "externalLinks": [
+        { "label": "05f_provider_switching", "href": "../../../courses/crs_001_develop_generative_ai_applications_get_started/lab/python/05f_provider_switching_lcel_pipeline.py" }
+      ]
+    },
+    {
+      "id": "json_structured",
+      "label": "JSON & structured output",
+      "size": "support",
+      "group": "lcel",
+      "definition": "JsonOutputParser, with_structured_output — capstone 2 territory.",
+      "externalLinks": [
+        { "label": "08–09 labs", "href": "../../../courses/crs_001_develop_generative_ai_applications_get_started/lab/python/08_json_parser_shape.py" }
+      ]
+    },
+    {
+      "id": "chain_retrieval_qa",
+      "label": "RetrievalQA",
+      "size": "core",
+      "group": "chains",
+      "definition": "Pre-built RAG chain — CRS 002 default for single-turn Q&A.",
+      "childTopics": [
+        { "label": "RAG Patterns", "topic": "rag_patterns.studybubble.json" }
+      ]
+    },
+    {
+      "id": "chain_conversational",
+      "label": "ConversationalRetrievalChain",
+      "size": "core",
+      "group": "chains",
+      "definition": "Pre-built RAG + chat_history parameter.",
+      "childTopics": [
+        { "label": "Memory & Chat", "topic": "memory_and_chat.studybubble.json" }
+      ]
+    },
+    {
+      "id": "low_level_tag",
+      "label": "Low-level track (tag)",
+      "size": "detail",
+      "group": "low",
+      "definition": "Direct API / env / model id — sibling track to LangChain, not a competing top bubble.",
+      "whyItMatters": "Use when swapping model id or debugging one raw call.",
+      "note": {
+        "summary": "Low-level: credentials, model id, client factory.\nLangChain: templates, chains, invoke dict keys."
+      },
+      "childTopics": [
+        { "label": "Talk to the Model", "topic": "talk_to_model.studybubble.json" }
+      ]
+    }
+  ],
+  "links": [
+    { "source": "lcel_pipe", "target": "provider_swap", "label": "swap in" },
+    { "source": "lcel_pipe", "target": "json_structured", "label": "ends with" },
+    { "source": "chain_retrieval_qa", "target": "chain_conversational", "label": "extends" },
+    { "source": "low_level_tag", "target": "provider_swap", "label": "config for" }
+  ],
+  "paths": [
+    {
+      "id": "crs001_compose_lane",
+      "label": "CRS 001 compose lane",
+      "description": "Open full LCEL map for labs 01–13 detail.",
+      "nodeIds": ["lcel_pipe", "json_structured", "provider_swap"]
+    },
+    {
+      "id": "crs002_compose_lane",
+      "label": "CRS 002 compose lane",
+      "description": "Pre-built chains first; LCEL when customizing.",
+      "nodeIds": ["chain_retrieval_qa", "chain_conversational"]
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "id": "m3_documents",
+  "title": "Documents (scaffold)",
+  "subtitle": "Document.text + Document.metadata — upgrade in Phase 2",
+  "parentTopic": { "label": "RAG Pipeline", "topic": "m3_rag_pipeline.studybubble.json" },
+  "groups": [{ "id": "scaffold", "label": "Scaffold", "color": "#FBBF24" }],
+  "mapResources": [
+    { "label": "Back: Pipeline", "type": "map", "topic": "m3_rag_pipeline.studybubble.json" },
+    { "label": "Loader map", "type": "map", "topic": "m3_loader.studybubble.json" },
+    { "label": "Next: Nodes", "type": "map", "topic": "m3_nodes_chunks.studybubble.json" }
+  ],
+  "nodes": [
+    {
+      "id": "documents_core",
+      "label": "Document",
+      "size": "core",
+      "group": "Scaffold",
+      "definition": "LlamaIndex object with .text and .metadata after loading.",
+      "note": { "summary": "Detailed bubble notes will be added when we study this step.\n\nfrom llama_index.core import Document\ndoc = Document(text=\"...\", metadata={\"source\": \"demo\"})" }
+    }
+  ],
+  "links": [],
+  "paths": []
+}

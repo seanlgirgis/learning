@@ -13,7 +13,7 @@ import os
 
 from watson_llm import GenParams, make_watsonx_llm
 
-print("Model:", os.environ["WATSONX_MODEL_ID"])
+print("Model:", os.environ.get("OPENAI_MODEL", "gpt-4o-mini"))
 print()
 
 

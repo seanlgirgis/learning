@@ -18,10 +18,10 @@ from watson_llm import make_watsonx_llm
 
 def main() -> None:
     print("Loaded watson_llm.py")
-    print("Model:", os.environ["WATSONX_MODEL_ID"])
+    print("Model:", os.environ.get("OPENAI_MODEL", "gpt-4o-mini"))
     print()
 
-    llama_llm = make_watsonx_llm()  # WatsonxLLM — name kept like the notebook
+    llama_llm = make_watsonx_llm()  # OpenAI via watson_llm stealth shim
     print(llama_llm.invoke("Who is man's best friend?"))
 
 

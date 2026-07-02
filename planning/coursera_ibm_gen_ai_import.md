@@ -11,7 +11,7 @@ Related: [IBM Generative AI Engineering Professional Certificate](https://www.co
 | # | ID | Status |
 |---|-----|--------|
 | 1 | `crs_001_develop_generative_ai_applications_get_started` | [Develop Generative AI Applications: Get Started](https://www.coursera.org/learn/develop-generative-ai-applications-get-started?specialization=rag-for-generative-ai-applications) — migrated in `learning/` |
-| 2 | `crs_002_build_rag_applications_get_started` | Scaffolded |
+| 2 | `crs_002_build_rag_applications_get_started` | [Build RAG Applications: Get Started](https://www.coursera.org/learn/build-rag-applications-get-started/home/module/1) — scaffolded |
 | 3 | `crs_003_vector_databases_for_rag_an_introduction` | Scaffolded |
 | 4 | `crs_004_advanced_rag_with_vector_databases_and_retrievers` | Scaffolded |
 

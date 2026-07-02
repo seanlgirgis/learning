@@ -1,0 +1,21 @@
+timestamp: 2026-06-23T23:43:46.326999+00:00
+source topic path: topics/m3_genai_model.studybubble.json
+output HTML path: outputs/m3_genai_model.html
+mode: single-file
+topic id: m3_genai_model
+topic title: GenAI Model / LLM (scaffold)
+node count: 1
+link count: 0
+path count: 0
+validation result: PASS
+generated HTML byte size: 69853
+manual smoke test steps:
+1. Open outputs/single_file/tiny_capacity_demo.html directly from File Explorer.
+2. Confirm title and subtitle render.
+3. Confirm 3 bubbles render (Telemetry, Baseline, Forecast).
+4. Confirm 2 relationship lines render.
+5. Click Telemetry and confirm side panel updates.
+6. Click Baseline and confirm side panel updates.
+7. Click Forecast and confirm side panel updates.
+8. Confirm no 'Failed to fetch' message appears.
+summary: PASS

@@ -14,7 +14,10 @@
     { "label": "Main Field Guide", "type": "page", "href": "../../study_pages/field_guide.html" },
     { "label": "LCEL Code Workflow Map", "type": "map", "topic": "crs_001_lcel_workflow.studybubble.json" },
     { "label": "RemNote Source Cards", "type": "page", "href": "../../source_cards/README.md" },
-    { "label": "Lab Run Book", "type": "lab", "href": "../../lab/lab_run_book.md" }
+    { "label": "Lab Run Book", "type": "lab", "href": "../../lab/lab_run_book.md" },
+    { "label": "Course Complete", "type": "page", "href": "../../study_pages/COURSE_COMPLETE.md" },
+    { "label": "Module 3 Flask Map", "type": "map", "topic": "crs_001_module3_flask_app.studybubble.json" },
+    { "label": "Capstone Flows Map", "type": "map", "topic": "crs_001_capstone_flows.studybubble.json" }
   ],
   "nodes": [
     {
@@ -67,7 +70,7 @@
       "interviewAnswer": "Prompt engineering shapes model behavior through instructions, context, examples, and explicit output requirements.",
       "childTopics": [],
       "externalLinks": [
-        { "label": "RemNote deck 02", "href": "../../source_cards/02 coursera_ibm_rag_dev...echniques_learning_mode.md" }
+        { "label": "RemNote deck 02", "href": "../../source_cards/02-prompt-techniques.md" }
       ]
     },
     {
@@ -137,9 +140,12 @@
       "safeSentence": "Flask wraps the chain behind routes, request validation, and HTTP responses.",
       "commonTrap": "Putting business logic only in routes with no reusable chain layer.",
       "interviewAnswer": "I keep the LangChain pipeline reusable and let Flask handle HTTP concerns and validation.",
-      "childTopics": [],
+      "childTopics": [
+        { "label": "Module 3 Flask Map", "topic": "crs_001_module3_flask_app.studybubble.json" }
+      ],
       "externalLinks": [
-        { "label": "Module 3 Field Guide", "href": "../../study_pages/chapter_03_build_a_generative_ai_application_with_langchain_field_guide.html" }
+        { "label": "Module 3 Field Guide", "href": "../../study_pages/chapter_03_build_a_generative_ai_application_with_langchain_field_guide.html" },
+        { "label": "LAB_DOCKET", "href": "../../source_material/module3/LAB_DOCKET.md" }
       ]
     },
     {

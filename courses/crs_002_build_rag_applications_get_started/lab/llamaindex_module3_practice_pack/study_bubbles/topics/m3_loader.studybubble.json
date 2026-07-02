@@ -1,0 +1,137 @@
+{
+  "id": "m3_loader",
+  "title": "Loader — SimpleDirectoryReader",
+  "subtitle": "Read sources → list[Document] with metadata",
+  "parentTopic": { "label": "RAG Pipeline", "topic": "m3_rag_pipeline.studybubble.json" },
+  "groups": [
+    { "id": "patterns", "label": "Load Patterns", "color": "#4C78A8" },
+    { "id": "metadata", "label": "Metadata", "color": "#F58518" },
+    { "id": "map_navigation", "label": "Map Navigation", "color": "#6B7280" }
+  ],
+  "mapResources": [
+    { "label": "Back: RAG Pipeline", "type": "map", "topic": "m3_rag_pipeline.studybubble.json" },
+    { "label": "Source map", "type": "map", "topic": "m3_source.studybubble.json" },
+    { "label": "Loader source types", "type": "map", "topic": "m3_loader_sources.studybubble.json" },
+    { "label": "Lab: 01_load_documents", "type": "lab", "href": "../starter_code/01_load_documents.py" }
+  ],
+  "nodes": [
+    {
+      "id": "main_example",
+      "label": "Main Example",
+      "size": "core",
+      "group": "Load Patterns",
+      "definition": "SimpleDirectoryReader loads a folder into Documents.",
+      "whyItMatters": "Default Module 3 ingestion pattern.",
+      "safeSentence": "load_data() returns list[Document].",
+      "note": {
+        "summary": "from pathlib import Path\nfrom llama_index.core import SimpleDirectoryReader\n\nDATA_DIR = Path(__file__).resolve().parent.parent / \"data\" / \"company_knowledge\"\ndocuments = SimpleDirectoryReader(str(DATA_DIR)).load_data()\n\nfor doc in documents:\n    print(doc.metadata.get(\"file_name\"), len(doc.text))"
+      },
+      "externalLinks": [{ "label": "01_load_documents.py", "href": "../starter_code/01_load_documents.py" }]
+    },
+    {
+      "id": "basic_dir",
+      "label": "Basic Directory",
+      "size": "support",
+      "group": "Load Patterns",
+      "definition": "Load all readable files in one folder.",
+      "note": { "summary": "SimpleDirectoryReader(str(DATA_DIR)).load_data()" }
+    },
+    {
+      "id": "recursive",
+      "label": "Recursive",
+      "size": "support",
+      "group": "Load Patterns",
+      "definition": "Walk subfolders.",
+      "note": { "summary": "SimpleDirectoryReader(str(DATA_DIR), recursive=True).load_data()" }
+    },
+    {
+      "id": "filter_ext",
+      "label": "Filter Extensions",
+      "size": "core",
+      "group": "Load Patterns",
+      "definition": "required_exts limits file types — quiz pattern.",
+      "commonTrap": "Forgetting recursive=True with required_exts.",
+      "note": {
+        "summary": "SimpleDirectoryReader(\n    str(DATA_DIR),\n    recursive=True,\n    required_exts=[\".md\", \".csv\"],\n).load_data()"
+      }
+    },
+    {
+      "id": "exclude",
+      "label": "Exclude Paths",
+      "size": "support",
+      "group": "Load Patterns",
+      "definition": "Skip archives, temp, .git noise.",
+      "note": { "summary": "exclude=[\"*.zip\", \"*.tmp\", \"archive\"]" }
+    },
+    {
+      "id": "single_file",
+      "label": "Single / Selected Files",
+      "size": "support",
+      "group": "Load Patterns",
+      "definition": "input_files= list of explicit paths.",
+      "note": {
+        "summary": "SimpleDirectoryReader(\n    input_files=[str(DATA_DIR / \"01_company_overview.md\")]\n).load_data()"
+      }
+    },
+    {
+      "id": "manual_doc",
+      "label": "Manual Document",
+      "size": "support",
+      "group": "Load Patterns",
+      "definition": "Skip loader — build Document in memory.",
+      "note": {
+        "summary": "from llama_index.core import Document\ndocuments = [Document(text=\"...\", metadata={\"source\": \"manual\"})]"
+      }
+    },
+    {
+      "id": "metadata_keys",
+      "label": "Metadata Keys",
+      "size": "core",
+      "group": "Metadata",
+      "definition": "file_path, file_name, file_type, file_size, dates — inspect per loader.",
+      "whyItMatters": "Trace answers back to source files.",
+      "safeSentence": "Always print doc.metadata once when learning a new source."
+    },
+    {
+      "id": "fallback_line",
+      "label": "Display Fallback",
+      "size": "support",
+      "group": "Metadata",
+      "definition": "Safe label when logging loaded files.",
+      "note": {
+        "summary": "source = (\n    doc.metadata.get(\"file_name\")\n    or doc.metadata.get(\"file_path\")\n    or \"unknown\"\n)"
+      }
+    },
+    {
+      "id": "source_types_nav",
+      "label": "Source Types Map",
+      "size": "detail",
+      "group": "Map Navigation",
+      "definition": "Where loaders read from — memory, web, API, cloud.",
+      "childTopics": [{ "label": "Loader source types", "topic": "m3_loader_sources.studybubble.json" }]
+    }
+  ],
+  "links": [
+    { "source": "basic_dir", "target": "main_example", "label": "simplest" },
+    { "source": "recursive", "target": "filter_ext", "label": "often with" },
+    { "source": "filter_ext", "target": "main_example", "label": "variant" },
+    { "source": "main_example", "target": "metadata_keys", "label": "populates" },
+    { "source": "metadata_keys", "target": "fallback_line", "label": "display via" },
+    { "source": "manual_doc", "target": "main_example", "label": "bypasses" },
+    { "source": "main_example", "target": "source_types_nav", "label": "see also" }
+  ],
+  "paths": [
+    {
+      "id": "quiz_lane",
+      "label": "Quiz Lane",
+      "description": "Module 3 quiz patterns for SimpleDirectoryReader.",
+      "nodeIds": ["recursive", "filter_ext", "metadata_keys", "fallback_line"]
+    },
+    {
+      "id": "lab_lane",
+      "label": "Lab Lane",
+      "description": "Run starter_code after studying bubbles.",
+      "nodeIds": ["main_example", "basic_dir", "filter_ext"]
+    }
+  ]
+}

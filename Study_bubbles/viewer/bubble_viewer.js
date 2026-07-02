@@ -586,11 +586,12 @@
     const relatedQuestions = Array.isArray(node.relatedQuestions) ? node.relatedQuestions : [];
     const noteImage = node.note && node.note.image && typeof node.note.image === "object" ? node.note.image : null;
     const copyPathVisible = !!activePath;
-    const doubleClickHint = hasOneChildTopic
+    const childTopicCount = Array.isArray(node.childTopics) ? node.childTopics.length : 0;
+    const doubleClickHint = childTopicCount === 1
       ? `<p><em>Double-click this bubble to open: ${escapeHtml(node.childTopics[0].label || node.childTopics[0].topic || "Child Topic")}</em></p>`
-      : hasParentTopic
-      ? `<p><em>Double-click this bubble to go back to parent topic: ${escapeHtml(topic.parentTopic.label || topic.parentTopic.topic || "Back")}</em></p>`
-      : "";
+      : childTopicCount > 1
+      ? `<p><em>Child maps listed below — use Open buttons or pick one to drill down.</em></p>`
+      : `<p><em>Leaf topic — click once; definition, notes, and example links are in this panel.</em></p>`;
     const commonTrap = node.commonTrap
       ? `<div class="card-section trap"><p><strong>Common Trap</strong></p><p>${escapeHtml(node.commonTrap)}</p></div>`
       : "";
@@ -1115,7 +1116,7 @@
         activate();
         const childTopics = Array.isArray(node.childTopics) ? node.childTopics : [];
         if (childTopics.length === 1) openSingleChild();
-        else openParent();
+        // Leaf bubbles: knowledge lives in the side panel (single-click). No auto-jump to parent.
       });
       group.addEventListener("keydown", (event) => {
         if (event.key === "Enter" || event.key === " ") {
@@ -1144,7 +1145,8 @@
 
       const childTopics = Array.isArray(node.childTopics) ? node.childTopics : [];
       if (childTopics.length === 1) group.setAttribute("title", `Double-click to open ${childTopics[0].label || childTopics[0].topic || "child topic"}`);
-      else if (topic.parentTopic && topic.parentTopic.topic) group.setAttribute("title", `Double-click to go back to ${topic.parentTopic.label || topic.parentTopic.topic || "parent topic"}`);
+      else if (childTopics.length > 1) group.setAttribute("title", "Click for details; use panel links to open child maps");
+      else group.setAttribute("title", "Click for definition, notes, and example links in the panel");
     }
 
     renderGroupFilters(topic);

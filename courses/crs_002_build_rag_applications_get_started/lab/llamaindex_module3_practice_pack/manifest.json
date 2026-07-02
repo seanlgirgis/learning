@@ -1,0 +1,33 @@
+{
+  "pack": "llamaindex_module3_practice_pack",
+  "purpose": "Practical RAG dataset and starter code for LlamaIndex Module 3",
+  "mental_model": [
+    "Source",
+    "Loader",
+    "Documents",
+    "Chunks/Nodes",
+    "Embeddings",
+    "Index/Vector Store",
+    "Retriever",
+    "Query Engine",
+    "GenAI Model / LLM",
+    "Answer"
+  ],
+  "files": [
+    "README.md",
+    "data/company_knowledge/01_company_overview.md",
+    "data/company_knowledge/02_support_policy.md",
+    "data/company_knowledge/03_data_handling_policy.md",
+    "data/company_knowledge/04_product_notes.md",
+    "data/company_knowledge/05_incident_report_may_2026.md",
+    "data/company_knowledge/06_analytics_schema_runbook.md",
+    "data/company_knowledge/07_faq.md",
+    "data/company_knowledge/08_product_matrix.csv",
+    "questions/practice_questions.md",
+    "runbook.md",
+    "starter_code/01_load_documents.py",
+    "starter_code/02_build_index_query.py",
+    "starter_code/03_interactive_query.py",
+    "starter_code/requirements.txt"
+  ]
+}

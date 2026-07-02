@@ -1,0 +1,23 @@
+{
+  "id": "m3_answer",
+  "title": "Answer (scaffold)",
+  "subtitle": "Final response to the user",
+  "parentTopic": { "label": "RAG Pipeline", "topic": "m3_rag_pipeline.studybubble.json" },
+  "groups": [{ "id": "scaffold", "label": "Scaffold", "color": "#FBBF24" }],
+  "mapResources": [
+    { "label": "Back: Pipeline", "type": "map", "topic": "m3_rag_pipeline.studybubble.json" },
+    { "label": "Lab 03", "type": "lab", "href": "../starter_code/03_interactive_query.py" }
+  ],
+  "nodes": [
+    {
+      "id": "answer_core",
+      "label": "Answer",
+      "size": "core",
+      "group": "Scaffold",
+      "definition": "str(response) shown to the user.",
+      "note": { "summary": "Detailed notes coming." }
+    }
+  ],
+  "links": [],
+  "paths": []
+}

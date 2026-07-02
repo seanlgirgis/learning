@@ -1,0 +1,31 @@
+{
+  "full_name": "Jordan Lee",
+  "headline": "Senior Data Engineer | RAG & LLM pipelines",
+  "location": "Austin, Texas",
+  "summary": "Builds retrieval systems and teaches teams how to ship grounded AI apps.",
+  "experiences": [
+    {
+      "title": "Senior Data Engineer",
+      "company": "Northwind Analytics",
+      "description": "Led migration of document Q&A from keyword search to vector RAG. Reduced support ticket volume 18%."
+    },
+    {
+      "title": "Data Engineer",
+      "company": "Contoso Retail",
+      "description": "Built PySpark ingestion for product catalogs and customer feedback text."
+    }
+  ],
+  "education": [
+    {
+      "school": "University of Texas at Austin",
+      "degree": "B.S. Computer Science",
+      "field": "Machine learning elective track"
+    }
+  ],
+  "skills": ["Python", "LangChain", "LlamaIndex", "ChromaDB", "PySpark"],
+  "certifications": ["IBM Generative AI Engineering Foundations"],
+  "accomplishments": {
+    "languages": ["English", "Korean"],
+    "interests": ["climbing", "jazz piano", "volunteer STEM mentoring"]
+  }
+}

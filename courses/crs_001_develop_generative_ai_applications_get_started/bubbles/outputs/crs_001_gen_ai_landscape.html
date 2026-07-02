@@ -664,6 +664,21 @@ body {
       "label": "Lab Run Book",
       "type": "lab",
       "href": "../../lab/lab_run_book.md"
+    },
+    {
+      "label": "Course Complete",
+      "type": "page",
+      "href": "../../study_pages/COURSE_COMPLETE.md"
+    },
+    {
+      "label": "Module 3 Flask Map",
+      "type": "map",
+      "topic": "crs_001_module3_flask_app.studybubble.json"
+    },
+    {
+      "label": "Capstone Flows Map",
+      "type": "map",
+      "topic": "crs_001_capstone_flows.studybubble.json"
     }
   ],
   "nodes": [
@@ -722,7 +737,7 @@ body {
       "externalLinks": [
         {
           "label": "RemNote deck 02",
-          "href": "../../source_cards/02 coursera_ibm_rag_dev...echniques_learning_mode.md"
+          "href": "../../source_cards/02-prompt-techniques.md"
         }
       ]
     },
@@ -805,11 +820,20 @@ body {
       "safeSentence": "Flask wraps the chain behind routes, request validation, and HTTP responses.",
       "commonTrap": "Putting business logic only in routes with no reusable chain layer.",
       "interviewAnswer": "I keep the LangChain pipeline reusable and let Flask handle HTTP concerns and validation.",
-      "childTopics": [],
+      "childTopics": [
+        {
+          "label": "Module 3 Flask Map",
+          "topic": "crs_001_module3_flask_app.studybubble.json"
+        }
+      ],
       "externalLinks": [
         {
           "label": "Module 3 Field Guide",
           "href": "../../study_pages/chapter_03_build_a_generative_ai_application_with_langchain_field_guide.html"
+        },
+        {
+          "label": "LAB_DOCKET",
+          "href": "../../source_material/module3/LAB_DOCKET.md"
         }
       ]
     },
@@ -1493,11 +1517,12 @@ body {
     const relatedQuestions = Array.isArray(node.relatedQuestions) ? node.relatedQuestions : [];
     const noteImage = node.note && node.note.image && typeof node.note.image === "object" ? node.note.image : null;
     const copyPathVisible = !!activePath;
-    const doubleClickHint = hasOneChildTopic
+    const childTopicCount = Array.isArray(node.childTopics) ? node.childTopics.length : 0;
+    const doubleClickHint = childTopicCount === 1
       ? `<p><em>Double-click this bubble to open: ${escapeHtml(node.childTopics[0].label || node.childTopics[0].topic || "Child Topic")}</em></p>`
-      : hasParentTopic
-      ? `<p><em>Double-click this bubble to go back to parent topic: ${escapeHtml(topic.parentTopic.label || topic.parentTopic.topic || "Back")}</em></p>`
-      : "";
+      : childTopicCount > 1
+      ? `<p><em>Child maps listed below — use Open buttons or pick one to drill down.</em></p>`
+      : `<p><em>Leaf topic — click once; definition, notes, and example links are in this panel.</em></p>`;
     const commonTrap = node.commonTrap
       ? `<div class="card-section trap"><p><strong>Common Trap</strong></p><p>${escapeHtml(node.commonTrap)}</p></div>`
       : "";
@@ -2022,7 +2047,7 @@ body {
         activate();
         const childTopics = Array.isArray(node.childTopics) ? node.childTopics : [];
         if (childTopics.length === 1) openSingleChild();
-        else openParent();
+        // Leaf bubbles: knowledge lives in the side panel (single-click). No auto-jump to parent.
       });
       group.addEventListener("keydown", (event) => {
         if (event.key === "Enter" || event.key === " ") {
@@ -2051,7 +2076,8 @@ body {
 
       const childTopics = Array.isArray(node.childTopics) ? node.childTopics : [];
       if (childTopics.length === 1) group.setAttribute("title", `Double-click to open ${childTopics[0].label || childTopics[0].topic || "child topic"}`);
-      else if (topic.parentTopic && topic.parentTopic.topic) group.setAttribute("title", `Double-click to go back to ${topic.parentTopic.label || topic.parentTopic.topic || "parent topic"}`);
+      else if (childTopics.length > 1) group.setAttribute("title", "Click for details; use panel links to open child maps");
+      else group.setAttribute("title", "Click for definition, notes, and example links in the panel");
     }
 
     renderGroupFilters(topic);
@@ -2302,7 +2328,7 @@ body {
   <!-- SECTION: Build Metadata -->
   <script id="studybubble-build-metadata" type="application/json">
 {
-  "generatedAtUtc": "2026-06-16T00:32:58.757630+00:00",
+  "generatedAtUtc": "2026-06-21T00:40:24.477431+00:00",
   "mode": "single-file",
   "sourceTopicPath": "topics/crs_001_gen_ai_landscape.studybubble.json",
   "topicId": "crs_001_gen_ai_landscape",

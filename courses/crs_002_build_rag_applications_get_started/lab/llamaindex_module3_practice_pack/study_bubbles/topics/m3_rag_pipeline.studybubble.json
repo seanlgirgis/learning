@@ -1,0 +1,164 @@
+{
+  "id": "m3_rag_pipeline",
+  "title": "Module 3 — RAG Pipeline",
+  "subtitle": "Source → load → chunk → embed → index → retrieve → query → answer",
+  "parentTopic": null,
+  "groups": [
+    { "id": "ingest", "label": "Ingest", "color": "#4C78A8" },
+    { "id": "indexing", "label": "Indexing", "color": "#F58518" },
+    { "id": "query", "label": "Query", "color": "#54A24B" },
+    { "id": "map_navigation", "label": "Map Navigation", "color": "#6B7280" }
+  ],
+  "mapResources": [
+    { "label": "Practice pack README", "type": "page", "href": "../README.md" },
+    { "label": "Starter: load documents", "type": "lab", "href": "../starter_code/01_load_documents.py" },
+    { "label": "Source detail map", "type": "map", "topic": "m3_source.studybubble.json" },
+    { "label": "Loader detail map", "type": "map", "topic": "m3_loader.studybubble.json" },
+    { "label": "Loader source types", "type": "map", "topic": "m3_loader_sources.studybubble.json" },
+    { "label": "Glossary", "type": "page", "href": "glossary.md" }
+  ],
+  "nodes": [
+    {
+      "id": "source",
+      "label": "Source",
+      "size": "core",
+      "group": "Ingest",
+      "definition": "Where knowledge lives before LlamaIndex — files, APIs, DB, web.",
+      "whyItMatters": "RAG starts outside the framework; you must pick sources first.",
+      "safeSentence": "Source is raw knowledge; it is not yet a Document.",
+      "commonTrap": "Treating a file path as if it were already a LlamaIndex object.",
+      "interviewAnswer": "I separate source (external data) from Document (in-memory loaded unit).",
+      "childTopics": [{ "label": "Source bubble map", "topic": "m3_source.studybubble.json" }],
+      "externalLinks": [{ "label": "company_knowledge/", "href": "../data/company_knowledge/" }]
+    },
+    {
+      "id": "loader",
+      "label": "Loader",
+      "size": "core",
+      "group": "Ingest",
+      "definition": "Code that reads a source and returns list[Document].",
+      "whyItMatters": "Bridge from disk/API to LlamaIndex types.",
+      "safeSentence": "SimpleDirectoryReader(...).load_data() returns Documents.",
+      "commonTrap": "Forgetting load_data() returns a list.",
+      "interviewAnswer": "Loaders materialize sources into Document objects with text and metadata.",
+      "note": {
+        "summary": "documents = SimpleDirectoryReader(str(DATA_DIR)).load_data()\n\nEach doc has .text and .metadata (file_name, file_path, etc.)."
+      },
+      "childTopics": [
+        { "label": "Loader patterns map", "topic": "m3_loader.studybubble.json" },
+        { "label": "Loader source types", "topic": "m3_loader_sources.studybubble.json" }
+      ],
+      "externalLinks": [{ "label": "01_load_documents.py", "href": "../starter_code/01_load_documents.py" }]
+    },
+    {
+      "id": "documents",
+      "label": "Documents",
+      "size": "core",
+      "group": "Ingest",
+      "definition": "LlamaIndex Document — whole loaded unit with text and metadata.",
+      "whyItMatters": "Splitters and indexes work from Documents or nodes derived from them.",
+      "safeSentence": "Document(text=..., metadata={...}) is one source unit before chunking.",
+      "childTopics": [{ "label": "Documents map (scaffold)", "topic": "m3_documents.studybubble.json" }]
+    },
+    {
+      "id": "nodes_chunks",
+      "label": "Nodes / Chunks",
+      "size": "core",
+      "group": "Ingest",
+      "definition": "Smaller pieces after SentenceSplitter — sized for retrieval.",
+      "whyItMatters": "chunk_size is in tokens; three sentences ≠ three nodes automatically.",
+      "safeSentence": "SentenceSplitter turns Documents into nodes under a token budget.",
+      "commonTrap": "Assuming each paragraph becomes exactly one node.",
+      "childTopics": [{ "label": "Nodes map (scaffold)", "topic": "m3_nodes_chunks.studybubble.json" }]
+    },
+    {
+      "id": "embeddings",
+      "label": "Embeddings",
+      "size": "support",
+      "group": "Indexing",
+      "definition": "Numeric vectors representing text meaning for similarity search.",
+      "whyItMatters": "Retriever compares question embeddings to chunk embeddings.",
+      "safeSentence": "Similar text → similar vectors.",
+      "childTopics": [{ "label": "Embeddings map (scaffold)", "topic": "m3_embeddings.studybubble.json" }]
+    },
+    {
+      "id": "index_store",
+      "label": "Index / Vector Store",
+      "size": "core",
+      "group": "Indexing",
+      "definition": "VectorStoreIndex embeds nodes and stores vectors for lookup.",
+      "whyItMatters": "One LlamaIndex step vs LangChain embed-then-Chroma separately.",
+      "safeSentence": "VectorStoreIndex(nodes) embeds and stores in one call.",
+      "note": { "summary": "index = VectorStoreIndex(nodes, show_progress=True)" },
+      "childTopics": [{ "label": "Index map (scaffold)", "topic": "m3_index_vector_store.studybubble.json" }],
+      "externalLinks": [{ "label": "02_build_index_query.py", "href": "../starter_code/02_build_index_query.py" }]
+    },
+    {
+      "id": "retriever",
+      "label": "Retriever",
+      "size": "core",
+      "group": "Query",
+      "definition": "as_retriever().retrieve(q) — top-k chunks, no LLM answer.",
+      "whyItMatters": "Separates search from generation; uses embeddings only.",
+      "safeSentence": "Retriever returns ranked chunks and scores, not prose answers.",
+      "commonTrap": "Expecting similarity_top_k results when the index has fewer nodes.",
+      "childTopics": [{ "label": "Retriever map (scaffold)", "topic": "m3_retriever.studybubble.json" }]
+    },
+    {
+      "id": "query_engine",
+      "label": "Query Engine",
+      "size": "core",
+      "group": "Query",
+      "definition": "as_query_engine().query(q) — retrieve + template + LLM.",
+      "whyItMatters": "One-call RAG answer like LangChain RetrievalQA.",
+      "safeSentence": "Query engine adds the LLM on top of retrieval.",
+      "childTopics": [{ "label": "Query engine map (scaffold)", "topic": "m3_query_engine.studybubble.json" }]
+    },
+    {
+      "id": "genai_model",
+      "label": "GenAI Model / LLM",
+      "size": "support",
+      "group": "Query",
+      "definition": "LLM reads {context_str} from prompt template and generates text.",
+      "whyItMatters": "Course uses watsonx; local labs use OpenAI via Settings.llm.",
+      "safeSentence": "Settings.llm = OpenAI(...) replaces WatsonxLLM in local practice.",
+      "childTopics": [{ "label": "GenAI Model / LLM map (scaffold)", "topic": "m3_genai_model.studybubble.json" }]
+    },
+    {
+      "id": "answer",
+      "label": "Answer",
+      "size": "core",
+      "group": "Query",
+      "definition": "Final response string returned from query().",
+      "whyItMatters": "Grounded when retrieval + templates constrain the LLM.",
+      "safeSentence": "str(response) is what the user sees.",
+      "childTopics": [{ "label": "Answer map (scaffold)", "topic": "m3_answer.studybubble.json" }],
+      "externalLinks": [{ "label": "03_interactive_query.py", "href": "../starter_code/03_interactive_query.py" }]
+    }
+  ],
+  "links": [
+    { "source": "source", "target": "loader", "label": "read by" },
+    { "source": "loader", "target": "documents", "label": "produces" },
+    { "source": "documents", "target": "nodes_chunks", "label": "split into" },
+    { "source": "nodes_chunks", "target": "embeddings", "label": "embedded as" },
+    { "source": "embeddings", "target": "index_store", "label": "stored in" },
+    { "source": "index_store", "target": "retriever", "label": "searched by" },
+    { "source": "retriever", "target": "query_engine", "label": "feeds" },
+    { "source": "query_engine", "target": "genai_model", "label": "calls" },
+    { "source": "genai_model", "target": "answer", "label": "returns" }
+  ],
+  "paths": [
+    {
+      "id": "ingest_lane",
+      "label": "Ingest Lane",
+      "description": "Phase 1 focus — source through loader (study maps built).",
+      "nodeIds": ["source", "loader", "documents", "nodes_chunks"]
+    },
+    {
+      "id": "query_lane",
+      "label": "Query Lane",
+      "description": "Index through answer — upgrade scaffolds as you study.",
+      "nodeIds": ["index_store", "retriever", "query_engine", "answer"]
+    }
+  ]
+}

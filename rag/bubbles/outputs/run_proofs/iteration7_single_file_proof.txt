@@ -1,0 +1,21 @@
+timestamp: 2026-06-21T00:40:24.519318+00:00
+source topic path: topics/talk_to_model.studybubble.json
+output HTML path: outputs/talk_to_model.html
+mode: single-file
+topic id: talk_to_model
+topic title: Gen AI · Talk to the Model
+node count: 6
+link count: 5
+path count: 1
+validation result: PASS
+generated HTML byte size: 74331
+manual smoke test steps:
+1. Open outputs/single_file/tiny_capacity_demo.html directly from File Explorer.
+2. Confirm title and subtitle render.
+3. Confirm 3 bubbles render (Telemetry, Baseline, Forecast).
+4. Confirm 2 relationship lines render.
+5. Click Telemetry and confirm side panel updates.
+6. Click Baseline and confirm side panel updates.
+7. Click Forecast and confirm side panel updates.
+8. Confirm no 'Failed to fetch' message appears.
+summary: PASS

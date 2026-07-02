@@ -1,0 +1,4 @@
+product,best_for,not_for,key_features
+InsightBoard,dashboard-style reporting,long document question answering,charts; tables; filters; scheduled email reports
+DocuPilot,document-grounded question answering,dashboard replacement,PDF ingestion; markdown notes; citations; searchable policy answers
+SignalWatch,operational monitoring,executive slide reporting,alert rules; metric thresholds; anomaly notes; incident timelines

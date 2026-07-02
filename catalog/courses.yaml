@@ -17,6 +17,9 @@ courses:
     provider: coursera
     partner: ibm
     title: "Build RAG Applications: Get Started"
+    coursera_url: "https://www.coursera.org/learn/build-rag-applications-get-started?specialization=rag-for-generative-ai-applications"
+    coursera_module1_home: "https://www.coursera.org/learn/build-rag-applications-get-started/home/module/1"
+    specialization_id: rag-for-generative-ai-applications
     folder: courses/crs_002_build_rag_applications_get_started
     index: courses/crs_002_build_rag_applications_get_started/index.html
     status: scaffolded

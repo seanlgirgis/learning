@@ -1,0 +1,126 @@
+{
+  "id": "gen_ai_applications_landscape",
+  "title": "Gen AI Applications — Landscape",
+  "subtitle": "Your brain map — not IBM's syllabus · parallel branches · double-click to drill down",
+  "parentTopic": null,
+  "groups": [
+    { "id": "foundation", "label": "Foundation", "color": "#4C78A8" },
+    { "id": "evidence", "label": "Evidence & Answers", "color": "#F58518" },
+    { "id": "delivery", "label": "Delivery & Beyond", "color": "#54A24B" },
+    { "id": "later", "label": "Later Layer", "color": "#6B7280" }
+  ],
+  "mapResources": [
+    { "label": "CRS 001 LCEL map", "type": "page", "href": "../../../courses/crs_001_develop_generative_ai_applications_get_started/bubbles/outputs/crs_001_lcel_workflow.html" },
+    { "label": "CRS 002 M1 labs", "type": "lab", "href": "../../../courses/crs_002_build_rag_applications_get_started/lab/python/README.md" },
+    { "label": "Example · Sean env (OpenAI)", "type": "lab", "href": "file:///D:/py_venv/rag_application_builder_foundation/set_env.ps1" }
+  ],
+  "nodes": [
+    {
+      "id": "branch_talk",
+      "label": "1 · Talk to the model",
+      "size": "core",
+      "group": "foundation",
+      "definition": "Env, API key, model id, one invoke — prove the model responds before you build anything else.",
+      "whyItMatters": "Foundation of every branch. Coursera is practice; this is your control surface.",
+      "safeSentence": "Get a model to respond at all.",
+      "note": { "summary": "Generic: credentials → LLM client factory → smoke invoke. Coursera/IBM/OpenAI are examples linked in the drill-down map." },
+      "childTopics": [{ "label": "Talk to the Model map", "topic": "talk_to_model.studybubble.json" }]
+    },
+    {
+      "id": "branch_prompting",
+      "label": "2 · Prompting",
+      "size": "core",
+      "group": "foundation",
+      "definition": "Templates, chat roles, few-shot, constraints — shape what the model sees before it thinks.",
+      "whyItMatters": "Parallel to RAG, not inside it. You prompt with and without retrieved docs.",
+      "safeSentence": "Control what the model sees.",
+      "childTopics": [{ "label": "Prompting map", "topic": "prompting.studybubble.json" }]
+    },
+    {
+      "id": "branch_compose",
+      "label": "3 · Compose",
+      "size": "core",
+      "group": "foundation",
+      "definition": "LangChain / LCEL — prompt | llm | parser, pre-built chains, provider swap.",
+      "whyItMatters": "How you wire reliable steps. CRS 001 home; CRS 002 uses RetrievalQA chains.",
+      "safeSentence": "Pipe steps together reliably.",
+      "childTopics": [{ "label": "Compose map", "topic": "compose_langchain.studybubble.json" }]
+    },
+    {
+      "id": "branch_ground",
+      "label": "4 · Ground",
+      "size": "core",
+      "group": "evidence",
+      "definition": "Vectors, chunks, embeddings, Chroma — turn files into searchable pieces.",
+      "whyItMatters": "Evidence layer. RAG cannot work without ground first.",
+      "safeSentence": "Turn files into searchable pieces.",
+      "childTopics": [{ "label": "Ground map", "topic": "ground_vectors_chunks.studybubble.json" }]
+    },
+    {
+      "id": "branch_rag",
+      "label": "5 · RAG",
+      "size": "core",
+      "group": "evidence",
+      "definition": "Retrieve top-k chunks → augment prompt → generate — answer from evidence, not guesswork.",
+      "whyItMatters": "CRS 002 M1 core. Sibling to prompting, not a replacement for the whole stack.",
+      "safeSentence": "Answer from evidence, not guesswork.",
+      "childTopics": [{ "label": "RAG patterns map", "topic": "rag_patterns.studybubble.json" }]
+    },
+    {
+      "id": "branch_memory",
+      "label": "6 · Memory & chat",
+      "size": "core",
+      "group": "evidence",
+      "definition": "History list, follow-ups, sessions — “what is the aim of it?” needs prior turns.",
+      "whyItMatters": "You passed 04 vs 07 here. Memory + retrieval together for doc-grounded chat.",
+      "safeSentence": "Remember what you already asked.",
+      "childTopics": [{ "label": "Memory & chat map", "topic": "memory_and_chat.studybubble.json" }]
+    },
+    {
+      "id": "branch_expose",
+      "label": "7 · Expose",
+      "size": "core",
+      "group": "delivery",
+      "definition": "Script, REPL, Flask API, Gradio UI — same chain, different front door.",
+      "whyItMatters": "CRS 001 Flask + CRS 002 Gradio. Apps reach humans or other systems here.",
+      "safeSentence": "Let a human or app reach your chain.",
+      "childTopics": [{ "label": "Expose map", "topic": "expose_interfaces.studybubble.json" }]
+    },
+    {
+      "id": "branch_agentic",
+      "label": "8 · Agentic",
+      "size": "support",
+      "group": "later",
+      "definition": "Tools, loops, plan/act — model chooses actions; RAG becomes one tool among many.",
+      "whyItMatters": "Bigger umbrella in autonomy, not in everything you have touched yet. Capstone 4 + later courses.",
+      "safeSentence": "Let the model choose actions across tools.",
+      "note": { "summary": "Later layer — uses branches 1–7 as ingredients. Not rushed; visible so you know where it sits." },
+      "childTopics": [{ "label": "Agentic map", "topic": "agentic.studybubble.json" }]
+    }
+  ],
+  "links": [
+    { "source": "branch_talk", "target": "branch_prompting", "label": "then" },
+    { "source": "branch_prompting", "target": "branch_compose", "label": "wires via" },
+    { "source": "branch_ground", "target": "branch_rag", "label": "feeds" },
+    { "source": "branch_prompting", "target": "branch_rag", "label": "shapes" },
+    { "source": "branch_compose", "target": "branch_rag", "label": "implements" },
+    { "source": "branch_rag", "target": "branch_memory", "label": "extends" },
+    { "source": "branch_memory", "target": "branch_expose", "label": "wrapped by" },
+    { "source": "branch_rag", "target": "branch_agentic", "label": "tool for" },
+    { "source": "branch_expose", "target": "branch_agentic", "label": "tool for" }
+  ],
+  "paths": [
+    {
+      "id": "brain_branches",
+      "label": "Your brain — 8 branches",
+      "description": "Parallel topics in one landscape. Double-click any bubble to open its drill-down map.",
+      "nodeIds": ["branch_talk", "branch_prompting", "branch_compose", "branch_ground", "branch_rag", "branch_memory", "branch_expose", "branch_agentic"]
+    },
+    {
+      "id": "evidence_lane",
+      "label": "Evidence lane",
+      "description": "Ground → RAG → Memory — how answers stay tied to your data.",
+      "nodeIds": ["branch_ground", "branch_rag", "branch_memory"]
+    }
+  ]
+}

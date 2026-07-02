@@ -11,10 +11,10 @@
 
 | # | Guide | Script | Status |
 |---|--------|--------|--------|
-| **1** | **[capstone01.md](capstone01.md)** | `capstone_01_ingest.py` (you type) + notebook | Ready — **start here** |
-| 2 | `capstone02.md` (later) | `capstone_02_review_desk.py` | Not yet |
-| 3 | `capstone03.md` (later) | `capstone_03_remember_me_chat.py` | Not yet |
-| 4 | `capstone04.md` (later) | `capstone_04_research_agent.py` | Not yet |
+| **1** | **[capstone01.md](capstone01.md)** | `capstone_01_ingest.py` + `capstone_01_chat.py` | **Done** |
+| **3** | **[capstone03.md](capstone03.md)** | `capstone_03_remember_me_chat.py` | **Done** |
+| **2** | **[capstone02.md](capstone02.md)** | `capstone_02_review_desk.py` | **Done** |
+| **4** | **[capstone04.md](capstone04.md)** | `capstone_04_research_agent.py` | **Done** |
 | 5 | `capstone05.md` (later) | `capstone_05_full_stack_mini.py` | Optional |
 
 One folder · **one guide `.md` per capstone** · Capstone 1 uses **two scripts** (ingest + chat).
@@ -28,7 +28,7 @@ One folder · **one guide `.md` per capstone** · Capstone 1 uses **two scripts*
 3. Open the capstone’s **own** `.md` guide (e.g. [capstone01.md](capstone01.md))
 4. Skim linked reference modules — then **close** them when you type
 
-**Memory hook (every capstone):** Route B — `from watson_llm import make_watsonx_llm` for pipes and RAG.
+**Memory hook (every capstone):** `from watson_llm import make_watsonx_llm` — OpenAI backend (see [PROVIDER_SWAP_WATSON_TO_OPENAI.md](../PROVIDER_SWAP_WATSON_TO_OPENAI.md)).
 
 ---
 
@@ -37,9 +37,9 @@ One folder · **one guide `.md` per capstone** · Capstone 1 uses **two scripts*
 | # | Name | Main ideas from labs |
 |---|------|----------------------|
 | 1 | [RAG Tutor](capstone01.md) | Load → split → embed → Chroma → QA (23–31) |
-| 2 | Review Desk | Multi-step chain + JSON (34, 11, 18) |
-| 3 | Remember-Me Chat | Chat template + memory (20, 33) |
-| 4 | Research Agent | Agent + tools + RAG tool (35 + #1) |
+| 2 | [Review Desk](capstone02.md) | Multi-step chain + JSON (34, 11, 18) |
+| 3 | [Remember-Me Chat](capstone03.md) | Chat template + memory (20, 33) |
+| 4 | [Research Agent](capstone04.md) | Agent + tools + RAG tool (35 + #1) |
 | 5 | Full Stack Mini | All modes in one CLI |
 
 **Suggested order:** 1 → 3 → 2 → 4 → 5
@@ -52,4 +52,6 @@ One folder · **one guide `.md` per capstone** · Capstone 1 uses **two scripts*
 - Reference **closed** when rebuilding from memory  
 - Log traps → `courses/crs_001/.../docs/TRAINING_LOG.md`
 
-**Next:** open [capstone01.md](capstone01.md) → say **bite 1** in chat.
+**CRS 001 course:** complete (2026-06-19). Docs: `courses/crs_001/.../docs/CAPSTONE_CODE_GUIDE.md` · bubbles: `crs_001_capstone_flows.html`
+
+**Optional next:** capstone 5 full-stack mini — deferred.

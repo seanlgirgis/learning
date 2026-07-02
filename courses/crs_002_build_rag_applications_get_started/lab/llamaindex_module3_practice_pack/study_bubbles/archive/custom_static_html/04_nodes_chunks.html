@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nodes / Chunks — Bubble Map (scaffold)</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <header class="app-header">
+    <h1>Nodes / Chunks <span class="badge badge-scaffold">scaffold</span></h1>
+    <p>Splitters turn Documents into smaller searchable pieces.</p>
+    <nav class="top-nav">
+      <a href="index.html">Home</a>
+      <a href="03_documents.html">← Documents</a>
+      <span class="here">Nodes</span>
+      <a href="05_embeddings.html">Embeddings →</a>
+    </nav>
+  </header>
+  <div class="bubble-layout">
+    <section class="bubble-canvas">
+      <p class="canvas-hint">Scaffold — SentenceSplitter bubbles coming in Phase 2.</p>
+      <div class="bubble-map" style="min-height:320px;">
+        <a class="bubble-node link-out" href="03_documents.html" style="left:25%;top:50%;"><span class="bubble-circle">← Documents</span></a>
+        <a class="bubble-node" href="#concept" style="left:50%;top:45%;"><span class="bubble-circle">Nodes</span><span class="bubble-tag">upgrade later</span></a>
+        <a class="bubble-node link-out" href="05_embeddings.html" style="left:75%;top:50%;"><span class="bubble-circle">Embeddings →</span></a>
+      </div>
+    </section>
+    <aside class="side-panel">
+      <div class="side-head"><h2>Notes</h2><p>Coming in Phase 2</p></div>
+      <div class="side-body">
+        <div class="side-default"><p style="color:var(--muted);">Click the center bubble.</p></div>
+        <div class="panel-card" id="concept">
+          <h3>Nodes / Chunks</h3>
+          <p>Detailed notes will be added when we study this bubble.</p>
+          <div class="note-box"><code>SentenceSplitter</code> → nodes. <code>chunk_size</code> is in tokens.</div>
+        </div>
+      </div>
+      <div class="side-foot"><a href="03_documents.html">← Documents</a> · <a href="05_embeddings.html">Embeddings →</a></div>
+    </aside>
+  </div>
+</body>
+</html>

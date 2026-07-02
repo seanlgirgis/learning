@@ -1,0 +1,18 @@
+Engage & Learn: Interactive Module 2 Lesson 1 Podcast (AI-Powered) - Transcript
+
+[00:00] Drew: Hey everyone, welcome back! I'm Drew, and today we're giving you a quick peek into what you'll learn about advanced database operations in Chroma DB. With me is Kate—she's got a real knack for breaking this stuff down. Hey, Kate!
+[00:13] Kate: Hi Drew! Yeah, I love talking about Chroma DB. There’s more to it than just storing vectors—this lesson really opens up the toolbox.
+[00:23] Drew: Totally. So, for folks who are already familiar with the basics, what new ground does this lesson cover?
+[00:30] Kate: Good question. This one goes beyond just creating collections—you actually learn how to modify collections, and add, update, or delete documents inside them. It's the kind of stuff you need for real applications, not just toy examples.
+[00:46] Drew: Right, so let’s say you’ve got a collection set up. If you want to connect to it later or tweak the description, what would you do?
+[00:54] Kate: You’d use the get_collection method to connect to an existing collection, and the modify method if you want to change things like its metadata. Just a heads up, though—some things, like the embedding model, can’t be changed directly. For those, you’d have to clone the collection.
+[01:12] Drew: Interesting. And when it comes to the actual data—let’s say you want to add new employee records, or maybe update someone’s info. How does that work?
+[01:23] Kate: That’s where the add and update methods come in. You can add documents with unique IDs and even attach any metadata you want—like location or role. If you need to change a document, you update it by its ID, and Chroma DB will even handle re-embedding automatically for you.
+[01:42] Drew: And if someone leaves the company, you can just delete their record?
+[01:46] Kate: Exactly. You can delete by ID or filter on metadata—super flexible. Oh, and you can always retrieve all your data, or even just specific documents if you need them.
+[01:58] Drew: One cool detail for advanced learners: you can actually get the stored embeddings from a collection, not just the metadata or text. That’s handy for debugging or visualization.
+[02:11] Kate: Yeah, just pass include=['embeddings'] to the get method—nice trick if you want to see what’s really stored under the hood.
+[02:19] Drew: Alright, so if you’re ready to manage your data collections like a pro—adding, updating, or deleting—this lesson is definitely for you.
+[02:28] Kate: Absolutely. Once you know these operations, you’re set for building more complex, real-world vector search apps.
+[02:35] Drew: Thanks, Kate! And thanks to everyone for listening. Give the lesson a try and see how these tools can level up your projects.
+[02:43] Kate: Thanks, Drew! Have fun exploring Chroma DB, everyone.

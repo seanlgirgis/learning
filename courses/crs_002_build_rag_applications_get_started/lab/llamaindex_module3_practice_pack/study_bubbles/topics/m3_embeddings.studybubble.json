@@ -1,0 +1,20 @@
+{
+  "id": "m3_embeddings",
+  "title": "Embeddings (scaffold)",
+  "subtitle": "Text → vectors — upgrade in Phase 2",
+  "parentTopic": { "label": "RAG Pipeline", "topic": "m3_rag_pipeline.studybubble.json" },
+  "groups": [{ "id": "scaffold", "label": "Scaffold", "color": "#FBBF24" }],
+  "mapResources": [{ "label": "Back: Pipeline", "type": "map", "topic": "m3_rag_pipeline.studybubble.json" }],
+  "nodes": [
+    {
+      "id": "embed_core",
+      "label": "Embeddings",
+      "size": "core",
+      "group": "Scaffold",
+      "definition": "Numeric vectors for similarity search.",
+      "note": { "summary": "Detailed notes coming.\n\nSettings.embed_model = OpenAIEmbedding(model=\"text-embedding-3-small\")" }
+    }
+  ],
+  "links": [],
+  "paths": []
+}

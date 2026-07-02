@@ -1,0 +1,130 @@
+{
+  "id": "crs_001_module3_flask_app",
+  "title": "CRS 001 — Module 3 Flask App Flow",
+  "subtitle": "Watsonx auth, per-model tokens, JSON parser, config → model → app",
+  "parentTopic": {
+    "label": "Gen AI Landscape Map",
+    "topic": "crs_001_gen_ai_landscape.studybubble.json"
+  },
+  "groups": [
+    { "id": "probe", "label": "Probe & Raw API", "color": "#4C78A8" },
+    { "id": "langchain", "label": "LangChain Layer", "color": "#F58518" },
+    { "id": "app", "label": "Flask App", "color": "#54A24B" },
+    { "id": "traps", "label": "Traps", "color": "#E45756" }
+  ],
+  "mapResources": [
+    { "label": "LAB_DOCKET", "type": "lab", "href": "../../source_material/module3/LAB_DOCKET.md" },
+    { "label": "CODE_CATALOG", "type": "lab", "href": "../../lab/CODE_CATALOG.md" },
+    { "label": "Flow charts", "type": "page", "href": "../../study_pages/exercise_and_capstone_flows.md" },
+    { "label": "Back: Landscape", "type": "map", "topic": "crs_001_gen_ai_landscape.studybubble.json" }
+  ],
+  "nodes": [
+    {
+      "id": "sn_auth",
+      "label": "SN Auth Pattern",
+      "size": "core",
+      "group": "traps",
+      "definition": "Credentials(url only) + project_id=skills-network — no api_key in code on Cloud IDE.",
+      "whyItMatters": "Explicit api_key caused empty generated_text in bite 1 debug.",
+      "safeSentence": "Match PDF auth before debugging prompt tokens.",
+      "commonTrap": "Passing WATSONX_APIKEY into Credentials on Skills Network.",
+      "interviewAnswer": "I use environment-injected bearer auth on SN; I avoid conflicting api_key in code.",
+      "childTopics": [],
+      "externalLinks": [
+        { "label": "02d granite", "href": "../../lab/python/module3/02d_capital_granite_tokens.py" }
+      ]
+    },
+    {
+      "id": "model_tokens",
+      "label": "Per-Model Tokens",
+      "size": "core",
+      "group": "probe",
+      "definition": "Granite <|system|>; Llama header tokens; Mistral [INST] — same question, different dialects.",
+      "whyItMatters": "Plain prompts on Llama/Granite can return garbage or empty output.",
+      "safeSentence": "Each foundation model has a preferred prompt shape.",
+      "childTopics": [],
+      "externalLinks": [
+        { "label": "03 llama tokens", "href": "../../lab/python/module3/03_capital_llama_tokens.py" }
+      ]
+    },
+    {
+      "id": "lcel_pipe_m3",
+      "label": "ChatWatsonx Pipe",
+      "size": "support",
+      "group": "langchain",
+      "definition": "PromptTemplate | ChatWatsonx | StrOutputParser — Module 3 bite 3.",
+      "whyItMatters": "Bridge from raw ModelInference to reusable chains.",
+      "note": { "summary": "04_langchain_one_model.py — same Ottawa answer through LCEL." },
+      "childTopics": [],
+      "externalLinks": [
+        { "label": "Lab 04", "href": "../../lab/python/module3/04_langchain_one_model.py" }
+      ]
+    },
+    {
+      "id": "json_ai_response",
+      "label": "AIResponse JSON",
+      "size": "core",
+      "group": "langchain",
+      "definition": "Pydantic AIResponse + JsonOutputParser → dict with summary, sentiment, response.",
+      "whyItMatters": "Downstream workflow systems need validated fields, not prose only.",
+      "safeSentence": "Parser enforces shape; Flask jsonifies the dict.",
+      "childTopics": [],
+      "externalLinks": [
+        { "label": "05 json parser", "href": "../../lab/python/module3/05_json_capital_parser.py" }
+      ]
+    },
+    {
+      "id": "config_module",
+      "label": "config.py",
+      "size": "support",
+      "group": "app",
+      "definition": "Model IDs, GenParams, credentials constants — settings only.",
+      "whyItMatters": "Single place to swap Maverick for PDF Llama ID on SN.",
+      "childTopics": []
+    },
+    {
+      "id": "model_util",
+      "label": "model.py utility",
+      "size": "core",
+      "group": "app",
+      "definition": "initialize_model, per-model templates, get_ai_response, llama/granite/mistral_response.",
+      "whyItMatters": "HTTP layer stays thin; all AI logic lives here.",
+      "safeSentence": "llm_test imports model; model imports config.",
+      "commonTrap": "Putting LangChain chains directly in Flask routes with no model.py.",
+      "childTopics": [],
+      "externalLinks": [
+        { "label": "model.py", "href": "../../lab/python/module3/genai_flask_app/model.py" },
+        { "label": "llm_test", "href": "../../lab/python/module3/genai_flask_app/llm_test.py" }
+      ]
+    },
+    {
+      "id": "flask_generate",
+      "label": "POST /generate",
+      "size": "core",
+      "group": "app",
+      "definition": "Flask reads message + model name, calls handler, adds duration, jsonify.",
+      "whyItMatters": "Production-shaped API boundary — same pattern as FastAPI later.",
+      "note": { "summary": "curl POST /generate with granite|llama|mistral — proved on SN VM." },
+      "childTopics": [],
+      "externalLinks": [
+        { "label": "app2.py", "href": "../../lab/python/module3/genai_flask_app/app2.py" }
+      ]
+    }
+  ],
+  "links": [
+    { "source": "sn_auth", "target": "model_tokens", "label": "then" },
+    { "source": "model_tokens", "target": "lcel_pipe_m3", "label": "wrap in" },
+    { "source": "lcel_pipe_m3", "target": "json_ai_response", "label": "structure" },
+    { "source": "json_ai_response", "target": "config_module", "label": "configure" },
+    { "source": "config_module", "target": "model_util", "label": "feeds" },
+    { "source": "model_util", "target": "flask_generate", "label": "exposed by" }
+  ],
+  "paths": [
+    {
+      "id": "lab_lane",
+      "label": "Lab Bite Order",
+      "description": "Probe → LangChain → config/model → Flask",
+      "nodeIds": ["sn_auth", "model_tokens", "lcel_pipe_m3", "json_ai_response", "config_module", "model_util", "flask_generate"]
+    }
+  ]
+}

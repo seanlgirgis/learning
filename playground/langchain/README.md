@@ -41,7 +41,7 @@ Earlier LCEL drills: `08.lcel.1.py` … `14.lcel.chain.custom_formatting.py` —
 ## Canonical reference (read-only)
 
 - `courses/crs_001_develop_generative_ai_applications_get_started/lab/python/`
-- `courses/crs_001_develop_generative_ai_applications_get_started/source_cards/05_06_invoke_and_vocabulary.md`
+- `courses/crs_001_develop_generative_ai_applications_get_started/source_cards/10-invoke-vocabulary.md`
 
 ## Shared watsonx helper
 

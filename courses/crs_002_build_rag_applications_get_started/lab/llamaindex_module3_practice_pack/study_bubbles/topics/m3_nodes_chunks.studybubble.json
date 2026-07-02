@@ -1,0 +1,25 @@
+{
+  "id": "m3_nodes_chunks",
+  "title": "Nodes / Chunks (scaffold)",
+  "subtitle": "SentenceSplitter → nodes — upgrade in Phase 2",
+  "parentTopic": { "label": "RAG Pipeline", "topic": "m3_rag_pipeline.studybubble.json" },
+  "groups": [{ "id": "scaffold", "label": "Scaffold", "color": "#FBBF24" }],
+  "mapResources": [
+    { "label": "Back: Pipeline", "type": "map", "topic": "m3_rag_pipeline.studybubble.json" },
+    { "label": "Documents", "type": "map", "topic": "m3_documents.studybubble.json" },
+    { "label": "Embeddings", "type": "map", "topic": "m3_embeddings.studybubble.json" }
+  ],
+  "nodes": [
+    {
+      "id": "nodes_core",
+      "label": "Nodes / Chunks",
+      "size": "core",
+      "group": "Scaffold",
+      "definition": "Smaller retrieval units from SentenceSplitter.",
+      "commonTrap": "Three sentences ≠ three nodes; chunk_size is tokens.",
+      "note": { "summary": "Detailed notes coming.\n\nSentenceSplitter(chunk_size=15, chunk_overlap=2)\nnodes = splitter.get_nodes_from_documents([doc])" }
+    }
+  ],
+  "links": [],
+  "paths": []
+}

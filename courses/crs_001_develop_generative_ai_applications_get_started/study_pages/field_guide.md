@@ -1,5 +1,8 @@
 # Develop Generative AI Applications: Get Started — Field Guide
 
+**Status:** Course complete · certificate earned 2026-06-19  
+**Completion hub:** [COURSE_COMPLETE.md](COURSE_COMPLETE.md) · **Flows:** [exercise_and_capstone_flows.md](exercise_and_capstone_flows.md)
+
 ## Course flow
 
 ```text
@@ -44,6 +47,22 @@ independent steps → parallel
 
 - [Concept and Code Quick Lookup](concept_and_code_quick_lookup.html)
 - [LangChain Code Patterns](langchain_code_patterns.html)
+- [Code Catalog (36 exercises)](../lab/CODE_CATALOG.md)
+- [Capstone Code Guide](../docs/CAPSTONE_CODE_GUIDE.md)
+- [Module 3 LAB_DOCKET](../source_material/module3/LAB_DOCKET.md)
 - [Chapter 1 Learning Evidence](chapter_01_learning_evidence.md)
 - [Certification Review Digest](certification_review_digest.html)
 - [Certification Self-Test](certification_self_test.html)
+- [Study Bubbles](../bubbles/index.html)
+
+## Module 3 delivery (completed)
+
+```mermaid
+flowchart LR
+  config[config.py] --> model[model.py]
+  model --> test[llm_test.py]
+  model --> app[app2.py Flask]
+  app --> api[POST /generate JSON]
+```
+
+Sean proved stack via `curl` on Skills Network (browser preview optional).

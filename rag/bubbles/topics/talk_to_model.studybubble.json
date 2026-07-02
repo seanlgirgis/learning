@@ -1,0 +1,99 @@
+{
+  "id": "talk_to_model",
+  "title": "Gen AI · Talk to the Model",
+  "subtitle": "Branch 1 — credentials, client, one invoke (provider-agnostic)",
+  "parentTopic": { "label": "Gen AI Applications — Landscape", "topic": "gen_ai_applications_landscape.studybubble.json" },
+  "groups": [
+    { "id": "setup", "label": "Setup", "color": "#4C78A8" },
+    { "id": "invoke", "label": "Invoke", "color": "#54A24B" },
+    { "id": "examples", "label": "Provider examples", "color": "#6B7280" }
+  ],
+  "mapResources": [
+    { "label": "← Landscape", "type": "map", "topic": "gen_ai_applications_landscape.studybubble.json" }
+  ],
+  "nodes": [
+    {
+      "id": "env_credentials",
+      "label": "Env & credentials",
+      "size": "core",
+      "group": "setup",
+      "definition": "Virtual env + secrets + model id + embedding model id. Every provider needs these three ideas: who am I calling, which LLM, which embedder.",
+      "whyItMatters": "Generic pattern — works for OpenAI, Anthropic, IBM, Azure, local Ollama. Names change; shape stays.",
+      "safeSentence": "Load env before any script.",
+      "note": { "summary": "Typical env vars (names vary by provider):\n• API key / token\n• LLM model id\n• Embedding model id" },
+      "externalLinks": [
+        { "label": "Example · Sean set_env (OpenAI)", "href": "file:///D:/py_venv/rag_application_builder_foundation/set_env.ps1" }
+      ]
+    },
+    {
+      "id": "llm_client_factory",
+      "label": "LLM client factory",
+      "size": "core",
+      "group": "setup",
+      "definition": "One small module that returns a chat model and an embeddings client — LangChain and scripts import the same factory.",
+      "whyItMatters": "Swap provider in one place; labs keep the same import names.",
+      "safeSentence": "One factory; many scripts share it.",
+      "externalLinks": [
+        { "label": "Example · Sean shim (OpenAI backend)", "href": "../../../playground/langchain/watson_llm.py" }
+      ]
+    },
+    {
+      "id": "model_compare",
+      "label": "Swap model id",
+      "size": "support",
+      "group": "invoke",
+      "definition": "Same invoke, different model id — compare wording and style, not retrieval.",
+      "safeSentence": "Retriever fixed; generator voice changes.",
+      "externalLinks": [
+        { "label": "Example · CRS 002 model compare", "href": "../../../courses/crs_002_build_rag_applications_get_started/lab/python/08_m1_model_compare.py" }
+      ]
+    },
+    {
+      "id": "smoke_invoke",
+      "label": "Smoke invoke",
+      "size": "core",
+      "group": "invoke",
+      "definition": "One successful text generation before you build chains, RAG, or UI.",
+      "whyItMatters": "Separates “provider broken” from “pipeline broken”.",
+      "safeSentence": "Prove the model answers once.",
+      "externalLinks": [
+        { "label": "Example · CRS 001 minimal invoke", "href": "../../../courses/crs_001_develop_generative_ai_applications_get_started/lab/python/05d_watsonx_smallest_test.py" },
+        { "label": "Example · CRS 002 RAG smoke", "href": "../../../courses/crs_002_build_rag_applications_get_started/lab/python/01_m1_rag_smoke.py" }
+      ]
+    },
+    {
+      "id": "provider_ibm",
+      "label": "Example · IBM watsonx",
+      "size": "detail",
+      "group": "examples",
+      "definition": "Coursera labs often use watsonx.ai — Granite, Mistral, project id, region URL.",
+      "safeSentence": "One provider option you practiced on IBM track.",
+      "externalLinks": [
+        { "label": "CRS 001 Watson routes map", "href": "../../../courses/crs_001_develop_generative_ai_applications_get_started/bubbles/outputs/crs_001_watson_two_routes.html" }
+      ]
+    },
+    {
+      "id": "provider_openai",
+      "label": "Example · OpenAI API",
+      "size": "detail",
+      "group": "examples",
+      "definition": "ChatOpenAI + OpenAIEmbeddings — common local/dev path; same LangChain pipe shape.",
+      "safeSentence": "API key + model name — widely used pattern."
+    }
+  ],
+  "links": [
+    { "source": "env_credentials", "target": "llm_client_factory", "label": "then" },
+    { "source": "llm_client_factory", "target": "smoke_invoke", "label": "prove" },
+    { "source": "smoke_invoke", "target": "model_compare", "label": "optional" },
+    { "source": "llm_client_factory", "target": "provider_ibm", "label": "example" },
+    { "source": "llm_client_factory", "target": "provider_openai", "label": "example" }
+  ],
+  "paths": [
+    {
+      "id": "first_invoke",
+      "label": "First invoke lane",
+      "description": "Credentials → client factory → one successful call. Provider links are optional examples.",
+      "nodeIds": ["env_credentials", "llm_client_factory", "smoke_invoke"]
+    }
+  ]
+}

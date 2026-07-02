@@ -1,0 +1,115 @@
+{
+  "id": "ground_vectors_chunks",
+  "title": "Gen AI · Ground",
+  "subtitle": "Branch 4 — vectors, chunks, embed, Chroma · in-memory vs persist",
+  "parentTopic": {
+    "label": "Gen AI Applications — Landscape",
+    "topic": "gen_ai_applications_landscape.studybubble.json"
+  },
+  "groups": [
+    { "id": "chunk", "label": "Chunking", "color": "#F58518" },
+    { "id": "store", "label": "Chroma storage", "color": "#4C78A8" },
+    { "id": "inspect", "label": "Inspect & fix", "color": "#E45756" }
+  ],
+  "mapResources": [
+    { "label": "← Landscape", "type": "map", "topic": "gen_ai_applications_landscape.studybubble.json" },
+    { "label": "Shared ingest module", "type": "lab", "href": "../../../courses/crs_002_build_rag_applications_get_started/lab/python/m1_rag_shared.py" }
+  ],
+  "nodes": [
+    {
+      "id": "why_chunk",
+      "label": "Why chunk at all",
+      "size": "core",
+      "group": "chunk",
+      "definition": "Whole policy file won't fit in one prompt slot; retrieval needs smaller searchable pieces.",
+      "whyItMatters": "You saw 16 chunks from one .txt — retrieval returns top-k of those, not the full file.",
+      "safeSentence": "Chunking = how big is each searchable piece."
+    },
+    {
+      "id": "recipe_character_split",
+      "label": "RECIPE · CharacterTextSplitter (now)",
+      "size": "core",
+      "group": "chunk",
+      "definition": "chunk_size=1000, overlap=0 in m1_rag_shared — course M1 default.",
+      "whyItMatters": "Oversized chunk warnings are a splitter quirk — not fatal.",
+      "safeSentence": "TextLoader → CharacterTextSplitter → list of Document objects.",
+      "note": {
+        "summary": "Your settings today:\n• chunk_size 1000\n• overlap 0\n• warnings when a split lands at ~1600–2000 chars"
+      },
+      "externalLinks": [
+        { "label": "build_chroma_from_txt", "href": "../../../courses/crs_002_build_rag_applications_get_started/lab/python/m1_rag_shared.py" }
+      ]
+    },
+    {
+      "id": "chunk_overlap_later",
+      "label": "LATER · overlap & other splitters",
+      "size": "detail",
+      "group": "chunk",
+      "definition": "RecursiveCharacterTextSplitter, semantic chunking — industry path; not required for M1 PASS.",
+      "whyItMatters": "You deferred this — map slot reserved so you know where it will live.",
+      "safeSentence": "When header-only chunks hurt answers, come back here."
+    },
+    {
+      "id": "chroma_in_memory",
+      "label": "Chroma · in-memory (M1)",
+      "size": "core",
+      "group": "store",
+      "definition": "Chroma.from_documents(...) with no persist_directory — dies when script ends.",
+      "whyItMatters": "All your PASS scripts so far. Re-ingest each run (cached .txt on disk, vectors in RAM).",
+      "safeSentence": "Fast to learn; rebuild each session.",
+      "externalLinks": [
+        { "label": "Lab 02", "href": "../../../courses/crs_002_build_rag_applications_get_started/lab/python/02_m1_rag_sean.py" }
+      ]
+    },
+    {
+      "id": "chroma_persist",
+      "label": "Chroma · persist (later)",
+      "size": "support",
+      "group": "store",
+      "definition": "persist_directory=... — embeddings survive between runs; re-ingest only when doc changes.",
+      "whyItMatters": "Slot on the map now so you do not confuse it with in-memory when course introduces it.",
+      "safeSentence": "Same Chroma API; add a folder path when ready.",
+      "note": {
+        "summary": "Not in your M1 scripts yet.\nWhen you add it: new recipe bubble under this node."
+      }
+    },
+    {
+      "id": "embed_model",
+      "label": "Embeddings · text-embedding-3-small",
+      "size": "support",
+      "group": "store",
+      "definition": "Embedding model turns each chunk into a vector — same credentials pattern as the LLM client.",
+      "whyItMatters": "Swap embed model → must re-ingest (vectors change).",
+      "safeSentence": "Chunks become vectors here; Chroma stores them."
+    },
+    {
+      "id": "inspect_sources",
+      "label": "INSPECT · return_source_documents",
+      "size": "core",
+      "group": "inspect",
+      "definition": "See which chunks the retriever actually picked — top-k only.",
+      "whyItMatters": "Lab 05 — header chunk vs body chunk. Chunking issue, not retrieval bug.",
+      "childTopics": [
+        { "label": "RAG Patterns Map", "topic": "rag_patterns.studybubble.json" }
+      ],
+      "externalLinks": [
+        { "label": "05_m1_return_sources.py", "href": "../../../courses/crs_002_build_rag_applications_get_started/lab/python/05_m1_return_sources.py" }
+      ]
+    }
+  ],
+  "links": [
+    { "source": "why_chunk", "target": "recipe_character_split", "label": "how" },
+    { "source": "recipe_character_split", "target": "embed_model", "label": "then" },
+    { "source": "embed_model", "target": "chroma_in_memory", "label": "store in" },
+    { "source": "chroma_in_memory", "target": "chroma_persist", "label": "evolves to" },
+    { "source": "recipe_character_split", "target": "inspect_sources", "label": "validate via" }
+  ],
+  "paths": [
+    {
+      "id": "ingest_lane",
+      "label": "Ingest lane (what you run today)",
+      "description": "txt → split → embed → Chroma in-memory.",
+      "nodeIds": ["why_chunk", "recipe_character_split", "embed_model", "chroma_in_memory"]
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-timestamp: 2026-06-16T00:22:03.379734+00:00
+timestamp: 2026-06-21T00:40:24.530407+00:00
 source topic path: topics/skill_pyspark_execution_model.studybubble.json
 output HTML path: outputs/skill_pyspark_execution_model.html
 mode: single-file
@@ -8,7 +8,7 @@ node count: 12
 link count: 12
 path count: 2
 validation result: PASS
-generated HTML byte size: 79537
+generated HTML byte size: 79789
 manual smoke test steps:
 1. Open outputs/single_file/tiny_capacity_demo.html directly from File Explorer.
 2. Confirm title and subtitle render.

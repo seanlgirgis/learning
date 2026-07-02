@@ -6,10 +6,7 @@ import sys
 CHECKS = (
     ("OPENAI_API_KEY", True),
     ("OPENAI_MODEL", False),
-    ("WATSONX_APIKEY", True),
-    ("WATSONX_PROJECT_ID", True),
-    ("WATSONX_URL", False),
-    ("WATSONX_MODEL_ID", True),
+    ("OPENAI_EMBEDDING_MODEL", False),
 )
 
 print("PLAYGROUND ENV CHECK")
@@ -27,6 +24,9 @@ for name, required in CHECKS:
         print(f"  opt  {name} (not set — defaults may apply)")
 
 print()
+print("  note  LLM + embeddings use OpenAI (watson_llm stealth swap)")
+print()
+
 if missing_required:
     print(
         "Run set_env.ps1 first:\n"

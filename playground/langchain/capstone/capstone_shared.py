@@ -14,13 +14,13 @@ _LANGCHAIN_ROOT = _CAPSTONE_DIR.parent
 if str(_LANGCHAIN_ROOT) not in sys.path:
     sys.path.insert(0, str(_LANGCHAIN_ROOT))
 
-from ibm_watsonx_ai.metanames import EmbedTextParamsMetaNames
 from langchain_chroma import Chroma
 from watson_llm import make_watsonx_embeddings
 
 # --- paths (both scripts must use these) ---
 CAPSTONE_DIR = _CAPSTONE_DIR
-CHROMA_DIR = CAPSTONE_DIR / "data" / "chroma_01"
+# OpenAI embeddings after watson_llm provider swap — re-run capstone_01_ingest.py once.
+CHROMA_DIR = CAPSTONE_DIR / "data" / "chroma_01_openai"
 MANIFEST_PATH = CAPSTONE_DIR / "data" / "ingest_manifest.json"
 CORPUS_PATH = CAPSTONE_DIR / "corpus_sources.json"
 
@@ -28,12 +28,6 @@ CORPUS_PATH = CAPSTONE_DIR / "corpus_sources.json"
 CHUNK_SIZE = 500
 CHUNK_OVERLAP = 50
 METADATA_SOURCE_KEY = "ingest_source_id"
-
-# Course labs use TRUNCATE_INPUT_TOKENS: 3 for tiny demos; capstone needs full text
-# so queries and chunks embed with real semantic signal (truncate=3 makes every query identical).
-EMBED_PARAMS = {
-    EmbedTextParamsMetaNames.RETURN_OPTIONS: {"input_text": True},
-}
 
 DEFAULT_SOURCE = (
     "https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/"
@@ -47,8 +41,8 @@ def chroma_has_data() -> bool:
 
 
 def make_embedding_model():
-    """Watsonx embeddings with capstone ``EMBED_PARAMS`` (Route B)."""
-    return make_watsonx_embeddings(EMBED_PARAMS)
+    """OpenAI embeddings via ``make_watsonx_embeddings`` stealth shim."""
+    return make_watsonx_embeddings()
 
 
 def open_vector_store(embedding_model=None) -> Chroma | None:

@@ -18,6 +18,8 @@ paths:
       - kind: course
         id: crs_002_build_rag_applications_get_started
         position: 2
+        coursera_url: "https://www.coursera.org/learn/build-rag-applications-get-started?specialization=rag-for-generative-ai-applications"
+        coursera_module1_home: "https://www.coursera.org/learn/build-rag-applications-get-started/home/module/1"
         status: scaffolded
         studybook_mirror: D:/Workarea/StudyBook/study_maps/DataCamp/courses/crs_002_build_rag_applications_get_started
       - kind: course

@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Source — Bubble Map</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <header class="app-header">
+    <h1>Source <span class="badge badge-ready">Phase 1</span></h1>
+    <p>Where knowledge lives — not yet a LlamaIndex Document.</p>
+    <nav class="top-nav">
+      <a href="index.html">Home</a>
+      <span class="here">Source</span>
+      <a href="02_loader.html">Loader →</a>
+    </nav>
+  </header>
+
+  <div class="bubble-layout">
+    <section class="bubble-canvas">
+      <p class="canvas-hint">Click a bubble — definition, examples, and notes appear on the right.</p>
+      <div class="bubble-map">
+        <span class="bubble-arrow" style="left:50%;top:34%;">↓</span>
+        <span class="bubble-arrow" style="left:50%;top:78%;">↓</span>
+
+        <a class="bubble-node" href="#cloud" style="left:50%;top:18%;">
+          <span class="bubble-circle">Cloud storage</span>
+          <span class="bubble-tag">S3, GCS, Azure</span>
+        </a>
+        <a class="bubble-node" href="#files" style="left:22%;top:38%;">
+          <span class="bubble-circle">Files</span>
+          <span class="bubble-tag">md, pdf, csv</span>
+        </a>
+        <a class="bubble-node" href="#hub" style="left:50%;top:42%;">
+          <span class="bubble-circle">Source</span>
+          <span class="bubble-tag">raw knowledge</span>
+        </a>
+        <a class="bubble-node" href="#folders" style="left:78%;top:38%;">
+          <span class="bubble-circle">Folders</span>
+          <span class="bubble-tag">directory tree</span>
+        </a>
+        <a class="bubble-node" href="#memory" style="left:18%;top:62%;">
+          <span class="bubble-circle">In-memory</span>
+          <span class="bubble-tag">Python string</span>
+        </a>
+        <a class="bubble-node" href="#web" style="left:38%;top:68%;">
+          <span class="bubble-circle">Web page</span>
+          <span class="bubble-tag">URL HTML</span>
+        </a>
+        <a class="bubble-node" href="#api" style="left:62%;top:68%;">
+          <span class="bubble-circle">API</span>
+          <span class="bubble-tag">JSON response</span>
+        </a>
+        <a class="bubble-node" href="#database" style="left:82%;top:62%;">
+          <span class="bubble-circle">Database</span>
+          <span class="bubble-tag">SQL rows</span>
+        </a>
+        <a class="bubble-node" href="#not-doc" style="left:50%;top:58%;">
+          <span class="bubble-circle" style="width:72px;height:72px;font-size:0.65rem;">≠ Document</span>
+          <span class="bubble-tag">important</span>
+        </a>
+        <a class="bubble-node link-out" href="02_loader.html" style="left:50%;top:88%;">
+          <span class="bubble-circle">Loader →</span>
+          <span class="bubble-tag">next step</span>
+        </a>
+      </div>
+    </section>
+
+    <aside class="side-panel">
+      <div class="side-head">
+        <h2>Notes</h2>
+        <p>Source bubble details</p>
+      </div>
+      <div class="side-body">
+        <div class="side-default">
+          <p style="color:var(--muted);font-size:0.9rem;">Pick a source type on the map.</p>
+          <div class="note-box">
+            <strong>Practice pack:</strong> sources live in <code>../data/company_knowledge/</code> until a loader runs.
+          </div>
+        </div>
+
+        <div class="panel-card" id="hub">
+          <h3>Source (hub)</h3>
+          <p>Any place your app’s knowledge lives <strong>before</strong> LlamaIndex touches it.</p>
+          <div class="note-box"><strong>Boundary:</strong> Source is outside the framework. First LlamaIndex object = <code>Document</code> from a <strong>Loader</strong>.</div>
+        </div>
+
+        <div class="panel-card" id="files">
+          <h3>Files</h3>
+          <p>Single files on disk: <code>.md</code>, <code>.txt</code>, <code>.pdf</code>, <code>.csv</code>, <code>.json</code>.</p>
+          <div class="code-block">../data/company_knowledge/01_company_overview.md
+../data/company_knowledge/08_product_matrix.csv</div>
+        </div>
+
+        <div class="panel-card" id="folders">
+          <h3>Folders</h3>
+          <p>A directory of many files — typical RAG corpus layout.</p>
+          <div class="code-block">../data/company_knowledge/
+  01_company_overview.md
+  02_support_policy.md
+  ...</div>
+        </div>
+
+        <div class="panel-card" id="memory">
+          <h3>In-memory text</h3>
+          <p>String already in Python — no file path needed.</p>
+          <div class="code-block">text = "Northwind refund policy: 30 days."</div>
+          <div class="note-box">Often wrapped manually in <code>Document(text=...)</code> — skips file loader.</div>
+        </div>
+
+        <div class="panel-card" id="web">
+          <h3>Web page</h3>
+          <p>Content fetched from a URL at runtime.</p>
+          <div class="code-block"># pseudo-code
+SimpleWebPageReader().load_data([url])</div>
+        </div>
+
+        <div class="panel-card" id="api">
+          <h3>API</h3>
+          <p>HTTP JSON — e.g. mock LinkedIn profile in icebreaker lab.</p>
+          <div class="code-block">data = response.json()  # source is the JSON blob
+# later: Document(text=json.dumps(data))</div>
+        </div>
+
+        <div class="panel-card" id="database">
+          <h3>Database</h3>
+          <p>Tables or query results — each row or joined text can become a Document.</p>
+          <div class="code-block"># pseudo-code
+for row in rows:
+    Document(text=row.body, metadata={"id": row.id})</div>
+        </div>
+
+        <div class="panel-card" id="cloud">
+          <h3>Cloud storage</h3>
+          <p>Blobs in S3 / GCS / Azure — usually download or use a connector, then load.</p>
+          <div class="note-box">Pattern: cloud blob → local path or stream → loader.</div>
+        </div>
+
+        <div class="panel-card" id="not-doc">
+          <h3>Source ≠ Document</h3>
+          <ul>
+            <li><strong>Source:</strong> file on disk, API JSON, DB row — outside LlamaIndex</li>
+            <li><strong>Document:</strong> Python object with <code>.text</code> + <code>.metadata</code></li>
+          </ul>
+          <div class="note-box"><strong>Loader</strong> is the bridge between these two worlds.</div>
+        </div>
+      </div>
+      <div class="side-foot">
+        <a href="index.html">← Home</a> · <a href="02_loader.html">Loader map →</a>
+      </div>
+    </aside>
+  </div>
+</body>
+</html>

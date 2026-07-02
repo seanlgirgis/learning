@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Loader Source Types — Bubble Map</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <header class="app-header">
+    <h1>Loader reads from…</h1>
+    <p>Every source type → same destination: <code>list[Document]</code>.</p>
+    <nav class="top-nav">
+      <a href="index.html">Home</a>
+      <a href="02_loader.html">← Loader patterns</a>
+      <span class="here">Source types</span>
+    </nav>
+  </header>
+
+  <div class="bubble-layout">
+    <section class="bubble-canvas">
+      <p class="canvas-hint">Nine input bubbles — one hub. Click for code or pseudo-code on the right.</p>
+      <div class="bubble-map" style="min-height:480px;">
+        <a class="bubble-node" href="#hub" style="left:50%;top:45%;">
+          <span class="bubble-circle">Loader</span>
+          <span class="bubble-tag">→ Documents</span>
+        </a>
+        <a class="bubble-node" href="#memory" style="left:20%;top:22%;">
+          <span class="bubble-circle">In-memory</span>
+        </a>
+        <a class="bubble-node" href="#single" style="left:38%;top:18%;">
+          <span class="bubble-circle">Single file</span>
+        </a>
+        <a class="bubble-node" href="#directory" style="left:62%;top:18%;">
+          <span class="bubble-circle">Directory</span>
+        </a>
+        <a class="bubble-node" href="#recursive" style="left:80%;top:22%;">
+          <span class="bubble-circle">Recursive</span>
+        </a>
+        <a class="bubble-node" href="#filtered" style="left:18%;top:68%;">
+          <span class="bubble-circle">Filtered</span>
+        </a>
+        <a class="bubble-node" href="#web" style="left:36%;top:74%;">
+          <span class="bubble-circle">Web page</span>
+        </a>
+        <a class="bubble-node" href="#api" style="left:54%;top:78%;">
+          <span class="bubble-circle">API</span>
+        </a>
+        <a class="bubble-node" href="#cloud" style="left:72%;top:74%;">
+          <span class="bubble-circle">Cloud</span>
+        </a>
+        <a class="bubble-node" href="#database" style="left:88%;top:68%;">
+          <span class="bubble-circle">Database</span>
+        </a>
+      </div>
+    </section>
+
+    <aside class="side-panel">
+      <div class="side-head">
+        <h2>Code &amp; notes</h2>
+        <p>Per source type</p>
+      </div>
+      <div class="side-body">
+        <div class="side-default">
+          <p style="color:var(--muted);font-size:0.9rem;">Click a source bubble around the Loader hub.</p>
+        </div>
+
+        <div class="panel-card" id="hub">
+          <h3>Loader hub</h3>
+          <p>All roads lead to <code>list[Document]</code>. Pick the reader that matches your source shape.</p>
+          <div class="note-box"><strong>Practice pack:</strong> directory + filter on <code>company_knowledge/</code>.</div>
+        </div>
+
+        <div class="panel-card" id="memory">
+          <h3>In-memory text</h3>
+          <div class="code-block">Document(text="...", metadata={"source": "manual"})</div>
+        </div>
+
+        <div class="panel-card" id="single">
+          <h3>Single file</h3>
+          <div class="code-block">SimpleDirectoryReader(
+    input_files=[path]
+).load_data()</div>
+        </div>
+
+        <div class="panel-card" id="directory">
+          <h3>Directory</h3>
+          <div class="code-block">SimpleDirectoryReader(str(DATA_DIR)).load_data()</div>
+        </div>
+
+        <div class="panel-card" id="recursive">
+          <h3>Recursive directory</h3>
+          <div class="code-block">SimpleDirectoryReader(str(DATA_DIR), recursive=True).load_data()</div>
+        </div>
+
+        <div class="panel-card" id="filtered">
+          <h3>Filtered directory</h3>
+          <div class="code-block">required_exts=[".md", ".csv"]
+exclude=["*.zip"]</div>
+        </div>
+
+        <div class="panel-card" id="web">
+          <h3>Web page</h3>
+          <div class="code-block"># pseudo-code
+SimpleWebPageReader().load_data([url])</div>
+        </div>
+
+        <div class="panel-card" id="api">
+          <h3>API</h3>
+          <div class="code-block">data = response.json()
+Document(text=json.dumps(data), metadata={"source": "api"})</div>
+        </div>
+
+        <div class="panel-card" id="cloud">
+          <h3>Cloud storage</h3>
+          <div class="code-block"># download blob → path → SimpleDirectoryReader(...)</div>
+        </div>
+
+        <div class="panel-card" id="database">
+          <h3>Database</h3>
+          <div class="code-block">docs = [Document(text=r.body, metadata={"title": r.title}) for r in rows]</div>
+        </div>
+      </div>
+      <div class="side-foot">
+        <a href="02_loader.html">← Loader patterns</a> · <a href="03_documents.html">Documents scaffold →</a>
+      </div>
+    </aside>
+  </div>
+</body>
+</html>

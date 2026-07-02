@@ -3,8 +3,11 @@
 ## Lab status
 
 ```text
-Lab coverage: DEVELOPING → STRONG for Module 1 and Module 2 local patterns
-Coursera Flask application lab: still to be completed and recorded
+Lab coverage: COMPLETE (2026-06-19)
+Module 1–2: 17 local Python labs — STRONG
+Module 3: Cloud IDE + genai_flask_app — verified via curl (see LAB_DOCKET)
+Capstones 1–4: playground/langchain/capstone — complete
+Catalog: CODE_CATALOG.md
 ```
 
 ## Chapter-to-lab mapping
@@ -13,7 +16,7 @@ Coursera Flask application lab: still to be completed and recorded
 |---|---|---|
 | Module 1 | `01` to `04` | PromptTemplate, ChatPromptTemplate, few-shot prompting |
 | Module 2 | `05` to `13` | LCEL, provider adapters, RunnableParallel, parsers, structured output, history |
-| Module 3 | To be added | Model selection and Flask application delivery |
+| Module 3 | `module3/` + `genai_flask_app/` | Watsonx, tokens, JsonOutputParser, Flask `/generate` |
 
 ## Run order
 
@@ -109,6 +112,28 @@ HumanMessage / AIMessage → what history contains
 
 `13_runnable_with_message_history.py` is retained as legacy enrichment because it emitted a deprecation warning. The production direction is LangGraph persistence, but that is outside the core course path.
 
+### 7. Module 3 — Cloud IDE Flask app
+
+Mirror: `lab/python/module3/` · Evidence: `source_material/module3/LAB_DOCKET.md`
+
+```bash
+# Cloud IDE /home/project (venv active)
+python3 llm_test.py
+python3 app2.py
+curl -s http://127.0.0.1:5000/
+curl -s -X POST http://127.0.0.1:5000/generate \
+  -H "Content-Type: application/json" \
+  -d '{"message":"What is the capital of Canada?","model":"granite"}'
+```
+
+Memory rule:
+
+```text
+config.py → settings
+model.py  → AI utility (imports config)
+app2.py   → HTTP only
+```
+
 ## Exact observed outputs to preserve
 
 Record successful outputs in:
@@ -144,4 +169,4 @@ This lab is considered strong when:
 2. OpenAI examples run with environment variables;
 3. Watsonx examples run with environment variables;
 4. outputs are saved under `expected_outputs/`;
-5. the Flask Module 3 lab is added or explicitly marked as pending.
+5. Module 3 Flask lab recorded in `LAB_DOCKET.md` (curl-verified 2026-06-19).

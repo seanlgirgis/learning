@@ -285,6 +285,53 @@ chapter_XX_section_slug_field_guide.html
       white-space: pre;
     }
 
+    .mermaid-wrap {
+      margin: 16px 0;
+      padding: 18px;
+      border: 1px solid #33404d;
+      border-radius: 11px;
+      background: #10161d;
+      overflow-x: auto;
+    }
+
+    .mermaid-wrap .mermaid {
+      display: flex;
+      justify-content: center;
+    }
+
+    .status-badge {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: var(--green-soft);
+      border: 1px solid rgba(3, 239, 98, 0.35);
+      color: var(--green);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .link-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .link-grid a {
+      display: block;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: var(--panel-soft);
+      color: var(--blue);
+      text-decoration: none;
+      font-size: 0.92rem;
+    }
+
+    .link-grid a:hover { border-color: var(--green); color: var(--green); }
+
     table {
       width: 100%;
       margin: 14px 0;
@@ -381,14 +428,15 @@ chapter_XX_section_slug_field_guide.html
       <p>
         Move from isolated calls to an application: select models systematically, compare candidates, connect LangChain to Flask, handle routes and errors, and plan operational monitoring.
       </p>
+      <p class="status-badge">Sean — completed 2026-06-19 · certificate earned · curl-verified on Skills Network</p>
 
       <div class="hero-actions">
-        <a class="button primary" href="../index.html">Course Home</a>
-        <a class="button secondary" href="../bubbles/outputs/crs_001_gen_ai_landscape.html">Landscape Map</a>
-        <a class="button secondary" href="field_guide.html">Main Field Guide</a>
-        <a class="button secondary" href="concept_and_code_quick_lookup.html">Concept & Code Quick Lookup</a>
+        <a class="button primary" href="COURSE_COMPLETE.md">Course Complete Hub</a>
+        <a class="button secondary" href="../bubbles/outputs/crs_001_module3_flask_app.html">Module 3 Bubble Map</a>
+        <a class="button secondary" href="../lab/CODE_CATALOG.md">Code Catalog</a>
+        <a class="button secondary" href="../source_material/module3/LAB_DOCKET.md">LAB_DOCKET</a>
+        <a class="button secondary" href="exercise_and_capstone_flows.md">All Flow Charts (MD)</a>
         <a class="button secondary" href="chapter_02_introduction_to_langchain_in_generative_ai_applications_field_guide.html">Previous: Module 2</a>
-        <a class="button secondary" href="field_guide.html">Next: Main Field Guide</a>
       </div>
     </header>
 
@@ -399,11 +447,13 @@ chapter_XX_section_slug_field_guide.html
         <a href="#concept-1">2. Model Selection and Evaluation</a>
         <a href="#concept-2">3. Application Lifecycle and Multimodel Design</a>
         <a href="#concept-3">4. Flask as the Application Interface</a>
-        <a href="#worked-example">5. Worked example</a>
-        <a href="#validation">6. Validation</a>
-        <a href="#mistakes">7. Common mistakes</a>
-        <a href="#interview">8. Interview translation</a>
-        <a href="#review">9. Memory review</a>
+        <a href="#flow-charts">5. Flow charts (lab stack)</a>
+        <a href="#lab-evidence">6. Lab evidence (Sean)</a>
+        <a href="#worked-example">7. Worked example</a>
+        <a href="#validation">8. Validation</a>
+        <a href="#mistakes">9. Common mistakes</a>
+        <a href="#interview">10. Interview translation</a>
+        <a href="#review">11. Memory review</a>
       </aside>
 
       <div class="content">
@@ -502,28 +552,147 @@ Monitoring and refinement</div>
           </table>
         </section>
 
+        <section class="section" id="flow-charts">
+          <h2>5. Flow Charts — Lab Stack</h2>
+          <p>Interactive diagrams for the Coursera guided project stack Sean built in Cloud IDE (<code>app2.py</code>).</p>
+
+          <h3>Bite path (probe → LangChain → Flask)</h3>
+          <div class="mermaid-wrap">
+            <pre class="mermaid">
+flowchart TD
+  subgraph phase0 [Phase 0 — Raw watsonx]
+    P0[venv + ibm-watsonx-ai]
+    P1[02d Granite tokens]
+    P2[03 Llama plain vs tokens]
+  end
+  subgraph phase1 [Phase 1 — LangChain]
+    P3[04 ChatWatsonx pipe]
+    P4[05 JsonOutputParser]
+  end
+  subgraph phase2 [Phase 2 — App]
+    C[config.py]
+    M[model.py]
+    T[llm_test.py]
+    A[app2.py Flask]
+  end
+  phase0 --> phase1 --> phase2
+  C --> M --> T
+  M --> A
+            </pre>
+          </div>
+
+          <h3>POST /generate sequence</h3>
+          <div class="mermaid-wrap">
+            <pre class="mermaid">
+sequenceDiagram
+  participant C as Client curl
+  participant F as app2.py
+  participant M as model.py
+  participant W as ChatWatsonx
+  C->>F: POST message + model name
+  F->>M: granite_response system user
+  M->>M: template | llm | JsonOutputParser
+  M->>W: invoke
+  W-->>M: text to dict
+  M-->>F: summary sentiment response
+  F-->>C: jsonify + duration
+            </pre>
+          </div>
+
+          <h3>Import chain (who sees config?)</h3>
+          <div class="mermaid-wrap">
+            <pre class="mermaid">
+flowchart LR
+  T[llm_test.py] --> M[model.py]
+  A[app2.py] --> M
+  M --> CFG[config.py]
+            </pre>
+          </div>
+
+          <div class="link-grid">
+            <a href="../bubbles/outputs/crs_001_module3_flask_app.html">Module 3 bubble map</a>
+            <a href="exercise_and_capstone_flows.md">Full Mermaid source (MD)</a>
+            <a href="../lab/python/module3/README.md">Bite roadmap</a>
+            <a href="../docs/CAPSTONE_CODE_GUIDE.md">Capstone flows (after course)</a>
+          </div>
+        </section>
+
+        <section class="section" id="lab-evidence">
+          <h2>6. Lab Evidence (Sean — 2026-06-19)</h2>
+          <p>Skills Network Cloud IDE. Browser preview was unavailable; stack verified with <code>curl</code> on the VM.</p>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Proof</th>
+                <th>Command / file</th>
+                <th>Result</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Three models JSON</td>
+                <td><code>curl POST /generate</code> granite · llama · mistral</td>
+                <td><code>summary</code>, <code>sentiment</code>, <code>response</code>, <code>duration</code></td>
+              </tr>
+              <tr>
+                <td>HTML UI served</td>
+                <td><code>curl GET /</code></td>
+                <td>Full <code>index.html</code> chat markup</td>
+              </tr>
+              <tr>
+                <td>Model sanity</td>
+                <td><code>python3 llm_test.py</code></td>
+                <td>All three models → structured dict</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="callout amber">
+            <strong>Traps documented in LAB_DOCKET:</strong> No <code>api_key</code> in <code>Credentials</code> on SN · Llama ID = Maverick (not PDF llama-3-2-11b) · <code>model.py</code> = AI utility · Flask stays thin.
+          </div>
+
+          <pre><code>/home/project/
+  config.py          # model IDs, GenParams
+  model.py           # templates + JsonOutputParser + 3 handlers
+  llm_test.py        # imports model only (model imports config)
+  app2.py            # POST /generate
+  templates/index.html
+  static/script.js + styles.css</code></pre>
+        </section>
+
         <section class="section" id="worked-example">
-          <h2>5. Worked Example</h2>
-          <p>The practical pattern connects a validated structured-output chain to a Flask route.</p>
+          <h2>7. Worked Example — Coursera Stack</h2>
+          <p>The lab pattern: <strong>config → model utility → Flask route</strong>. Not all logic in the route.</p>
 
-          <pre><code>structured_model = model.with_structured_output(TopicSummary)
-chain = prompt | structured_model
+          <pre><code># model.py (simplified)
+json_parser = JsonOutputParser(pydantic_object=AIResponse)
 
-@app.route(&quot;/explain&quot;, methods=[&quot;POST&quot;])
-def explain():
-    topic = request.json.get(&quot;topic&quot;, &quot;&quot;).strip()
-    if not topic:
-        return jsonify({&quot;error&quot;: &quot;topic is required&quot;}), 422
-    result = chain.invoke({&quot;topic&quot;: topic})
-    return jsonify(result.model_dump()), 200</code></pre>
+def get_ai_response(model, template, system_prompt, user_prompt):
+    chain = template | model | json_parser
+    return chain.invoke({...})
+
+def granite_response(system_prompt, user_prompt):
+    return get_ai_response(granite_llm, granite_template, ...)</code></pre>
+
+          <pre><code># app2.py (simplified)
+@app.route(&quot;/generate&quot;, methods=[&quot;POST&quot;])
+def generate():
+    data = request.get_json(silent=True)
+    user_message = data.get(&quot;message&quot;)
+    model_name = data.get(&quot;model&quot;)  # llama | granite | mistral
+    ...
+    result = handler(SYSTEM_PROMPT, user_message)
+    result[&quot;duration&quot;] = round(time.time() - start_time, 3)
+    return jsonify(result)</code></pre>
 
           <div class="callout green">
-            <strong>Result:</strong> The route validates input, invokes a reusable chain, receives a validated object, and returns application-ready JSON.
+            <strong>Result:</strong> HTTP validates input, picks a model handler, returns validated JSON fields — same shape production APIs use (FastAPI next).
           </div>
         </section>
 
         <section class="section" id="validation">
-          <h2>6. Validation and Troubleshooting</h2>
+          <h2>8. Validation and Troubleshooting</h2>
           <ul>
             <li>Test representative prompts against every candidate.</li>
             <li>Validate request fields before paid calls.</li>
@@ -537,7 +706,7 @@ def explain():
         </section>
 
         <section class="section" id="mistakes">
-          <h2>7. Common Mistakes</h2>
+          <h2>9. Common Mistakes</h2>
 
           <div class="qa">
             <article class="qa-item">
@@ -554,11 +723,21 @@ def explain():
               <strong>Returning raw output blindly</strong>
               Parse or validate model output before exposing it.
             </article>
+
+            <article class="qa-item">
+              <strong>Putting all LangChain code in Flask routes</strong>
+              Use a <code>model.py</code> utility module; routes only handle HTTP.
+            </article>
+
+            <article class="qa-item">
+              <strong>Quiz says fine-tune for domain</strong>
+              In practice: RAG + prompt templates + few-shot first; weight fine-tuning is later.
+            </article>
           </div>
         </section>
 
         <section class="section" id="interview">
-          <h2>8. Interview Translation</h2>
+          <h2>10. Interview Translation</h2>
 
           <div class="qa">
             <article class="qa-item">
@@ -575,11 +754,16 @@ def explain():
               <strong>What changes in production?</strong>
               Add evaluation, validation, security, observability, cost controls, governance, and failure handling.
             </article>
+
+            <article class="qa-item">
+              <strong>How do you expose GenAI to clients?</strong>
+              Web API (Flask/FastAPI) with server-side chains; stateful chat uses <code>session_id</code> + keyed storage.
+            </article>
           </div>
         </section>
 
         <section class="section" id="review">
-          <h2>9. Memory Review</h2>
+          <h2>11. Memory Review</h2>
 
           <div class="memory-box">
             <strong>Section summary</strong>
@@ -599,31 +783,45 @@ def explain():
             <li>Can I describe prototype-to-production controls?</li>
           </ul>
 
-          <div class="callout amber">
-            <strong>Lab decision:</strong> Complete the Coursera model-selection and Flask lab and record exact evidence.
+          <div class="callout green">
+            <strong>Lab complete:</strong> Coursera Module 3 guided project — curl-proved on SN (see <a href="../source_material/module3/LAB_DOCKET.md">LAB_DOCKET</a>).
           </div>
 
           <div class="callout green">
-            <strong>Completion standard:</strong> Explain the lifecycle and build a small Flask route backed by a validated LangChain chain.
+            <strong>Completion standard met:</strong> Multi-model <code>model.py</code> + <code>JsonOutputParser</code> + Flask <code>POST /generate</code> returning structured JSON.
+          </div>
+
+          <div class="link-grid">
+            <a href="COURSE_COMPLETE.md">Course complete hub</a>
+            <a href="../source_cards/12-module3-lab-quiz.md">RemNote M3 cards</a>
+            <a href="../bubbles/outputs/crs_001_capstone_flows.html">Capstone bubble map</a>
+            <a href="certification_review_digest.html">Certification review</a>
           </div>
         </section>
       </div>      </div>
     </div>
 
     <footer>
-      <span>Develop Generative AI Applications: Get Started · Module 3 Field Guide</span>
+      <span>Develop Generative AI Applications: Get Started · Module 3 · Complete 2026-06-19</span>
       <span>
-        <a href="../index.html">Course Home</a>
+        <a href="COURSE_COMPLETE.md">Course Complete</a>
         &nbsp;·&nbsp;
-        <a href="../bubbles/index.html">Bubble Maps</a>
+        <a href="../bubbles/outputs/crs_001_module3_flask_app.html">M3 Bubble</a>
         &nbsp;·&nbsp;
         <a href="field_guide.html">Main Field Guide</a>
         &nbsp;·&nbsp;
-        <a href="chapter_02_introduction_to_langchain_in_generative_ai_applications_field_guide.html">Previous: Module 2</a>
-        &nbsp;·&nbsp;
-        <a href="field_guide.html">Next: Main Field Guide</a>
+        <a href="chapter_02_introduction_to_langchain_in_generative_ai_applications_field_guide.html">Module 2</a>
       </span>
     </footer>
   </main>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: "dark",
+      securityLevel: "loose",
+      flowchart: { curve: "basis" }
+    });
+  </script>
 </body>
 </html>

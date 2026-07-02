@@ -1,0 +1,58 @@
+- LCEL build order: first step? >>A)
+    - Define a template string with variables like `{topic}`
+    - Create the pipe chain before the template exists
+    - Invoke with input values before building components
+    - Bind the output parser only
+- LCEL build order: after the template string? >>A)
+    - Create a PromptTemplate from that template
+    - Call the LLM first
+    - Split documents into chunks
+    - Write Flask routes
+- LCEL build order: after PromptTemplate? >>A)
+    - Build the chain with the pipe operator, e.g. `prompt | llm | parser`
+    - Invoke before connecting components
+    - Store only the final chain output in memory
+    - Load Chroma before the prompt exists
+- LCEL connect syntax: correct? >>A)
+    - `chain = prompt | llm | output_parser`
+    - `chain = [prompt, llm, output_parser]`
+    - `chain = prompt.connect(llm).connect(output_parser)`
+    - `chain = prompt >> llm >> output_parser`
+- Why split long documents in LangChain? >>A)
+    - Break text into chunks that fit model context windows and retrieval
+    - Eliminate duplicate files across folders
+    - Improve visual formatting in the UI
+    - Splitting exists mainly to reduce API cost with no other reason
+- Text splitting also helps RAG because: >>A)
+    - Smaller chunks embed and retrieve more precisely than one giant document
+    - It removes the need for an LLM
+    - It replaces ConversationBufferMemory
+    - It makes SequentialChain unnecessary
+- How does LangChain memory support continuity? >>A)
+    - Read from and write to memory across interactions
+    - Store only the final output of each chain and nothing else
+    - Physically alter devices to gain access
+    - Use sophisticated algorithms with no read/write step
+- Sequential chain vs memory: sequential chain? >>A)
+    - Pass one step's output as the next step's input in a fixed pipeline
+    - Remember the user's name across REPL turns
+    - Let the LLM pick which tool to call
+    - Embed PDFs into Chroma
+- Sequential chain vs memory: memory? >>A)
+    - Keep conversation history across turns in a chat
+    - Always retrieve from Chroma on every question
+    - Replace PromptTemplate with JsonOutputParser
+    - Build `prompt | llm` only once
+- Agent vs fixed RAG: fixed RetrievalQA? >>A)
+    - Always retrieve from the vector store, then answer
+    - Let the LLM choose calculator or search per question
+    - Only store chat history, never tools
+    - Run Flask routes before model selection
+- Agent vs fixed RAG: ReAct agent? >>A)
+    - LLM reasons, then may call tools such as search or calculator
+    - Always calls the vector store on every question
+    - Is the same as ConversationBufferMemory
+    - Skips the LLM and runs tools only
+- Complete: LCEL order mnemonic→template → PromptTemplate → pipe → invoke
+- Complete: text split main reason→fit context windows (and better retrieval chunks)
+- Complete: memory job→read/write history for continuity

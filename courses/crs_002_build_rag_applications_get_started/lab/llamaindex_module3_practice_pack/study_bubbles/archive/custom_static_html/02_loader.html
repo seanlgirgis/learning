@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Loader — Bubble Map</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <header class="app-header">
+    <h1>Loader <span class="badge badge-ready">Phase 1</span></h1>
+    <p>Reads sources → returns <code>list[Document]</code>.</p>
+    <nav class="top-nav">
+      <a href="index.html">Home</a>
+      <a href="01_source.html">← Source</a>
+      <span class="here">Loader</span>
+      <a href="03_documents.html">Documents →</a>
+    </nav>
+  </header>
+
+  <div class="bubble-layout">
+    <section class="bubble-canvas">
+      <p class="canvas-hint">Each bubble = one loading pattern. Side panel has code + notes.</p>
+      <div class="bubble-map" style="min-height:500px;">
+        <a class="bubble-node" href="#main" style="left:50%;top:32%;">
+          <span class="bubble-circle">Main example</span>
+          <span class="bubble-tag">start here</span>
+        </a>
+        <a class="bubble-node" href="#basic" style="left:22%;top:22%;">
+          <span class="bubble-circle">Basic dir</span>
+        </a>
+        <a class="bubble-node" href="#recursive" style="left:78%;top:22%;">
+          <span class="bubble-circle">Recursive</span>
+        </a>
+        <a class="bubble-node" href="#filter" style="left:15%;top:48%;">
+          <span class="bubble-circle">Filter ext</span>
+        </a>
+        <a class="bubble-node" href="#exclude" style="left:32%;top:58%;">
+          <span class="bubble-circle">Exclude</span>
+        </a>
+        <a class="bubble-node" href="#single" style="left:68%;top:58%;">
+          <span class="bubble-circle">Single file</span>
+        </a>
+        <a class="bubble-node" href="#manual" style="left:85%;top:48%;">
+          <span class="bubble-circle">Manual Doc</span>
+        </a>
+        <a class="bubble-node" href="#metadata" style="left:38%;top:78%;">
+          <span class="bubble-circle">Metadata</span>
+        </a>
+        <a class="bubble-node" href="#fallback" style="left:62%;top:78%;">
+          <span class="bubble-circle">Fallback line</span>
+        </a>
+        <a class="bubble-node link-out" href="02_loader_sources_map.html" style="left:50%;top:92%;">
+          <span class="bubble-circle">Source types</span>
+          <span class="bubble-tag">sub-map</span>
+        </a>
+      </div>
+    </section>
+
+    <aside class="side-panel">
+      <div class="side-head">
+        <h2>Code &amp; notes</h2>
+        <p>Loader bubble details</p>
+      </div>
+      <div class="side-body">
+        <div class="side-default">
+          <p style="color:var(--muted);font-size:0.9rem;">Click a loader pattern bubble.</p>
+          <div class="note-box"><strong>Returns:</strong> always think <code>list[Document]</code>.</div>
+        </div>
+
+        <div class="panel-card" id="main">
+          <h3>Main example</h3>
+          <div class="code-block">from pathlib import Path
+from llama_index.core import SimpleDirectoryReader
+
+DATA_DIR = Path(__file__).resolve().parent.parent / "data" / "company_knowledge"
+
+documents = SimpleDirectoryReader(str(DATA_DIR)).load_data()
+
+print(f"Loaded {len(documents)} documents")
+for doc in documents:
+    print(doc.metadata.get("file_name"), len(doc.text))</div>
+          <div class="note-box"><strong>Output:</strong> each item has <code>.text</code> and <code>.metadata</code>.</div>
+        </div>
+
+        <div class="panel-card" id="basic">
+          <h3>a) Basic directory</h3>
+          <div class="code-block">documents = SimpleDirectoryReader(str(DATA_DIR)).load_data()</div>
+          <p>One folder. Good for flat corpora like the practice pack.</p>
+        </div>
+
+        <div class="panel-card" id="recursive">
+          <h3>b) Recursive directory</h3>
+          <div class="code-block">documents = SimpleDirectoryReader(
+    str(DATA_DIR),
+    recursive=True,
+).load_data()</div>
+          <p>Includes subfolders.</p>
+        </div>
+
+        <div class="panel-card" id="filter">
+          <h3>c) Filter by extension</h3>
+          <div class="code-block">documents = SimpleDirectoryReader(
+    str(DATA_DIR),
+    recursive=True,
+    required_exts=[".md", ".csv"],
+).load_data()</div>
+          <div class="note-box"><strong>Quiz pattern:</strong> <code>recursive=True</code> + <code>required_exts</code>.</div>
+        </div>
+
+        <div class="panel-card" id="exclude">
+          <h3>d) Exclude archives / temp</h3>
+          <div class="code-block">documents = SimpleDirectoryReader(
+    str(DATA_DIR),
+    recursive=True,
+    exclude=["*.zip", "*.tmp", "archive"],
+).load_data()</div>
+        </div>
+
+        <div class="panel-card" id="single">
+          <h3>e) Single or selected files</h3>
+          <div class="code-block">documents = SimpleDirectoryReader(
+    input_files=[str(DATA_DIR / "01_company_overview.md")]
+).load_data()
+
+paths = [str(DATA_DIR / "02_support_policy.md"), str(DATA_DIR / "07_faq.md")]
+documents = SimpleDirectoryReader(input_files=paths).load_data()</div>
+        </div>
+
+        <div class="panel-card" id="manual">
+          <h3>f) Manual in-memory Document</h3>
+          <div class="code-block">from llama_index.core import Document
+
+documents = [
+    Document(text="Policy text here.", metadata={"source": "manual"}),
+]</div>
+          <p>No loader — you already have the text.</p>
+        </div>
+
+        <div class="panel-card" id="metadata">
+          <h3>Metadata keys (file loaders)</h3>
+          <ul>
+            <li><code>file_path</code></li>
+            <li><code>file_name</code></li>
+            <li><code>file_type</code></li>
+            <li><code>file_size</code></li>
+            <li><code>creation_date</code></li>
+            <li><code>last_modified_date</code></li>
+          </ul>
+          <div class="note-box">Inspect <code>doc.metadata</code> once per new source type.</div>
+        </div>
+
+        <div class="panel-card" id="fallback">
+          <h3>Safe display fallback</h3>
+          <div class="code-block">source = (
+    doc.metadata.get("file_name")
+    or doc.metadata.get("file_path")
+    or "unknown"
+)</div>
+          <p>Use when logging — not every loader fills every key.</p>
+        </div>
+      </div>
+      <div class="side-foot">
+        <a href="02_loader_sources_map.html">Source types map</a> · <a href="01_source.html">← Source</a>
+      </div>
+    </aside>
+  </div>
+</body>
+</html>

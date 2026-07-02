@@ -1,0 +1,7 @@
+This module explores the connections between vector databases, similarity search, recommendation systems, and Retrieval-Augmented Generation (RAG), while also providing instruction on essential database operations using Chroma DB. By analyzing employee data and building a food search recommendation system using hands-on labs, participants will gain a deeper understanding of both recommendation systems and Chroma DB. Moreover, the module highlights the critical role vector databases and similarity searches play within RAG systems.
+Learning Objectives
+Comprehend the connections between vector databases, similarity search, recommendation systems, and Retrieval-Augmented Generation (RAG).
+Execute key database operations using Chroma DB.
+Build recommendation systems using a vector database and an embedding model
+Understand the core principles of RAG and how they relate to vector databases and similarity searches
+Explore how vector databases power recommendation system

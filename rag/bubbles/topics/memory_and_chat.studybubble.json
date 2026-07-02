@@ -1,0 +1,126 @@
+{
+  "id": "memory_and_chat",
+  "title": "Gen AI · Memory & Chat",
+  "subtitle": "Branch 6 — follow-ups, history list, demo vs REPL",
+  "parentTopic": {
+    "label": "Gen AI Applications — Landscape",
+    "topic": "gen_ai_applications_landscape.studybubble.json"
+  },
+  "groups": [
+    { "id": "needs", "label": "You Need First", "color": "#E45756" },
+    { "id": "recipes", "label": "Recipes (pick one)", "color": "#54A24B" },
+    { "id": "crs001", "label": "CRS 001 twins", "color": "#4C78A8" }
+  ],
+  "mapResources": [
+    { "label": "← Landscape", "type": "map", "topic": "gen_ai_applications_landscape.studybubble.json" }
+  ],
+  "nodes": [
+    {
+      "id": "need_rag",
+      "label": "NEED · RAG running",
+      "size": "core",
+      "group": "needs",
+      "definition": "ConversationalRetrievalChain still retrieves from Chroma each turn — memory does not replace retrieval.",
+      "whyItMatters": "Turn 3 “aim of it” needs both: prior Q/A in history AND policy chunks from the retriever.",
+      "safeSentence": "Memory = what we already said; RAG = what the document says.",
+      "childTopics": [
+        { "label": "RAG Patterns Map", "topic": "rag_patterns.studybubble.json" }
+      ]
+    },
+    {
+      "id": "need_chroma",
+      "label": "NEED · Chroma in-memory",
+      "size": "core",
+      "group": "needs",
+      "definition": "M1 uses build_chroma_from_txt — no persist_directory yet.",
+      "whyItMatters": "Every memory script imports the same shared ingest you liked.",
+      "safeSentence": "Open Chroma map → In-memory bubble → m1_rag_shared.",
+      "childTopics": [
+        { "label": "Chroma & Chunks Map", "topic": "ground_vectors_chunks.studybubble.json" }
+      ],
+      "externalLinks": [
+        { "label": "m1_rag_shared.py", "href": "../../../courses/crs_002_build_rag_applications_get_started/lab/python/m1_rag_shared.py" }
+      ]
+    },
+    {
+      "id": "ingredient_history",
+      "label": "INGREDIENT · history list",
+      "size": "support",
+      "group": "needs",
+      "definition": "history: list[tuple[str,str]] — append (query, answer) after each invoke; pass as chat_history.",
+      "whyItMatters": "The pattern you understood in 04 vs 07: storing turns is what makes follow-ups work.",
+      "safeSentence": "Same list whether questions come from TURNS or from input().",
+      "note": {
+        "summary": "result = chain.invoke({\"question\": query, \"chat_history\": history})\nhistory.append((query, answer))"
+      }
+    },
+    {
+      "id": "recipe_demo",
+      "label": "RECIPE · Demo (fixed turns)",
+      "size": "core",
+      "group": "recipes",
+      "definition": "Scripted TURNS list — proves follow-ups without you typing.",
+      "whyItMatters": "Run this first in one session; REPL second.",
+      "safeSentence": "04 = demo mode for ConversationalRetrievalChain.",
+      "childTopics": [],
+      "externalLinks": [
+        { "label": "04_m1_memory_chat.py", "href": "../../../courses/crs_002_build_rag_applications_get_started/lab/python/04_m1_memory_chat.py" }
+      ]
+    },
+    {
+      "id": "recipe_repl",
+      "label": "RECIPE · REPL (you type)",
+      "size": "core",
+      "group": "recipes",
+      "definition": "while True + input() until quit/exit/bye — same chain and history as 04.",
+      "whyItMatters": "This is the one you ran happy with “aim of it”.",
+      "safeSentence": "07 = live mode; identical engine to 04.",
+      "childTopics": [],
+      "externalLinks": [
+        { "label": "07_m1_chat_repl.py", "href": "../../../courses/crs_002_build_rag_applications_get_started/lab/python/07_m1_chat_repl.py" }
+      ]
+    },
+    {
+      "id": "recipe_next_gradio",
+      "label": "NEXT · Gradio wrap",
+      "size": "detail",
+      "group": "recipes",
+      "definition": "Same chain, browser UI instead of terminal — M2.",
+      "childTopics": [
+        { "label": "Expose Map", "topic": "expose_interfaces.studybubble.json" }
+      ],
+      "externalLinks": [
+        { "label": "09_m2_gradio_sean.py (scaffold)", "href": "../../../courses/crs_002_build_rag_applications_get_started/lab/python/09_m2_gradio_sean.py" }
+      ]
+    },
+    {
+      "id": "crs001_history_labs",
+      "label": "CRS 001 · LCEL memory labs",
+      "size": "support",
+      "group": "crs001",
+      "definition": "MessagesPlaceholder, RunnableWithMessageHistory — same idea, no retrieval.",
+      "whyItMatters": "When memory chat is NOT over docs, use CRS 001 path instead of this map.",
+      "childTopics": [
+        { "label": "LangChain Compose Map", "topic": "compose_langchain.studybubble.json" }
+      ],
+      "externalLinks": [
+        { "label": "Labs 10–13", "href": "../../../courses/crs_001_develop_generative_ai_applications_get_started/lab/CODE_CATALOG.md" }
+      ]
+    }
+  ],
+  "links": [
+    { "source": "need_chroma", "target": "need_rag", "label": "then" },
+    { "source": "need_rag", "target": "ingredient_history", "label": "plus" },
+    { "source": "ingredient_history", "target": "recipe_demo", "label": "→" },
+    { "source": "recipe_demo", "target": "recipe_repl", "label": "then" },
+    { "source": "recipe_repl", "target": "recipe_next_gradio", "label": "then" }
+  ],
+  "paths": [
+    {
+      "id": "memory_chat_recipe_lane",
+      "label": "Recipe lane · Memory chat over docs",
+      "description": "Click NEED bubbles first, then RECIPE demo → REPL.",
+      "nodeIds": ["need_chroma", "need_rag", "ingredient_history", "recipe_demo", "recipe_repl"]
+    }
+  ]
+}

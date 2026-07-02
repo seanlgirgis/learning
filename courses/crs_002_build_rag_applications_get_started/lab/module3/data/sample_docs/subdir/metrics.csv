@@ -1,0 +1,3 @@
+metric,value
+rag_queries_per_day,1200
+avg_latency_ms,850

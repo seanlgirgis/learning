@@ -1,6 +1,6 @@
-timestamp: 2026-06-16T00:22:06.919457+00:00
-source topic path: iac_why_terraform_exists.studybubble.json
-output HTML path: iac_why_terraform_exists.html
+timestamp: 2026-06-21T00:40:24.555771+00:00
+source topic path: references/model_maps/landscape/iac_why_terraform_exists.studybubble.json
+output HTML path: references/model_maps/landscape/iac_why_terraform_exists.html
 mode: single-file
 topic id: iac_why_terraform_exists
 topic title: IaC: Why Terraform Exists
@@ -8,7 +8,7 @@ node count: 10
 link count: 10
 path count: 1
 validation result: PASS
-generated HTML byte size: 81351
+generated HTML byte size: 81635
 manual smoke test steps:
 1. Open outputs/single_file/tiny_capacity_demo.html directly from File Explorer.
 2. Confirm title and subtitle render.

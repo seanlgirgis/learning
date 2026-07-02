@@ -12,7 +12,7 @@ import shutil
 
 from study_bubbles.build_topic import _load_layout, build_single_file
 from study_bubbles.container import load_container_config
-from study_bubbles.style import format_model_maps_summary
+from study_bubbles.style import ENGINE_ROOT, format_model_maps_summary, get_model_maps
 from tools.sync_downloaded_layouts import sync_downloaded_layouts
 
 
@@ -115,6 +115,138 @@ def _run_model_maps(_args: argparse.Namespace) -> int:
     return 0
 
 
+def _topic_id_from_filename(filename: str) -> str:
+    if filename.endswith(".studybubble.json"):
+        return filename[: -len(".studybubble.json")]
+    if filename.endswith(".json"):
+        return filename[: -len(".json")]
+    return filename
+
+
+def _build_topic_file(
+    *,
+    topic_path: Path,
+    out_html_path: Path,
+    layout_path: Path | None,
+    project_root: Path,
+    viewer_root: Path,
+) -> int:
+    return build_single_file(
+        topic_path=topic_path,
+        out_html_path=out_html_path,
+        layout_path=layout_path,
+        project_root=project_root,
+        viewer_root=viewer_root,
+    )
+
+
+def _run_rebuild_all(_args: argparse.Namespace) -> int:
+    learning_root = PROJECT_ROOT.parent
+    viewer_root = (PROJECT_ROOT / "viewer").resolve()
+    if not viewer_root.exists():
+        print(f"ERROR: viewer folder not found: {viewer_root}")
+        return 1
+
+    exit_code = 0
+    built = 0
+    failed: list[str] = []
+
+    print("=== StudyBubble rebuild-all (leaf dblclick fix) ===\n")
+
+    for ini_path in sorted(learning_root.rglob("bubbles.ini")):
+        if "studybubble_container_template" in ini_path.as_posix():
+            continue
+        container_root = ini_path.parent
+        try:
+            container = load_container_config(cwd=container_root)
+        except FileNotFoundError as exc:
+            print(str(exc))
+            exit_code = 1
+            continue
+
+        topic_files = sorted(container.topics_dir.glob("*.studybubble.json"))
+        if not topic_files:
+            continue
+
+        print(f"Container: {container_root.relative_to(learning_root)}")
+        for topic_path in topic_files:
+            topic_id = _topic_id_from_filename(topic_path.name)
+            layout_path = container.layouts_dir / f"{topic_id}.layout.json"
+            if not layout_path.is_file():
+                layout_path = None
+            out_html_path = container.outputs_dir / f"{topic_id}.html"
+            rc = _build_topic_file(
+                topic_path=topic_path,
+                out_html_path=out_html_path,
+                layout_path=layout_path,
+                project_root=container.root,
+                viewer_root=viewer_root,
+            )
+            if rc == 0:
+                built += 1
+                print(f"  PASS {topic_id}")
+            else:
+                failed.append(str(out_html_path))
+                exit_code = 1
+                print(f"  FAIL {topic_id}")
+        print("")
+
+    engine_topics_dir = PROJECT_ROOT / "topics"
+    engine_out_dir = PROJECT_ROOT / "outputs" / "single_file"
+    engine_layouts = PROJECT_ROOT / "layouts"
+    if engine_topics_dir.is_dir():
+        print("Engine demos: Study_bubbles/topics")
+        for topic_path in sorted(engine_topics_dir.glob("*.studybubble.json")):
+            topic_id = _topic_id_from_filename(topic_path.name)
+            layout_path = engine_layouts / f"{topic_id}.layout.json"
+            if not layout_path.is_file():
+                layout_path = None
+            out_html_path = engine_out_dir / f"{topic_id}.html"
+            engine_out_dir.mkdir(parents=True, exist_ok=True)
+            rc = _build_topic_file(
+                topic_path=topic_path,
+                out_html_path=out_html_path,
+                layout_path=layout_path,
+                project_root=PROJECT_ROOT,
+                viewer_root=viewer_root,
+            )
+            if rc == 0:
+                built += 1
+                print(f"  PASS {topic_id}")
+            else:
+                failed.append(str(out_html_path))
+                exit_code = 1
+                print(f"  FAIL {topic_id}")
+        print("")
+
+    print("Model maps: references/model_maps")
+    for model_map in get_model_maps():
+        layout_path = model_map.layout_json if model_map.layout_json.is_file() else None
+        rc = _build_topic_file(
+            topic_path=model_map.topic_json,
+            out_html_path=model_map.html,
+            layout_path=layout_path,
+            project_root=ENGINE_ROOT,
+            viewer_root=viewer_root,
+        )
+        if rc == 0:
+            built += 1
+            print(f"  PASS {model_map.id}")
+        else:
+            failed.append(str(model_map.html))
+            exit_code = 1
+            print(f"  FAIL {model_map.id}")
+    print("")
+
+    print(f"Built: {built}")
+    if failed:
+        print(f"Failed ({len(failed)}):")
+        for path in failed:
+            print(f"  - {path}")
+
+    return exit_code
+
+
 def _run_import_layout(args: argparse.Namespace) -> int:
     try:
         container = load_container_config(cwd=Path.cwd())
@@ -166,6 +298,12 @@ def main(argv: list[str] | None = None) -> int:
     p_sync.add_argument("--downloads", default=None, help="Downloads folder override")
     p_sync.add_argument("--dry-run", action="store_true", help="Plan-only mode; do not copy/delete/rebuild")
     p_sync.set_defaults(handler=_run_sync_layout)
+
+    p_rebuild_all = sub.add_parser(
+        "rebuild-all",
+        help="Rebuild every container map + engine demos + model maps (embeds current viewer)",
+    )
+    p_rebuild_all.set_defaults(handler=_run_rebuild_all)
 
     args = parser.parse_args(argv)
     return args.handler(args)

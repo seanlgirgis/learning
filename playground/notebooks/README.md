@@ -1,6 +1,6 @@
 # Notebooks
 
-**Your working copies** of the two crs_001 Coursera labs — patched for local `WATSONX_*` env.
+**Your working copies** of the two crs_001 Coursera labs — patched for local **OpenAI** via `watson_llm` / `watson_helper` shims.
 
 | File | Source |
 |------|--------|
@@ -25,7 +25,15 @@ python -m ipykernel install --user --name rag_foundation --display-name "RAG Fou
 D:\Workarea\learning\playground\notebooks\start_jupyter.ps1
 ```
 
-`start_jupyter.ps1` runs `set_env.ps1` and adds `../langchain` to **PYTHONPATH** so notebooks import the same two helpers as `.py` labs.
+`start_jupyter.ps1` runs `set_env.ps1`, adds `../langchain` to **PYTHONPATH**, and **by default clears Jupyter caches**:
+
+- `.ipynb_checkpoints/` (stale autosave snapshots)
+- stale `jupyter runtime` session files
+- JupyterLab workspace restore (open tabs / layout)
+
+**Browser note:** closing the Jupyter *server* does not clear an already-open browser tab’s in-memory editor. After restart, **close old notebook tabs** and reopen from the file tree, or use **File → Reload Notebook from Disk**.
+
+Skip cache clear: `.\start_jupyter.ps1 -SkipCacheClear`
 
 Custom port:
 
@@ -37,10 +45,10 @@ Custom port:
 
 | Module | Route | Use |
 |--------|-------|-----|
-| **`watson_helper.py`** | A — IBM SDK | `model.generate()` → dict |
-| **`watson_llm.py`** | B — LangChain | `make_watsonx_llm()`, `invoke`, pipes, `make_watsonx_embeddings()` |
+| **`watson_helper.py`** | A — compat shim | `model.generate()` → dict (OpenAI backend) |
+| **`watson_llm.py`** | B — LangChain | `make_watsonx_llm()`, `invoke`, pipes, `make_watsonx_embeddings()` (OpenAI) |
 
-Both read **`WATSONX_*`** from `set_env.ps1`.
+Both use **`OPENAI_*`** from `set_env.ps1` (watsonx-compatible function names kept). See [PROVIDER_SWAP_WATSON_TO_OPENAI.md](../langchain/PROVIDER_SWAP_WATSON_TO_OPENAI.md).
 
 ## Refresh notebooks from Downloads
 
@@ -53,6 +61,7 @@ python D:\Workarea\learning\playground\notebooks\prepare_local_notebooks.py
 Re-apply env patches only (without re-copying from Downloads):
 
 ```powershell
+python D:\Workarea\learning\playground\notebooks\patch_notebooks_openai.py
 python D:\Workarea\learning\playground\notebooks\patch_langchain_env.py
 ```
 

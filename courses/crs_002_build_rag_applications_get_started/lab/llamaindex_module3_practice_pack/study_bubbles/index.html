@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>StudyBubble Maps | Module 3 Practice Pack</title>
+  <style>
+    body{font-family:Segoe UI,Arial,sans-serif;background:#0d1117;color:#e6edf3;margin:0;line-height:1.6}
+    main{max-width:960px;margin:0 auto;padding:28px 20px}
+    a{color:#58a6ff} a:hover{color:#03ef62}
+    .card{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:18px;margin:14px 0}
+    .badge{font-size:.8rem;color:#9da7b3}
+    .ready{color:#4ade80}
+    .scaffold{color:#fbbf24}
+    code{background:#21262d;padding:2px 6px;border-radius:4px}
+  </style>
+</head>
+<body>
+<main>
+  <nav style="color:#9da7b3;margin-bottom:16px;">
+    <a href="../README.md">Practice pack</a> › StudyBubble Maps
+  </nav>
+  <h1>Module 3 — StudyBubble Maps</h1>
+  <p>Real <strong>Study_bubbles</strong> maps: search, drag, export layout, study paths, cross-links.</p>
+  <p>Source of truth: <code>topics/*.studybubble.json</code> — rebuild with <code>studybubble.py build &lt;topic&gt;</code>.</p>
+
+  <article class="card">
+    <span class="badge ready">Phase 1 · 10 bubbles</span>
+    <h2><a href="outputs/m3_rag_pipeline.html">RAG Pipeline (main map)</a></h2>
+    <p>Start here — full flow from Loading Source to Answer.</p>
+  </article>
+
+  <article class="card">
+    <span class="badge ready">Phase 1 · detail maps</span>
+    <h2><a href="outputs/m3_loader.html">Loading Source</a></h2>
+    <p>Combined map: source types + reader road + manual Document road.</p>
+  </article>
+
+  <article class="card">
+    <h2><a href="outputs/m3_loader_sources.html">Source Type Patterns</a></h2>
+    <p>Optional helper map: which source types use reader vs manual patterns.</p>
+  </article>
+
+  
+
+  <h2 style="margin-top:28px;color:#9da7b3;font-size:1rem;">Scaffolds (upgrade as we study)</h2>
+
+  <article class="card">
+    <span class="badge scaffold">scaffold</span>
+    <h2><a href="outputs/m3_documents.html">Documents</a> ·
+      <a href="outputs/m3_nodes_chunks.html">Nodes</a> ·
+      <a href="outputs/m3_embeddings.html">Embeddings</a> ·
+      <a href="outputs/m3_index_vector_store.html">Index</a></h2>
+  </article>
+
+  <article class="card">
+    <span class="badge scaffold">scaffold</span>
+    <h2><a href="outputs/m3_retriever.html">Retriever</a> ·
+      <a href="outputs/m3_query_engine.html">Query Engine</a> ·
+      <a href="outputs/m3_genai_model.html">GenAI</a> ·
+      <a href="outputs/m3_answer.html">Answer</a></h2>
+  </article>
+
+  <p style="color:#9da7b3;font-size:.9rem;">
+    <a href="README.md">README</a> · <a href="glossary.md">Glossary</a> ·
+    <a href="manifest.md">Manifest</a> ·
+    Old custom HTML: <code>archive/custom_static_html/</code>
+  </p>
+</main>
+</body>
+</html>

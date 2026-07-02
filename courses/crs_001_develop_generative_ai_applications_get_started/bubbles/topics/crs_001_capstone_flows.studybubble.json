@@ -1,0 +1,110 @@
+{
+  "id": "crs_001_capstone_flows",
+  "title": "CRS 001 — Capstone Use-Case Flows",
+  "subtitle": "RAG tutor · review desk · session memory · ReAct agent",
+  "parentTopic": {
+    "label": "Gen AI Landscape Map",
+    "topic": "crs_001_gen_ai_landscape.studybubble.json"
+  },
+  "groups": [
+    { "id": "rag", "label": "RAG", "color": "#4C78A8" },
+    { "id": "chains", "label": "Fixed Chains", "color": "#F58518" },
+    { "id": "state", "label": "Stateful", "color": "#54A24B" },
+    { "id": "agent", "label": "Agent", "color": "#E45756" }
+  ],
+  "mapResources": [
+    { "label": "Capstone Guide", "type": "page", "href": "../../docs/CAPSTONE_CODE_GUIDE.md" },
+    { "label": "Flow charts MD", "type": "page", "href": "../../study_pages/exercise_and_capstone_flows.md" },
+    { "label": "capstones.md", "type": "lab", "href": "../../../playground/langchain/capstone/capstones.md" },
+    { "label": "Back: Landscape", "type": "map", "topic": "crs_001_gen_ai_landscape.studybubble.json" }
+  ],
+  "nodes": [
+    {
+      "id": "c01_ingest",
+      "label": "C01 Ingest",
+      "size": "core",
+      "group": "rag",
+      "definition": "PDFs → split → embed → Chroma (chroma_01_openai).",
+      "whyItMatters": "Without ingest, RAG chat has nothing to retrieve.",
+      "childTopics": [],
+      "externalLinks": [
+        { "label": "capstone_01_ingest.py", "href": "../../../playground/langchain/capstone/capstone_01_ingest.py" }
+      ]
+    },
+    {
+      "id": "c01_chat",
+      "label": "C01 RAG Chat",
+      "size": "core",
+      "group": "rag",
+      "definition": "Retrieve top-k chunks → stuff context → prompt | llm → answer.",
+      "whyItMatters": "Fixed RAG QA — same family as course RAG specialization.",
+      "safeSentence": "Retrieve then generate; model does not pick the tool.",
+      "childTopics": [],
+      "externalLinks": [
+        { "label": "capstone_01_chat.py", "href": "../../../playground/langchain/capstone/capstone_01_chat.py" }
+      ]
+    },
+    {
+      "id": "c02_review",
+      "label": "C02 Review Desk",
+      "size": "support",
+      "group": "chains",
+      "definition": "Sequential steps: sentiment → summary → customer reply → JSON.",
+      "whyItMatters": "Multi-step without agent overhead when route is always the same.",
+      "childTopics": [],
+      "externalLinks": [
+        { "label": "capstone_02_review_desk.py", "href": "../../../playground/langchain/capstone/capstone_02_review_desk.py" }
+      ]
+    },
+    {
+      "id": "c03_memory",
+      "label": "C03 Session Memory",
+      "size": "core",
+      "group": "state",
+      "definition": "session_id keys message history — load, append, save (chat_memory.json in dev).",
+      "whyItMatters": "Same pattern as FastAPI stateful chat with Redis/DB in production.",
+      "commonTrap": "One global list for all users.",
+      "childTopics": [],
+      "externalLinks": [
+        { "label": "capstone_03_remember_me_chat.py", "href": "../../../playground/langchain/capstone/capstone_03_remember_me_chat.py" }
+      ]
+    },
+    {
+      "id": "c04_agent",
+      "label": "C04 ReAct Agent",
+      "size": "core",
+      "group": "agent",
+      "definition": "LLM picks search_course_docs or calculator from tool descriptions each turn.",
+      "whyItMatters": "Contrasts with fixed RAG — router is the model, not your if/else only.",
+      "commonTrap": "Using make_watsonx_llm instead of make_watsonx_agent_llm for ReAct.",
+      "childTopics": [],
+      "externalLinks": [
+        { "label": "capstone_04_research_agent.py", "href": "../../../playground/langchain/capstone/capstone_04_research_agent.py" }
+      ]
+    },
+    {
+      "id": "c04_rag_tool",
+      "label": "RAG as Tool",
+      "size": "support",
+      "group": "agent",
+      "definition": "search_course_docs wraps capstone 01 retrieval — agent invokes when needed.",
+      "whyItMatters": "Composes capstone 1 + 4 — RAG is one capability among several.",
+      "childTopics": []
+    }
+  ],
+  "links": [
+    { "source": "c01_ingest", "target": "c01_chat", "label": "feeds" },
+    { "source": "c01_chat", "target": "c04_rag_tool", "label": "reused in" },
+    { "source": "c04_rag_tool", "target": "c04_agent", "label": "tool of" },
+    { "source": "c02_review", "target": "c03_memory", "label": "then skills" },
+    { "source": "c03_memory", "target": "c04_agent", "label": "then" }
+  ],
+  "paths": [
+    {
+      "id": "capstone_order",
+      "label": "Suggested build order",
+      "description": "1 RAG → 3 memory → 2 chain → 4 agent",
+      "nodeIds": ["c01_ingest", "c01_chat", "c03_memory", "c02_review", "c04_rag_tool", "c04_agent"]
+    }
+  ]
+}

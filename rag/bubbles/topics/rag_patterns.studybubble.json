@@ -1,0 +1,111 @@
+{
+  "id": "rag_patterns",
+  "title": "Gen AI · RAG Patterns",
+  "subtitle": "Branch 5 — retrieve → augment → generate",
+  "parentTopic": {
+    "label": "Gen AI Applications — Landscape",
+    "topic": "gen_ai_applications_landscape.studybubble.json"
+  },
+  "groups": [
+    { "id": "needs", "label": "Needs", "color": "#E45756" },
+    { "id": "recipes", "label": "Recipes", "color": "#54A24B" }
+  ],
+  "mapResources": [
+    { "label": "← Landscape", "type": "map", "topic": "gen_ai_applications_landscape.studybubble.json" },
+    { "label": "Ground (vectors & chunks)", "type": "map", "topic": "ground_vectors_chunks.studybubble.json" }
+  ],
+  "nodes": [
+    {
+      "id": "need_chroma",
+      "label": "NEED · Chroma ingest",
+      "size": "core",
+      "group": "needs",
+      "definition": "build_chroma_from_txt must run before any RAG recipe — shared module, in-memory Chroma.",
+      "whyItMatters": "Every RAG script imports the same ingest you already trust.",
+      "safeSentence": "Click Chroma map if you forgot how txt becomes vectors.",
+      "childTopics": [
+        { "label": "Ground map", "topic": "ground_vectors_chunks.studybubble.json" }
+      ]
+    },
+    {
+      "id": "recipe_basic_qa",
+      "label": "RECIPE · Basic Q&A",
+      "size": "core",
+      "group": "recipes",
+      "definition": "RetrievalQA — one question, answer from top-k chunks.",
+      "whyItMatters": "Your 02 build — canonical M1 path.",
+      "safeSentence": "Start here for any new document.",
+      "externalLinks": [
+        { "label": "02_m1_rag_sean.py", "href": "../../../courses/crs_002_build_rag_applications_get_started/lab/python/02_m1_rag_sean.py" }
+      ]
+    },
+    {
+      "id": "recipe_dont_know",
+      "label": "RECIPE · Don't know",
+      "size": "support",
+      "group": "recipes",
+      "definition": "PromptTemplate tells model to refuse when context does not support an answer.",
+      "externalLinks": [
+        { "label": "03_m1_prompt_dont_know.py", "href": "../../../courses/crs_002_build_rag_applications_get_started/lab/python/03_m1_prompt_dont_know.py" }
+      ],
+      "childTopics": [
+        { "label": "Prompting Map", "topic": "prompting.studybubble.json" }
+      ]
+    },
+    {
+      "id": "recipe_sources",
+      "label": "RECIPE · Show sources",
+      "size": "support",
+      "group": "recipes",
+      "definition": "return_source_documents=True — inspect chunks, not faith.",
+      "externalLinks": [
+        { "label": "05_m1_return_sources.py", "href": "../../../courses/crs_002_build_rag_applications_get_started/lab/python/05_m1_return_sources.py" }
+      ]
+    },
+    {
+      "id": "recipe_swap_doc",
+      "label": "RECIPE · Swap document",
+      "size": "support",
+      "group": "recipes",
+      "definition": "Same pipeline, PRACTICE_URL / practiceDocument.txt.",
+      "externalLinks": [
+        { "label": "06_m1_practice_document.py", "href": "../../../courses/crs_002_build_rag_applications_get_started/lab/python/06_m1_practice_document.py" }
+      ]
+    },
+    {
+      "id": "recipe_conversational",
+      "label": "RECIPE · Conversational RAG",
+      "size": "core",
+      "group": "recipes",
+      "definition": "ConversationalRetrievalChain — retrieval + chat_history each turn.",
+      "childTopics": [
+        { "label": "Memory & Chat Map", "topic": "memory_and_chat.studybubble.json" }
+      ]
+    },
+    {
+      "id": "recipe_model_compare",
+      "label": "RECIPE · Compare models",
+      "size": "detail",
+      "group": "recipes",
+      "definition": "Same retrieval twice; swap LLM model id only — compare generator voice.",
+      "whyItMatters": "You ran this — retriever identical, voice different.",
+      "externalLinks": [
+        { "label": "08_m1_model_compare.py", "href": "../../../courses/crs_002_build_rag_applications_get_started/lab/python/08_m1_model_compare.py" }
+      ]
+    }
+  ],
+  "links": [
+    { "source": "need_chroma", "target": "recipe_basic_qa", "label": "then" },
+    { "source": "recipe_basic_qa", "target": "recipe_dont_know", "label": "add" },
+    { "source": "recipe_basic_qa", "target": "recipe_sources", "label": "inspect" },
+    { "source": "recipe_basic_qa", "target": "recipe_conversational", "label": "extend" }
+  ],
+  "paths": [
+    {
+      "id": "m1_study_order",
+      "label": "M1 study order",
+      "description": "Matches your README: 02 → 03 → 04 → 05 → …",
+      "nodeIds": ["need_chroma", "recipe_basic_qa", "recipe_dont_know", "recipe_conversational", "recipe_sources"]
+    }
+  ]
+}

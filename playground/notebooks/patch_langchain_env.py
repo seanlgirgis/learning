@@ -9,11 +9,11 @@ from pathlib import Path
 NOTEBOOK = Path(__file__).resolve().parent / "sean_langchain_lab.ipynb"
 
 LOCAL_NOTE = (
-    "> **Local copy:** LLM, embeddings, and `ModelInference` use **`WATSONX_*`** from "
-    "`start_jupyter.ps1` — not `skills-network`, `us-south`, or Coursera demo models.\n\n"
+    "> **Local copy:** LLM + embeddings via **`watson_llm`** / **`watson_helper`** → **OpenAI** "
+    "(`OPENAI_*` from `start_jupyter.ps1`). Not `skills-network` or Coursera demo models.\n\n"
 )
 
-LOCAL_MODEL_CELL = """# LOCAL SETUP — ModelInference from WATSONX_* env
+LOCAL_MODEL_CELL = """# LOCAL SETUP — OpenAI via watson_helper shim
 from watson_helper import credentials, model, model_id, parameters, project_id
 
 print("Loaded watson_helper.py")
@@ -24,9 +24,8 @@ print("URL:", credentials["url"])
 LOCAL_RUNNING_MD = (
     "### Running Locally\n\n"
     "This copy uses **`start_jupyter.ps1`** (runs `set_env.ps1`). "
-    "Helpers **`watson_helper.py`** (IBM) and **`watson_llm.py`** (LangChain + embeddings) in "
-    "`../langchain/` read **`WATSONX_MODEL_ID`**, **`WATSONX_URL`**, "
-    "**`WATSONX_PROJECT_ID`**, **`WATSONX_APIKEY`**.\n"
+    "Helpers **`watson_helper.py`** and **`watson_llm.py`** in `../langchain/` call **OpenAI** "
+    "via `OPENAI_API_KEY`, `OPENAI_MODEL`, `OPENAI_EMBEDDING_MODEL` (stealth `make_watsonx_*` names).\n"
 )
 
 LOCAL_MODEL_MD = (
@@ -36,21 +35,21 @@ LOCAL_MODEL_MD = (
 
 CHAT_LLM_CELL = """from watson_llm import make_watsonx_llm
 
-llama_llm = make_watsonx_llm()  # LOCAL: WATSONX_* env (name kept for later cells)
+llama_llm = make_watsonx_llm()  # LOCAL: OpenAI via watson_llm shim
 """
 
-EMBEDDING_CELL = """# LOCAL: WatsonxEmbeddings from WATSONX_* env
+EMBEDDING_CELL = """# LOCAL: OpenAI embeddings via make_watsonx_embeddings
 from watson_llm import make_watsonx_embeddings
 
 watsonx_embedding = make_watsonx_embeddings(embed_params)
 """
 
-EXERCISE_1_STARTER = """# LOCAL: compare temperature on WATSONX_MODEL_ID
+EXERCISE_1_STARTER = """# LOCAL: compare temperature on OPENAI_MODEL
 # (Coursera compares Granite vs Llama on Skills Network)
 from watson_llm import make_watsonx_llm
 import os
 
-print("Model:", os.environ["WATSONX_MODEL_ID"])
+print("Model:", os.environ.get("OPENAI_MODEL", "gpt-4o-mini"))
 
 parameters_creative = {
     GenParams.MAX_NEW_TOKENS: 256,
@@ -78,7 +77,7 @@ EXERCISE_1_SOLUTION = """# LOCAL: same model, two temperatures
 from watson_llm import make_watsonx_llm
 import os
 
-print("Model:", os.environ["WATSONX_MODEL_ID"])
+print("Model:", os.environ.get("OPENAI_MODEL", "gpt-4o-mini"))
 
 parameters_creative = {
     GenParams.MAX_NEW_TOKENS: 256,
@@ -108,7 +107,7 @@ for prompt in prompts:
 """
 
 EXERCISE_1_MD_NOTE = (
-    "> **Local:** Compare **temperature 0.8 vs 0.1** on your `WATSONX_MODEL_ID`. "
+    "> **Local:** Compare **temperature 0.8 vs 0.1** on your `OPENAI_MODEL`. "
     "Coursera's Skills Network lab compares Granite vs Llama — skip that here.\n\n"
 )
 
@@ -116,7 +115,7 @@ OLD_WATSONX_LLM_IMPORT = (
     "from ibm_watson_machine_learning.foundation_models.extensions.langchain import WatsonxLLM"
 )
 LOCAL_WATSONX_LLM_IMPORT = (
-    "from langchain_ibm import WatsonxLLM  # local: not ibm_watson_machine_learning (Py 3.13)"
+    "from watson_llm import make_watsonx_llm  # local: OpenAI shim (not langchain_ibm)"
 )
 
 WATSONX_EMBEDDINGS_RE = re.compile(
@@ -224,9 +223,12 @@ def _patch_cell(src: str, cell_type: str) -> tuple[str, bool]:
             drop = (
                 "from ibm_watsonx_ai.foundation_models import ModelInference\n",
                 "from langchain_ibm import WatsonxLLM  # local: not ibm_watson_machine_learning (Py 3.13)\n",
+                "from langchain_ibm import WatsonxLLM\n",
             )
             for line in drop:
                 src = src.replace(line, "")
+            if "from watson_llm import make_watsonx_llm" not in src:
+                src = "from watson_llm import make_watsonx_llm\n" + src
 
     if cell_type == "markdown":
         if "### Running Locally" in src and "start_jupyter.ps1" not in src:
@@ -276,7 +278,7 @@ def _patch_cell(src: str, cell_type: str) -> tuple[str, bool]:
         src = _ensure_embedding_import(src)
 
     src = src.replace('project_id = "skills-network"', "project_id = project_id  # from watson_helper")
-    src = src.replace("project_id=\"skills-network\"", 'project_id=os.environ["WATSONX_PROJECT_ID"]')
+    src = src.replace("project_id=\"skills-network\"", "# skills-network skipped — use make_watsonx_llm()")
 
     return src, src != original
 

@@ -1,0 +1,101 @@
+{
+  "id": "expose_interfaces",
+  "title": "Gen AI · Expose (REPL · Flask · Gradio)",
+  "subtitle": "Same chain · different front door",
+  "parentTopic": {
+    "label": "Gen AI Applications — Landscape",
+    "topic": "gen_ai_applications_landscape.studybubble.json"
+  },
+  "groups": [
+    { "id": "terminal", "label": "Terminal", "color": "#4C78A8" },
+    { "id": "api", "label": "Web API", "color": "#F58518" },
+    { "id": "ui", "label": "Web UI", "color": "#54A24B" }
+  ],
+  "mapResources": [
+    { "label": "← Landscape", "type": "map", "topic": "gen_ai_applications_landscape.studybubble.json" },
+    { "label": "CRS 001 Flask map", "type": "page", "href": "../../../courses/crs_001_develop_generative_ai_applications_get_started/bubbles/outputs/crs_001_module3_flask_app.html" }
+  ],
+  "nodes": [
+    {
+      "id": "expose_script",
+      "label": "Scripted run",
+      "size": "support",
+      "group": "terminal",
+      "definition": "python script.py — fixed questions, print answers. Learning mode.",
+      "safeSentence": "Demo before interactive."
+    },
+    {
+      "id": "expose_repl",
+      "label": "RECIPE · Terminal REPL",
+      "size": "core",
+      "group": "terminal",
+      "definition": "input() loop — you in PowerShell. CRS 002 07.",
+      "whyItMatters": "You were happy here — follow-ups without Gradio complexity.",
+      "externalLinks": [
+        { "label": "07_m1_chat_repl.py", "href": "../../../courses/crs_002_build_rag_applications_get_started/lab/python/07_m1_chat_repl.py" }
+      ],
+      "childTopics": [
+        { "label": "Memory & Chat", "topic": "memory_and_chat.studybubble.json" }
+      ]
+    },
+    {
+      "id": "expose_flask_tutorial",
+      "label": "Flask · tutorial bites",
+      "size": "support",
+      "group": "api",
+      "definition": "01 hello → 02 json route → 03 POST echo. Local, no cloud.",
+      "externalLinks": [
+        { "label": "flask_tutorial/", "href": "../../../courses/crs_001_develop_generative_ai_applications_get_started/lab/python/flask_tutorial/01_hello.py" }
+      ]
+    },
+    {
+      "id": "expose_flask_generate",
+      "label": "RECIPE · Flask POST /generate",
+      "size": "core",
+      "group": "api",
+      "definition": "CRS 001 M3 — app2.py, JsonOutputParser, curl proves stack.",
+      "whyItMatters": "Machine-to-machine: another app sends JSON, gets JSON back.",
+      "safeSentence": "Flask = you define routes and jsonify.",
+      "externalLinks": [
+        { "label": "genai_flask_app/app2.py", "href": "../../../courses/crs_001_develop_generative_ai_applications_get_started/lab/python/module3/genai_flask_app/app2.py" }
+      ]
+    },
+    {
+      "id": "expose_gradio",
+      "label": "RECIPE · Gradio (next)",
+      "size": "core",
+      "group": "ui",
+      "definition": "Browser form — gr.Interface or ChatInterface wraps your qa function.",
+      "whyItMatters": "CRS 002 M2 — demo users, no curl needed.",
+      "safeSentence": "Gradio = UI built for you; Flask = API you build.",
+      "note": {
+        "summary": "When you add Gradio:\n1. NEED working chain from RAG or Memory map\n2. Wrap fn= in 09_m2_gradio_sean.py\n3. Open localhost URL in browser"
+      },
+      "externalLinks": [
+        { "label": "09_m2_gradio_sean.py", "href": "../../../courses/crs_002_build_rag_applications_get_started/lab/python/09_m2_gradio_sean.py" }
+      ],
+      "childTopics": [
+        { "label": "RAG Patterns", "topic": "rag_patterns.studybubble.json" }
+      ]
+    }
+  ],
+  "links": [
+    { "source": "expose_script", "target": "expose_repl", "label": "then" },
+    { "source": "expose_flask_tutorial", "target": "expose_flask_generate", "label": "then" },
+    { "source": "expose_repl", "target": "expose_gradio", "label": "same chain as" }
+  ],
+  "paths": [
+    {
+      "id": "crs002_expose_lane",
+      "label": "CRS 002 path",
+      "description": "REPL now → Gradio next.",
+      "nodeIds": ["expose_repl", "expose_gradio"]
+    },
+    {
+      "id": "crs001_expose_lane",
+      "label": "CRS 001 path",
+      "description": "Flask tutorial → POST /generate.",
+      "nodeIds": ["expose_flask_tutorial", "expose_flask_generate"]
+    }
+  ]
+}

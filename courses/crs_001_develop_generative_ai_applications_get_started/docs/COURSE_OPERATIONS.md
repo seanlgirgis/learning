@@ -18,8 +18,8 @@ Each training session the agent may:
 | Asset | Count | Status |
 |-------|------:|--------|
 | Coursera quizzes (logged) | 3 | 100% · 5 Q + 100% · 7 Q + **40% · 5 Q** (LangChain components) |
-| RemNote decks | 9 + 1 new | `01`–`04`, `05_01`–`05_05`; **`05_06`** invoke/vocabulary added |
-| RemNote cards (approx.) | ~160 + 12 | See `source_cards/README.md` |
+| RemNote decks | 13 | `01`–`13` numeric study order — see `source_cards/README.md` |
+| RemNote cards (approx.) | ~222 | See `source_cards/README.md` |
 | Bubble maps | 2 | Landscape (10) · LCEL workflow (11) |
 | Local Python labs | 17 | `lab/python/01`–`13` (+ variants) |
 | Study pages (HTML) | 10+ | Field guide + 3 chapters + patterns + lookup |
@@ -48,13 +48,13 @@ Log Coursera grades in `TRAINING_LOG.md`. Re-drill `needs_repetition` rows befor
 
 | Concept | Status | Reinforcement |
 |---------|--------|---------------|
-| `.messages` vs `.output` | needs_repetition | `05_06`, lab `03`, LCEL map |
-| `human` vs `user` | needs_repetition | `05_06`, deck `03` |
-| `from_template` vs `from_messages` | improving → solid on drill | `05_01`, `05_06` |
-| `format()` vs `invoke()` | solid on quizzes | `05_06` vocabulary bridge |
-| Sequential chain vs memory | needs_repetition | Coursera 2026-06-16 · add `05_07` |
-| Agents vs memory (tools) | needs_repetition | Coursera 2026-06-16 · add `05_07` |
-| Chat models vs prompt templates | needs_repetition | Coursera 2026-06-16 · add `05_07` |
+| `.messages` vs `.output` | needs_repetition | `10`, lab `03`, LCEL map |
+| `human` vs `user` | needs_repetition | `10`, deck `03` |
+| `from_template` vs `from_messages` | improving → solid on drill | `05`, `10` |
+| `format()` vs `invoke()` | solid on quizzes | `10` vocabulary bridge |
+| Sequential chain vs memory | needs_repetition | Coursera 2026-06-16 · deck `11` |
+| Agents vs memory (tools) | needs_repetition | Coursera 2026-06-16 · deck `11` |
+| Chat models vs prompt templates | needs_repetition | Coursera 2026-06-16 · deck `11` |
 
 ## Pedagogy note (Sean feedback)
 
@@ -78,14 +78,14 @@ Not: encyclopedia chapters chained A→B→C without a through-line.
 
 ### RemNote
 
-- [x] `05_06_invoke_and_vocabulary.md` — invoke trio, format/invoke, roles
-- [ ] `05_07_coursera_quiz_reinforcement.md` — after more platform quizzes
+- [x] `10-invoke-vocabulary.md` — invoke trio, format/invoke, roles
+- [x] `11-module2-quiz.md` — M2 quiz traps
 - [ ] Module 3 theory deck (model selection only — **no Flask coding**)
 
 ### Bubble maps
 
 - [x] Landscape + LCEL workflow
-- [ ] Optional: **Invoke rules** mini-map (6–8 bubbles) if traps persist after `05_06`
+- [ ] Optional: **Invoke rules** mini-map (6–8 bubbles) if traps persist after deck `10`
 
 ### Docs
 

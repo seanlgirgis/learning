@@ -1,0 +1,23 @@
+{
+  "id": "m3_index_vector_store",
+  "title": "Index / Vector Store (scaffold)",
+  "subtitle": "VectorStoreIndex — upgrade in Phase 2",
+  "parentTopic": { "label": "RAG Pipeline", "topic": "m3_rag_pipeline.studybubble.json" },
+  "groups": [{ "id": "scaffold", "label": "Scaffold", "color": "#FBBF24" }],
+  "mapResources": [
+    { "label": "Back: Pipeline", "type": "map", "topic": "m3_rag_pipeline.studybubble.json" },
+    { "label": "Lab 02", "type": "lab", "href": "../starter_code/02_build_index_query.py" }
+  ],
+  "nodes": [
+    {
+      "id": "index_core",
+      "label": "VectorStoreIndex",
+      "size": "core",
+      "group": "Scaffold",
+      "definition": "Embed + store nodes in one step.",
+      "note": { "summary": "Detailed notes coming.\n\nindex = VectorStoreIndex(nodes, show_progress=True)" }
+    }
+  ],
+  "links": [],
+  "paths": []
+}
