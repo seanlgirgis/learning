@@ -16,7 +16,9 @@ Each entry should eventually answer:
 
 | Command / Function | Type | Introduced In | Purpose | Small Example | Common Mistake | Add to Cookbook? |
 |---|---|---|---|---|---|---|
-| search | command | TBD | Basic event search | `index=main error` | Starting too broad | Yes |
+| search | Search command | Module 1 | Basic event search | `error` | Staying too broad after finding relevant events | Yes |
+| keyword search | Search pattern | Module 1 | Find events containing one or more raw terms | `failed login` | Assuming keyword order means exact phrase matching | Yes |
+| incident symptom search | Search pattern | Module 1 | Search for events that match the reported symptom | `failed transaction` | Searching story details instead of reusable symptom patterns | Yes |
 
 ## Types
 

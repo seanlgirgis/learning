@@ -19,7 +19,9 @@ It is Sean's practical SPL working index.
 
 | Command / Function | Category | First Seen In | Cookbook Page | Purpose | Tiny Example |
 |---|---|---|---|---|---|
-| search | Search | 101 | searching.md | Find matching events | `index=main error` |
+| search | Search basics | 101 Module 1 | searching.md | Find matching events | `error` |
+| keyword search | Search basics | 101 Module 1 | searching.md | Find events containing related terms | `failed login` |
+| incident symptom search | Search basics | 101 Module 1 | searching.md | Find events related to a reported symptom | `failed transaction` |
 
 ## Categories
 
