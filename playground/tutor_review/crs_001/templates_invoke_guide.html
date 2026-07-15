@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Templates &amp; Invoke — Tutor Guide | CRS 001</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --panel: #161b22;
+      --panel-soft: #1c232d;
+      --border: #30363d;
+      --text: #e6edf3;
+      --muted: #9da7b3;
+      --green: #03ef62;
+      --green-soft: rgba(3, 239, 98, 0.12);
+      --blue: #58a6ff;
+      --blue-soft: rgba(88, 166, 255, 0.12);
+      --amber: #d29922;
+      --amber-soft: rgba(210, 153, 34, 0.12);
+      --purple: #bc8cff;
+      --purple-soft: rgba(188, 140, 255, 0.12);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(3, 239, 98, 0.08), transparent 28rem),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.62;
+    }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { color: var(--green); }
+    code, pre { font-family: Consolas, "Courier New", monospace; }
+    code {
+      background: var(--panel-soft);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.1em 0.4em;
+      font-size: 0.92em;
+    }
+    pre {
+      margin: 12px 0 0;
+      padding: 14px 16px;
+      background: #0b0f14;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow-x: auto;
+      font-size: 0.88rem;
+      color: #c9d3dc;
+    }
+    .page { width: min(920px, calc(100% - 32px)); margin: 0 auto; padding: 24px 0 56px; }
+    .breadcrumbs { color: var(--muted); font-size: 0.9rem; margin-bottom: 16px; }
+    .hero {
+      background: linear-gradient(135deg, #061d2d, #14384e);
+      border: 1px solid #28506a;
+      border-radius: 18px;
+      padding: 28px;
+      margin-bottom: 22px;
+    }
+    .badge {
+      display: inline-block;
+      margin-bottom: 10px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--amber-soft);
+      color: var(--amber);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .hero h1 { margin: 0 0 10px; font-size: 1.85rem; }
+    .hero p { margin: 0; color: #c9d3dc; }
+    .spine {
+      margin: 0 0 22px;
+      padding: 16px 18px;
+      border-left: 4px solid var(--green);
+      background: var(--green-soft);
+      border-radius: 0 10px 10px 0;
+      color: #c9d3dc;
+      font-size: 1.05rem;
+    }
+    .spine strong { color: var(--green); }
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 0 0 22px;
+    }
+    @media (max-width: 720px) { .flow { grid-template-columns: 1fr; } }
+    .flow-step {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+    }
+    .flow-step .n {
+      color: var(--green);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .flow-step h2 { margin: 6px 0 8px; font-size: 1.15rem; }
+    .flow-step p { margin: 0; color: var(--muted); font-size: 0.95rem; }
+    .flow-step.build { border-color: rgba(88, 166, 255, 0.45); }
+    .flow-step.fill { border-color: rgba(210, 153, 34, 0.45); }
+    .flow-step.run { border-color: rgba(3, 239, 98, 0.45); }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 22px;
+      margin: 0 0 16px;
+    }
+    .card h2 { margin: 0 0 10px; font-size: 1.2rem; }
+    .card h3 { margin: 16px 0 8px; font-size: 1rem; color: var(--muted); font-weight: 600; }
+    .card p { margin: 0 0 10px; color: #c9d3dc; }
+    .card p:last-child { margin-bottom: 0; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+      margin-top: 8px;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: var(--panel-soft); color: var(--muted); font-weight: 600; }
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+    .tag-blue { background: var(--blue-soft); color: var(--blue); }
+    .tag-amber { background: var(--amber-soft); color: var(--amber); }
+    .tag-green { background: var(--green-soft); color: var(--green); }
+    .tag-purple { background: var(--purple-soft); color: var(--purple); }
+    .trap {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: rgba(255, 123, 114, 0.08);
+      border: 1px solid rgba(255, 123, 114, 0.35);
+      color: #c9d3dc;
+      font-size: 0.95rem;
+    }
+    .trap strong { color: #ff7b72; }
+    .files { font-size: 0.92rem; }
+    .files li { margin: 6px 0; }
+    footer {
+      margin-top: 28px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+  </style>
+</head>
+<body>
+<main class="page">
+  <nav class="breadcrumbs">
+    <a href="../../index.html">Playground</a> ›
+    <a href="./RECAP.md">Tutor recap</a> ›
+    <span>Templates &amp; invoke</span>
+  </nav>
+
+  <header class="hero">
+    <span class="badge">Tutor review · CRS 001</span>
+    <h1>Templates &amp; invoke</h1>
+    <p>
+      Sean’s unified model: three template classes, one fill step, one real pipeline call.
+      Companion to the runnable files in this folder.
+    </p>
+  </header>
+
+  <div class="spine">
+    <strong>Story in one line:</strong>
+    BUILD a recipe → FILL blanks with a dict → RUN the chain to get the LLM answer.
+  </div>
+
+  <section class="flow" aria-label="Three stages">
+    <article class="flow-step build">
+      <div class="n">Stage 1</div>
+      <h2>BUILD</h2>
+      <p>Create the template object. No network. No tokens.</p>
+    </article>
+    <article class="flow-step fill">
+      <div class="n">Stage 2</div>
+      <h2>FILL</h2>
+      <p><code>template.invoke({...})</code> substitutes blanks. Still no LLM.</p>
+    </article>
+    <article class="flow-step run">
+      <div class="n">Stage 3</div>
+      <h2>RUN</h2>
+      <p><code>chain.invoke({...})</code> fills + calls the model. This can charge.</p>
+    </article>
+  </section>
+
+  <section class="card">
+    <h2>Three classes → three builders</h2>
+    <p>Each class is a <em>recipe</em>. The builder method (or constructor) matches the shape of that recipe.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Class</th>
+          <th>Shape</th>
+          <th>How you BUILD</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>PromptTemplate</code></td>
+          <td>One string with blanks · <span class="tag tag-blue">no turns</span></td>
+          <td><code>from_template("...{blank}...")</code></td>
+        </tr>
+        <tr>
+          <td><code>ChatPromptTemplate</code></td>
+          <td>Ordered turns + blanks · <span class="tag tag-purple">roles</span></td>
+          <td><code>from_messages([(role, content), ...])</code></td>
+        </tr>
+        <tr>
+          <td><code>FewShotPromptTemplate</code></td>
+          <td>Prefix + example rows + suffix · <span class="tag tag-amber">2+ shots</span></td>
+          <td>Constructor: <code>examples</code>, <code>example_prompt</code>, prefix/suffix</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="trap">
+      <strong>Trap:</strong> <code>from_messages</code> is the <em>builder</em>.
+      <code>invoke</code> is the <em>fill</em> (or fill+run on a chain) — not how you create the chat template.
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Turns (chat only)</h2>
+    <p>A chat is an ordered list of <strong>turns</strong>. Each turn = <strong>role + content</strong>.</p>
+    <table>
+      <thead>
+        <tr><th>LangChain role</th><th>Everyday name</th><th>Job</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>system</code></td><td>system</td><td>Rules / persona</td></tr>
+        <tr><td><code>human</code></td><td>user</td><td>Person asking</td></tr>
+        <tr><td><code>ai</code></td><td>assistant</td><td>Model reply</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:12px;">
+      Blanks like <code>{question}</code> live in <strong>content</strong> — including <code>system</code>, not only <code>human</code>.
+    </p>
+  </section>
+
+  <section class="card">
+    <h2>Few-shot pieces (don’t mix these up)</h2>
+    <table>
+      <thead>
+        <tr><th>Piece</th><th>Job</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>example_prompt</code></td>
+          <td>Cookie cutter — how <em>one</em> example row is printed</td>
+        </tr>
+        <tr>
+          <td><code>examples</code></td>
+          <td>The dough — list of dicts (worked samples)</td>
+        </tr>
+        <tr>
+          <td><code>prefix</code> / <code>suffix</code></td>
+          <td>Intro + the live question (suffix usually has <code>{request}</code>)</td>
+        </tr>
+      </tbody>
+    </table>
+    <pre>prefix
++ example1 (cutter + row1)
++ example2 (cutter + row2)
++ suffix with {request}</pre>
+  </section>
+
+  <section class="card">
+    <h2>Invoke: prepare vs answer</h2>
+    <table>
+      <thead>
+        <tr><th>Call</th><th>What you get</th><th>LLM / cost?</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>template.invoke({...})</code></td>
+          <td>Prepared prompt — string via <code>.to_string()</code> or chat via <code>.messages</code></td>
+          <td><span class="tag tag-amber">No model charge</span></td>
+        </tr>
+        <tr>
+          <td><code>model.invoke(...)</code></td>
+          <td>Model output (you already prepared input)</td>
+          <td><span class="tag tag-green">Yes — charges</span></td>
+        </tr>
+        <tr>
+          <td><code>chain.invoke({...})</code></td>
+          <td>Full pipe: fill → model → parser</td>
+          <td><span class="tag tag-green">Yes — charges</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <pre>chain = prompt | model | StrOutputParser()
+answer = chain.invoke({"topic": "RAG"})   # real path day-to-day</pre>
+    <p style="margin-top:12px;">
+      <code>ChatOpenAI(...)</code> only <strong>builds</strong> the client. Free until an invoke that hits the model.
+    </p>
+    <div class="trap">
+      <strong>Not LangChain?</strong> You can still call the OpenAI SDK directly
+      (<code>client.chat.completions.create</code>). LangChain is optional glue for templates, pipes, RAG.
+      <code>model.invoke</code> is still LangChain — just the model runnable without a full chain.
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Recall anchors (say these out loud)</h2>
+    <pre>from_template  → blanks in ONE string (no turns)
+from_messages  → blanks + turns
+invoke(dict)   → FILL blanks
+chain.invoke   → FILL + LLM answer</pre>
+  </section>
+
+  <section class="card files">
+    <h2>Runnable companions (this folder)</h2>
+    <ol>
+      <li><code>01_prompt_template_fill.py</code> — fill only</li>
+      <li><code>02_chat_prompt_template_fill.py</code> — turns, fill only</li>
+      <li><code>01b_prompt_template_with_llm.py</code> — string + chain</li>
+      <li><code>02b_chat_prompt_with_llm.py</code> — chat + chain</li>
+      <li><code>03_few_shot_prompt.py</code> — few-shot fill + chain</li>
+      <li><a href="./RECAP.md">RECAP.md</a> — full Module 1 memory card</li>
+    </ol>
+  </section>
+
+  <footer>
+    Tutor review · 2026-07-12 · Quality bar: mental model first, then code proof ·
+    Path: <code>playground/tutor_review/crs_001/templates_invoke_guide.html</code>
+  </footer>
+</main>
+</body>
+</html>

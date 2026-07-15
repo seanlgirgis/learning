@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Module 1 Field Guide — Vector DBs &amp; Chroma | CRS 003</title>
+  <style>
+    :root {
+      --bg: #0d1117; --panel: #161b22; --panel-soft: #1c232d; --border: #30363d;
+      --text: #e6edf3; --muted: #9da7b3; --green: #03ef62; --blue: #58a6ff;
+      --amber: #d29922; --purple: #bc8cff;
+      --green-soft: rgba(3,239,98,.12); --blue-soft: rgba(88,166,255,.12);
+      --amber-soft: rgba(210,153,34,.12); --purple-soft: rgba(188,140,255,.12);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: "Segoe UI", Arial, sans-serif; color: var(--text); line-height: 1.62;
+      background: radial-gradient(circle at top left, rgba(88,166,255,.1), transparent 28rem), var(--bg);
+    }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { color: var(--green); }
+    code, pre { font-family: Consolas, "Courier New", monospace; }
+    code { background: var(--panel-soft); border: 1px solid var(--border); border-radius: 6px; padding: .1em .4em; font-size: .92em; }
+    pre { margin: 12px 0 0; padding: 14px 16px; background: #0b0f14; border: 1px solid var(--border); border-radius: 10px; overflow-x: auto; font-size: .88rem; color: #c9d3dc; }
+    .page { width: min(920px, calc(100% - 32px)); margin: 0 auto; padding: 24px 0 56px; }
+    .breadcrumbs { color: var(--muted); font-size: .9rem; margin-bottom: 16px; }
+    .hero {
+      background: linear-gradient(135deg, #0a1a2e, #1a3a52); border: 1px solid #2a5570;
+      border-radius: 18px; padding: 28px; margin-bottom: 20px;
+    }
+    .badge {
+      display: inline-block; margin-bottom: 10px; padding: 4px 10px; border-radius: 999px;
+      background: var(--blue-soft); color: var(--blue); font-size: .78rem; font-weight: 700;
+      letter-spacing: .06em; text-transform: uppercase;
+    }
+    .hero h1 { margin: 0 0 10px; font-size: 1.75rem; }
+    .hero p { margin: 0; color: #c9d3dc; }
+    .spine {
+      margin: 0 0 20px; padding: 16px 18px; border-left: 4px solid var(--green);
+      background: var(--green-soft); border-radius: 0 10px 10px 0; color: #c9d3dc;
+    }
+    .spine strong { color: var(--green); }
+    .flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+    @media (max-width: 800px) { .flow { grid-template-columns: 1fr 1fr; } }
+    .flow-step {
+      background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 14px;
+    }
+    .flow-step .n { color: var(--blue); font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+    .flow-step h2 { margin: 6px 0 6px; font-size: 1rem; }
+    .flow-step p { margin: 0; color: var(--muted); font-size: .9rem; }
+    .card {
+      background: var(--panel); border: 1px solid var(--border); border-radius: 14px;
+      padding: 20px 22px; margin: 0 0 14px;
+    }
+    .card h2 { margin: 0 0 10px; font-size: 1.2rem; }
+    .card p { margin: 0 0 10px; color: #c9d3dc; }
+    table { width: 100%; border-collapse: collapse; font-size: .93rem; margin-top: 8px; }
+    th, td { border: 1px solid var(--border); padding: 9px 11px; text-align: left; vertical-align: top; }
+    th { background: var(--panel-soft); color: var(--muted); font-weight: 600; }
+    .tag { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: .75rem; font-weight: 700; }
+    .tag-green { background: var(--green-soft); color: var(--green); }
+    .tag-amber { background: var(--amber-soft); color: var(--amber); }
+    .tag-purple { background: var(--purple-soft); color: var(--purple); }
+    .trap {
+      margin-top: 12px; padding: 12px 14px; border-radius: 10px;
+      background: rgba(255,123,114,.08); border: 1px solid rgba(255,123,114,.35); color: #c9d3dc; font-size: .95rem;
+    }
+    .trap strong { color: #ff7b72; }
+    footer { margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--border); color: var(--muted); font-size: .88rem; }
+  </style>
+</head>
+<body>
+<main class="page">
+  <nav class="breadcrumbs">
+    <a href="../index.html">CRS 003</a> ›
+    <span>Module 1 field guide</span>
+  </nav>
+
+  <header class="hero">
+    <span class="badge">CRS 003 · Module 1</span>
+    <h1>Vector databases &amp; Chroma DB</h1>
+    <p>
+      Story spine for Module 1. Theory first, then metrics by hand, then Chroma does the same job at scale.
+      Source map: <code>docs/MODULE1_SOURCE_MAP.md</code>
+    </p>
+  </header>
+
+  <div class="spine">
+    <strong>One-line story:</strong>
+    Turn messy data into numbers (vectors) → store them so “nearby” means “similar” → search with distance metrics → use Chroma so you don’t brute-force everything.
+  </div>
+
+  <section class="flow" aria-label="Module arc">
+    <article class="flow-step">
+      <div class="n">1</div>
+      <h2>Vector</h2>
+      <p>List of numbers = meaning in multi-dimensional space.</p>
+    </article>
+    <article class="flow-step">
+      <div class="n">2</div>
+      <h2>Vector DB</h2>
+      <p>Store/search vectors; similarity not SQL equality.</p>
+    </article>
+    <article class="flow-step">
+      <div class="n">3</div>
+      <h2>Metrics</h2>
+      <p>L2 · cosine · dot product — how “close” is scored.</p>
+    </article>
+    <article class="flow-step">
+      <div class="n">4</div>
+      <h2>Chroma</h2>
+      <p>Collections, embed, query, filter, HNSW index.</p>
+    </article>
+  </section>
+
+  <section class="card">
+    <h2>Why this exists (RAG link)</h2>
+    <p>
+      In RAG you <strong>retrieve</strong> useful chunks before the LLM writes.
+      Retrieval quality depends on embeddings + a store that can find nearest neighbors fast.
+      That store is the vector database.
+    </p>
+    <pre>Source → embed → vectors in DB → query embed → nearest chunks → prompt → LLM</pre>
+  </section>
+
+  <section class="card">
+    <h2>Vector DB vs traditional DB</h2>
+    <table>
+      <thead>
+        <tr><th>Function</th><th>Traditional</th><th>Vector</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Shape</td><td>Tables / rows / columns</td><td>High-dimensional vectors</td></tr>
+        <tr><td>Search</td><td>SQL exact / joins</td><td>Similarity / nearest neighbor</td></tr>
+        <tr><td>Index</td><td>B-trees, etc.</td><td>HNSW, LSH, metric trees…</td></tr>
+        <tr><td>Sweet spot</td><td>Transactions, structured business data</td><td>Text, images, recs, RAG context</td></tr>
+      </tbody>
+    </table>
+    <div class="trap">
+      <strong>Trap:</strong> a <em>vector library</em> (in-memory search helpers) ≠ a full <em>vector database</em> (CRUD, persistence, production ops).
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Three metrics (cheat sheet)</h2>
+    <table>
+      <thead>
+        <tr><th>Metric</th><th>Cares about magnitude?</th><th>Best for (course)</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>L2 (Euclidean)</td>
+          <td><span class="tag tag-amber">yes</span></td>
+          <td>Spatial / geometric closeness</td>
+        </tr>
+        <tr>
+          <td>Cosine</td>
+          <td><span class="tag tag-green">no — direction / angle</span></td>
+          <td>Text &amp; embeddings (topic match)</td>
+        </tr>
+        <tr>
+          <td>Dot product</td>
+          <td><span class="tag tag-amber">yes</span></td>
+          <td>Topic + “strength” (e.g. popularity)</td>
+        </tr>
+      </tbody>
+    </table>
+    <pre>cosine_distance = 1 − cosine_similarity
+Chroma spaces often: l2 (default) · cosine · ip (inner product)</pre>
+  </section>
+
+  <section class="card">
+    <h2>Chroma mental model</h2>
+    <pre>create collection
+  → add documents (+ optional metadata / precomputed embeddings)
+  → Chroma embeds (or you pass embeddings)
+  → query(text or vector) → top-k nearest
+  → optional filters: where (metadata) · where_document (text)</pre>
+    <p>
+      Under the hood Chroma uses <strong>HNSW</strong> (approximate nearest neighbor) so it does not always compare the query to every vector.
+      Deploy: <span class="tag tag-purple">standalone (one process)</span> or client–server.
+    </p>
+  </section>
+
+  <section class="card">
+    <h2>Local labs (run after theory beats)</h2>
+    <table>
+      <thead>
+        <tr><th>Lab</th><th>Proves</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>lab/python/001_similarity_search_by_hand.py</code></td><td>Metrics without a DB</td></tr>
+        <tr><td><code>lab/python/002_chroma_similarity_search.py</code></td><td>Chroma stores + ranks</td></tr>
+        <tr><td><code>lab/python/003_chroma_native_embedding_search.py</code></td><td>Native embedding path</td></tr>
+        <tr><td><code>lab/python/004_chroma_cosine_distance_search.py</code></td><td>Cosine space search</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="card">
+    <h2>Study order (this package)</h2>
+    <pre>1. This field guide (spine)
+2. Tutor beats (one concept at a time)
+3. Lab 001 → 002 → 003/004
+4. Source cards + bubbles (drill + spatial)
+5. Module 2 only after M1 checklist feels solid</pre>
+  </section>
+
+  <footer>
+    CRS 003 Module 1 · spine created 2026-07-12 · quality bar: mental model → lab proof → cards/bubbles
+  </footer>
+</main>
+</body>
+</html>
